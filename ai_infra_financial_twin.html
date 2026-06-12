@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaSpark AI · CFO Financial Twin · Jun-26</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#070B18;--navy2:#0C1020;--navy3:#111728;
+  --blue:#1A3A5C;--indigo:#4F6AF0;--indigo2:#6B83F5;
+  --purple:#7C3AED;--teal:#0D9488;--teal2:#14B8A6;
+  --green:#10B981;--amber:#F59E0B;--red:#EF4444;--red2:#F87171;
+  --orange:#F97316;
+  --gray1:rgba(255,255,255,0.04);--gray2:rgba(255,255,255,0.07);
+  --gray3:rgba(255,255,255,0.12);--gray4:rgba(255,255,255,0.22);
+  --gray5:rgba(255,255,255,0.55);--white:rgba(255,255,255,0.92);
+  --font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;
+}
+body{background:var(--navy);color:var(--white);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gray3);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.fade{animation:fadeUp 0.4s ease both}
+.fade-1{animation-delay:0.05s}.fade-2{animation-delay:0.1s}
+.fade-3{animation-delay:0.15s}.fade-4{animation-delay:0.2s}
+.fade-5{animation-delay:0.25s}.fade-6{animation-delay:0.3s}
+.app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+.header{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:rgba(7,11,24,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--gray2)}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#F97316,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;box-shadow:0 0 20px rgba(249,115,22,0.35)}
+.brand{font-size:13px;font-weight:600;letter-spacing:-0.2px}
+.brand span{color:var(--gray4);font-weight:400;margin-left:6px;font-size:12px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+.header-meta{display:flex;align-items:center;gap:16px;font-size:11px;color:var(--gray4);font-family:var(--mono)}
+.badge{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(239,68,68,0.12);color:var(--red2);border:1px solid rgba(239,68,68,0.2);letter-spacing:0.3px}
+.badge.warn{background:rgba(245,158,11,0.12);color:var(--amber);border-color:rgba(245,158,11,0.2)}
+.badge.ok{background:rgba(16,185,129,0.12);color:var(--green);border-color:rgba(16,185,129,0.2)}
+.badge.info{background:rgba(249,115,22,0.12);color:var(--orange);border-color:rgba(249,115,22,0.2)}
+.main{display:flex;flex-direction:column;min-height:calc(100vh - 56px)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--gray2);padding:0 24px;position:sticky;top:56px;z-index:100;background:var(--navy)}
+.tab{padding:12px 16px;font-size:12px;font-weight:500;cursor:pointer;color:var(--gray4);border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap}
+.tab:hover{color:var(--white)}
+.tab.active{color:var(--indigo2);border-bottom-color:var(--indigo)}
+.tab-content{display:none;padding:24px}
+.tab-content.active{display:block}
+.section-title{font-size:13px;font-weight:600;letter-spacing:-0.2px;color:var(--white);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--gray2)}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;padding:16px;position:relative;overflow:hidden;cursor:default;transition:border-color 0.2s,transform 0.2s}
+.kpi-card:hover{border-color:var(--gray3);transform:translateY(-1px)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent1,var(--indigo)),var(--accent2,var(--purple)))}
+.kpi-label{font-size:10px;color:var(--gray4);font-weight:500;letter-spacing:0.3px;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-size:24px;font-weight:700;letter-spacing:-1px;font-family:var(--mono);line-height:1}
+.kpi-sub{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:4px}
+.kpi-sub.up{color:var(--green)}.kpi-sub.down{color:var(--red2)}.kpi-sub.warn{color:var(--amber)}
+.kpi-trend{position:absolute;bottom:12px;right:12px;width:60px;height:28px}
+.charts-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.charts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;padding:16px}
+.chart-card.wide{grid-column:span 2}
+.chart-card.full{grid-column:span 3}
+.chart-title{font-size:11px;font-weight:600;color:var(--gray5);margin-bottom:4px;letter-spacing:0.2px}
+.chart-subtitle{font-size:10px;color:var(--gray4);margin-bottom:14px}
+.chart-wrap{position:relative}
+.table-card{background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{padding:8px 12px;text-align:right;font-size:10px;font-weight:600;color:var(--gray4);letter-spacing:0.3px;text-transform:uppercase;background:var(--navy3);border-bottom:1px solid var(--gray2);white-space:nowrap}
+.tbl th:first-child{text-align:left;width:200px}
+.tbl td{padding:7px 12px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--gray5);border-bottom:1px solid rgba(255,255,255,0.03)}
+.tbl td:first-child{text-align:left;font-family:var(--font);color:var(--white);font-size:11px;font-weight:500}
+.tbl tr:hover td{background:var(--gray1)}
+.tbl .total td{color:var(--white);font-weight:600;background:rgba(79,106,240,0.06);border-top:1px solid rgba(79,106,240,0.2)}
+.tbl .total-green td{color:var(--green);font-weight:600;background:rgba(16,185,129,0.06);border-top:1px solid rgba(16,185,129,0.2)}
+.tbl .total-red td{color:var(--red2);font-weight:600;background:rgba(239,68,68,0.06);border-top:1px solid rgba(239,68,68,0.2)}
+.tbl .section td{color:var(--gray4);font-size:9px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;background:var(--navy3);padding:5px 12px}
+.tbl .indent td:first-child{padding-left:24px;color:var(--gray5);font-weight:400}
+.act-col{color:var(--white)!important}
+.fcast-col{color:rgba(20,184,166,0.85)!important}
+.neg{color:var(--red2)!important}.pos{color:var(--green)!important}
+.col-head-act{background:rgba(79,106,240,0.12)!important;color:var(--indigo2)!important}
+.col-head-fcast{background:rgba(13,148,136,0.12)!important;color:var(--teal2)!important}
+/* Scenario tabs */
+.scen-tabs{display:flex;gap:4px;margin-bottom:16px}
+.scen-tab{padding:6px 16px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--gray2);color:var(--gray4);transition:all 0.15s}
+.scen-tab.active-base{background:rgba(79,106,240,0.15);color:var(--indigo2);border-color:rgba(79,106,240,0.3)}
+.scen-tab.active-bull{background:rgba(16,185,129,0.15);color:var(--green);border-color:rgba(16,185,129,0.3)}
+.scen-tab.active-bear{background:rgba(239,68,68,0.15);color:var(--red2);border-color:rgba(239,68,68,0.3)}
+/* Sim controls */
+.sim-grid{display:grid;grid-template-columns:320px 1fr;gap:20px;margin-top:8px}
+.sim-panel{background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;padding:20px}
+.sim-section{margin-bottom:20px;border-bottom:1px solid var(--gray2);padding-bottom:16px}
+.sim-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.sim-section-title{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--gray4);margin-bottom:12px}
+.slider-row{margin-bottom:12px}
+.slider-label{display:flex;justify-content:space-between;font-size:11px;color:var(--gray5);margin-bottom:4px}
+.slider-val{font-family:var(--mono);color:var(--white);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--indigo);height:3px;border-radius:2px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.toggle-label{font-size:11px;color:var(--gray5)}
+.toggle{position:relative;width:36px;height:18px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;border-radius:18px;background:var(--gray2);transition:0.2s}
+.toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:2px;top:2px;border-radius:50%;background:var(--gray4);transition:0.2s}
+.toggle input:checked + .toggle-slider{background:var(--indigo)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(18px);background:#fff}
+.sim-output{display:flex;flex-direction:column;gap:16px}
+.capex-waterfall{background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;padding:16px}
+/* FCF bridge */
+.fcf-bridge{background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;padding:20px;margin-bottom:24px}
+.bridge-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:12px}
+.bridge-bar{height:8px;border-radius:4px;transition:width 0.4s ease}
+.bridge-label{width:200px;color:var(--gray5);flex-shrink:0}
+.bridge-val{width:80px;text-align:right;font-family:var(--mono);font-size:11px;flex-shrink:0}
+/* Insight cards */
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.insight-card{background:var(--navy2);border:1px solid var(--gray2);border-radius:10px;padding:14px 16px}
+.insight-title{font-size:11px;font-weight:700;color:var(--white);margin-bottom:6px}
+.insight-body{font-size:11px;color:var(--gray5);line-height:1.6}
+/* Sector comparison */
+.sector-table{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--gray2);border-radius:10px;overflow:hidden;margin-bottom:24px}
+.sc{background:var(--navy2);padding:10px 12px;font-size:11px;font-family:var(--mono);text-align:right}
+.sc.head{background:var(--navy3);color:var(--gray4);font-size:10px;font-weight:700;letter-spacing:0.3px;text-align:center;font-family:var(--font)}
+.sc.rl{text-align:left;font-family:var(--font);color:var(--gray5)}
+.sc.hi{background:rgba(16,185,129,0.12);color:var(--green);font-weight:700}
+.sc.lo{background:rgba(239,68,68,0.08);color:var(--red2)}
+.sc.me{background:rgba(245,158,11,0.08);color:var(--amber)}
+/* GPU util gauge */
+.gauge-row{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+.gauge-wrap{flex:1;background:var(--gray2);border-radius:4px;height:8px;overflow:hidden}
+.gauge-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
+.gauge-label{font-size:11px;color:var(--gray5);width:160px;flex-shrink:0}
+.gauge-pct{font-size:11px;font-family:var(--mono);color:var(--white);width:40px;text-align:right;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">⚡</div>
+    <div>
+      <div class="brand">NovaSpark AI Infrastructure <span>CFO Financial Twin</span></div>
+    </div>
+    <div class="status-dot"></div>
+    <span style="font-size:11px;color:var(--gray4)">Jun-26 Close</span>
+  </div>
+  <div class="header-meta">
+    <span>GPU Cloud · Model Serving · Training-as-a-Service</span>
+    <span style="color:var(--gray3)">|</span>
+    <span>12 months actuals + 8-mo forecast</span>
+    <span style="color:var(--gray3)">|</span>
+    <span id="ts"></span>
+    <span class="badge warn">⚠ HIGH CAPEX CYCLE</span>
+    <span class="badge info">Series C · $1.8B Raised</span>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs" id="tabs">
+  <div class="tab active" onclick="switchTab('overview')">Overview</div>
+  <div class="tab" onclick="switchTab('pl')">P&L Detail</div>
+  <div class="tab" onclick="switchTab('capex')">📦 CapEx & FCF Model</div>
+  <div class="tab" onclick="switchTab('margin')">📈 Margin Deep-Dive</div>
+  <div class="tab" onclick="switchTab('scenarios')">Scenarios</div>
+  <div class="tab" onclick="switchTab('sector')">🔬 Sector Benchmarks</div>
+  <div class="tab" onclick="switchTab('simulator')" style="color:#F97316;font-weight:600">⚙ CFO Simulator</div>
+</div>
+
+<div id="content-root">
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<div class="tab-content active" id="tab-overview">
+
+  <div class="kpi-grid fade fade-1" style="margin-top:8px">
+    <div class="kpi-card" style="--accent1:#F97316;--accent2:#7C3AED">
+      <div class="kpi-label">Jun-26 Revenue</div>
+      <div class="kpi-val">$112.4M</div>
+      <div class="kpi-sub up">▲ +22.4% MoM · GPU utilization 91%</div>
+      <canvas class="kpi-trend" id="spark-rev"></canvas>
+    </div>
+    <div class="kpi-card" style="--accent1:#0D9488;--accent2:#14B8A6">
+      <div class="kpi-label">Gross Margin</div>
+      <div class="kpi-val">38.2%</div>
+      <div class="kpi-sub warn">▲ +4.1pp MoM · target: 55% by Q2-27</div>
+      <canvas class="kpi-trend" id="spark-gm"></canvas>
+    </div>
+    <div class="kpi-card" style="--accent1:#EF4444;--accent2:#F97316">
+      <div class="kpi-label">Free Cash Flow</div>
+      <div class="kpi-val" style="color:var(--red2)">-$284M</div>
+      <div class="kpi-sub down">▼ CapEx cycle peak · H2-26 inflection expected</div>
+      <canvas class="kpi-trend" id="spark-fcf"></canvas>
+    </div>
+    <div class="kpi-card" style="--accent1:#7C3AED;--accent2:#4F6AF0">
+      <div class="kpi-label">Annualized Revenue Run-Rate</div>
+      <div class="kpi-val">$1.35B</div>
+      <div class="kpi-sub up">▲ +188% YoY · 82k H100-equiv GPU-hours/day</div>
+      <canvas class="kpi-trend" id="spark-arr"></canvas>
+    </div>
+  </div>
+
+  <div class="kpi-grid fade fade-2">
+    <div class="kpi-card" style="--accent1:#F59E0B;--accent2:#F97316">
+      <div class="kpi-label">CapEx (LTM)</div>
+      <div class="kpi-val" style="color:var(--amber)">$892M</div>
+      <div class="kpi-sub warn">GPU cluster build-out · H100 + GB200 fleet</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#10B981;--accent2:#14B8A6">
+      <div class="kpi-label">Cash Balance</div>
+      <div class="kpi-val" style="color:var(--green)">$1.42B</div>
+      <div class="kpi-sub up">~18 mo runway @ current FCF burn</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#4F6AF0;--accent2:#7C3AED">
+      <div class="kpi-label">Adj. EBITDA</div>
+      <div class="kpi-val" style="color:var(--amber)">-$18.3M</div>
+      <div class="kpi-sub warn">Pre-depreciation loss · D&A = $62M/mo</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#6B83F5;--accent2:#0D9488">
+      <div class="kpi-label">GPU Utilization</div>
+      <div class="kpi-val" style="color:var(--green)">91.3%</div>
+      <div class="kpi-sub up">▲ from 74% six months ago · economics inflect >85%</div>
+    </div>
+  </div>
+
+  <div class="section-title fade fade-3">Revenue & Gross Margin Trend</div>
+  <div class="charts-2 fade fade-3">
+    <div class="chart-card wide">
+      <div class="chart-title">Monthly Revenue by Segment ($M) · Actuals + Forecast</div>
+      <div class="chart-subtitle">GPU Cloud · Model Serving · Training-as-a-Service · Managed Inference API</div>
+      <div class="chart-wrap"><canvas id="chart-rev" height="200"></canvas></div>
+    </div>
+  </div>
+
+  <div class="charts-3 fade fade-4">
+    <div class="chart-card">
+      <div class="chart-title">Gross Margin % (Blended)</div>
+      <div class="chart-subtitle">Target band 50–60% by end of FY27</div>
+      <div class="chart-wrap"><canvas id="chart-gm" height="160"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">CapEx vs Revenue ($M)</div>
+      <div class="chart-subtitle">CapEx intensity declining as fleet matures</div>
+      <div class="chart-wrap"><canvas id="chart-capex" height="160"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Free Cash Flow ($M)</div>
+      <div class="chart-subtitle">FCF = EBITDA – CapEx – ΔWC</div>
+      <div class="chart-wrap"><canvas id="chart-fcf" height="160"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title fade fade-5">GPU Utilization by Fleet Cohort</div>
+  <div class="chart-card fade fade-5" style="margin-bottom:24px;padding:20px">
+    <div class="chart-title" style="margin-bottom:16px">Real-time GPU Cluster Utilization (Jun-26)</div>
+    <div id="gpu-gauges"></div>
+  </div>
+
+  <div class="charts-2 fade fade-6">
+    <div class="chart-card">
+      <div class="chart-title">Adj. EBITDA ($M)</div>
+      <div class="chart-subtitle">Pre-D&A operating income · D&A = ~$62M/mo</div>
+      <div class="chart-wrap"><canvas id="chart-ebitda" height="180"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Cash Runway ($M)</div>
+      <div class="chart-subtitle">Cash balance vs FCF burn rate</div>
+      <div class="chart-wrap"><canvas id="chart-cash" height="180"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ P&L DETAIL ══════════ -->
+<div class="tab-content" id="tab-pl">
+  <div style="margin-top:8px">
+  <div class="section-title">Monthly P&L — Actuals + Base Forecast ($M)</div>
+  <div class="table-card fade">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="pl-table">
+      <thead id="pl-head"></thead>
+      <tbody id="pl-body"></tbody>
+    </table>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ CAPEX & FCF MODEL ══════════ -->
+<div class="tab-content" id="tab-capex">
+  <div style="margin-top:8px">
+
+  <!-- FCF Bridge -->
+  <div class="section-title">Free Cash Flow Bridge — LTM Jun-26</div>
+  <div class="fcf-bridge fade">
+    <div class="chart-title" style="margin-bottom:20px">From EBITDA to Free Cash Flow ($M, LTM)</div>
+    <div id="fcf-bridge-rows"></div>
+  </div>
+
+  <!-- CapEx composition chart -->
+  <div class="section-title">CapEx Composition & Depreciation Schedule</div>
+  <div class="charts-2 fade">
+    <div class="chart-card">
+      <div class="chart-title">CapEx by Category ($M/mo)</div>
+      <div class="chart-subtitle">GPU hardware · Networking · Data center build-out · Software</div>
+      <div class="chart-wrap"><canvas id="chart-capex-mix" height="200"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Depreciation vs Revenue ($M)</div>
+      <div class="chart-subtitle">D&A grows as fleet capitalizes · 3-yr GPU life</div>
+      <div class="chart-wrap"><canvas id="chart-da" height="200"></canvas></div>
+    </div>
+  </div>
+
+  <!-- CapEx intensity analysis -->
+  <div class="section-title">CapEx Intensity Analysis</div>
+  <div class="charts-2 fade">
+    <div class="chart-card wide">
+      <div class="chart-title">CapEx as % of Revenue vs FCF Margin — Rolling 12 Months</div>
+      <div class="chart-subtitle">The CapEx intensity curve: as clusters mature and utilization rises, FCF improves even with continued spend</div>
+      <div class="chart-wrap"><canvas id="chart-capex-intensity" height="200"></canvas></div>
+    </div>
+  </div>
+
+  <!-- FCF Forecast table -->
+  <div class="section-title">FCF Forecast Detail</div>
+  <div class="table-card fade">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="fcf-table">
+      <thead id="fcf-head"></thead>
+      <tbody id="fcf-body"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Insight cards -->
+  <div class="section-title">Key CapEx & FCF Insights</div>
+  <div class="insight-grid fade">
+    <div class="insight-card">
+      <div class="insight-title">🏗️ The GPU Fleet Depreciation Cliff</div>
+      <div class="insight-body">NovaSpark capitalized $892M of GPU hardware over 12 months on a 36-month useful life. That means $24.8M/month of D&A is already baked in — and growing. By Dec-26, monthly D&A hits ~$68M. Unlike software companies, AI infra players carry GAAP losses long after reaching operational profitability. The board needs to track <em>Cash EBITDA</em> (pre-D&A), not GAAP net income.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">⚡ Utilization is the Only Lever That Matters</div>
+      <div class="insight-body">At 75% GPU utilization, gross margin is ~28%. At 90%, it's 38%. At 95%+ (theoretical max), it approaches 52%. Every percentage point of utilization improvement is worth ~$8M/year in gross profit at current scale. The H2-26 hyperscaler contract with a major LLM foundation lab locks in 85% utilization on 12,000 GB200 GPUs for 24 months — this single contract changes the FCF trajectory.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">📦 CapEx Payback: 26 Months at Current Rates</div>
+      <div class="insight-body">An H100 cluster costing $40K/GPU generates ~$3.20/GPU-hour at market rates. At 90% utilization (7,884 hrs/yr), that's $25.2K annual revenue per GPU — a 63% annual yield. Subtract power ($4.2K/yr at $0.07/kWh), networking ($1.1K), and data center ($2.8K), and each GPU generates ~$17.1K of gross profit annually. Simple payback: ~28 months. That's the economics this model is built on.</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🎯 FCF Inflection: Q1-27 is the Target</div>
+      <div class="insight-body">The model shows FCF turning positive in Feb-27, assuming: (1) the GB200 cluster reaches 88% utilization by Dec-26; (2) CapEx drops to $45M/mo from Jan-27 as major build-out completes; (3) Managed Inference API hits $35M/mo revenue at 61% GM. Miss any of these, and FCF breakeven slides to Q3-27 — burning an additional ~$320M of cash. This is the single most important forecast risk for the board.</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ MARGIN DEEP-DIVE ══════════ -->
+<div class="tab-content" id="tab-margin">
+  <div style="margin-top:8px">
+  <div class="section-title">Gross Margin Decomposition by Segment</div>
+  <div class="charts-2 fade">
+    <div class="chart-card">
+      <div class="chart-title">Gross Margin % by Business Unit</div>
+      <div class="chart-subtitle">GPU Cloud margin constrained by power & bandwidth costs</div>
+      <div class="chart-wrap"><canvas id="chart-gm-seg" height="220"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Cost of Revenue Composition ($M/mo)</div>
+      <div class="chart-subtitle">Power · Bandwidth · Depreciation · Colocation · Personnel</div>
+      <div class="chart-wrap"><canvas id="chart-cogs-mix" height="220"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">Margin Driver Tree</div>
+  <div class="table-card fade">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="margin-table">
+      <thead id="margin-head"></thead>
+      <tbody id="margin-body"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:8px">Margin Improvement Roadmap</div>
+  <div class="charts-2 fade">
+    <div class="chart-card wide">
+      <div class="chart-title">Gross Margin % — Actuals vs Path to Target (55% by Q2-27)</div>
+      <div class="chart-subtitle">Hive-equivalent software optimizations + GB200 efficiency gains + proprietary networking stack</div>
+      <div class="chart-wrap"><canvas id="chart-gm-path" height="200"></canvas></div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ SCENARIOS ══════════ -->
+<div class="tab-content" id="tab-scenarios">
+  <div style="margin-top:8px">
+  <div class="section-title">8-Month Forward Scenarios (Jul-26 → Feb-27)</div>
+  <div class="scen-tabs">
+    <div class="scen-tab active-base" id="stab-base" onclick="switchScen('base')">Base Case</div>
+    <div class="scen-tab" id="stab-bull" onclick="switchScen('bull')">Bull Case — Hyperscaler Ramp</div>
+    <div class="scen-tab" id="stab-bear" onclick="switchScen('bear')">Bear Case — GPU Oversupply</div>
+  </div>
+  <div class="charts-2">
+    <div class="chart-card wide">
+      <div class="chart-title" id="scen-title">Revenue + FCF — Base Case ($M)</div>
+      <div class="chart-wrap"><canvas id="chart-scen" height="220"></canvas></div>
+    </div>
+  </div>
+  <div class="table-card fade" style="margin-top:16px">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="scen-table">
+      <thead id="scen-head"></thead>
+      <tbody id="scen-body"></tbody>
+    </table>
+    </div>
+  </div>
+  <div class="section-title" style="margin-top:24px">Scenario Assumptions</div>
+  <div class="table-card">
+    <table class="tbl" id="assump-table">
+      <thead id="assump-head"></thead>
+      <tbody id="assump-body"></tbody>
+    </table>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ SECTOR BENCHMARKS ══════════ -->
+<div class="tab-content" id="tab-sector">
+  <div style="margin-top:8px">
+  <div class="section-title">AI Infrastructure Sector Benchmarks — Jun-26</div>
+  <div style="font-size:11px;color:var(--gray4);margin-bottom:16px">Peer group: CoreWeave, Lambda Labs, Together AI, Crusoe Energy, Vast.ai · Public data + analyst estimates</div>
+  <div class="sector-table fade" id="sector-grid"></div>
+
+  <div class="section-title" style="margin-top:8px">Margin Benchmarking vs Peers</div>
+  <div class="charts-2 fade">
+    <div class="chart-card">
+      <div class="chart-title">Gross Margin % — NovaSpark vs Peer Group</div>
+      <div class="chart-subtitle">LTM blended gross margin · bubble size = ARR</div>
+      <div class="chart-wrap"><canvas id="chart-peer-gm" height="220"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">CapEx Intensity vs FCF Margin</div>
+      <div class="chart-subtitle">CapEx / Revenue vs FCF / Revenue · LTM</div>
+      <div class="chart-wrap"><canvas id="chart-peer-capex" height="220"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-title">Unit Economics — Per GPU Hour</div>
+  <div class="insight-grid fade">
+    <div class="insight-card">
+      <div class="insight-title">💡 H100 Economics (80GB SXM5)</div>
+      <div class="insight-body">
+        <strong>List price:</strong> $2.85–$4.20/GPU-hr (spot vs reserved)<br>
+        <strong>NovaSpark blended ASP:</strong> $3.20/GPU-hr<br>
+        <strong>Power cost:</strong> $0.52/GPU-hr (350W × $0.07/kWh × 24)<br>
+        <strong>Bandwidth:</strong> $0.14/GPU-hr<br>
+        <strong>Data center:</strong> $0.32/GPU-hr<br>
+        <strong>Depreciation:</strong> $0.47/GPU-hr ($40K / 36mo / 730 hrs)<br>
+        <strong>Gross profit:</strong> $1.75/GPU-hr → <strong>54.7% GM at 90% util</strong>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🚀 GB200 NVL72 Economics (Next-Gen)</div>
+      <div class="insight-body">
+        <strong>List price:</strong> $8.50–$12.00/GPU-hr<br>
+        <strong>NovaSpark blended ASP:</strong> $9.80/GPU-hr<br>
+        <strong>Power cost:</strong> $1.18/GPU-hr (1200W × $0.07/kWh × 24)<br>
+        <strong>Bandwidth:</strong> $0.28/GPU-hr<br>
+        <strong>Data center:</strong> $0.64/GPU-hr<br>
+        <strong>Depreciation:</strong> $1.15/GPU-hr ($82K / 36mo / 730 hrs)<br>
+        <strong>Gross profit:</strong> $6.55/GPU-hr → <strong>66.8% GM at 90% util</strong>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">📊 Managed Inference API Economics</div>
+      <div class="insight-body">
+        <strong>ASP:</strong> $0.80/M tokens (blended; mix of models)<br>
+        <strong>Cost per M tokens (H100):</strong> ~$0.31/M (at 90% util)<br>
+        <strong>Gross margin:</strong> 61.3% (highest-margin segment)<br>
+        <strong>Growth:</strong> +88% MoM for 4 consecutive months<br>
+        <strong>Attach rate:</strong> 34% of GPU Cloud customers adopt API<br>
+        <strong>Strategic value:</strong> Locks in LLM developer ecosystem, reduces churn to AWS/GCP by 2.8×
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">🏋️ Training-as-a-Service Economics</div>
+      <div class="insight-body">
+        <strong>ASP:</strong> $4.80/GPU-hr (premium: reserved clusters, SLA)<br>
+        <strong>GM:</strong> 42% (lower due to dedicated cluster overhead)<br>
+        <strong>Contract length:</strong> 6–18 months (avg 11 months)<br>
+        <strong>Customer type:</strong> AI labs, Fortune 500 model tuning<br>
+        <strong>NRR:</strong> 142% — customers expand as models grow<br>
+        <strong>Risk:</strong> Hyperscalers building internal capacity by 2028
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ CFO SIMULATOR ══════════ -->
+<div class="tab-content" id="tab-simulator">
+  <div style="margin-top:8px">
+  <div class="section-title">CFO Simulator — Dynamic CapEx, Margin & FCF Model</div>
+  <div style="font-size:11px;color:var(--gray4);margin-bottom:20px">Adjust assumptions to see real-time impact on Gross Margin, CapEx intensity, and Free Cash Flow trajectory over the next 12 months.</div>
+
+  <div class="sim-grid">
+    <!-- Left: controls -->
+    <div class="sim-panel">
+      <div class="sim-section">
+        <div class="sim-section-title">📈 Revenue Growth</div>
+        <div class="slider-row">
+          <div class="slider-label"><span>GPU Cloud MoM Growth</span><span class="slider-val" id="lv-gpu-gr">12%</span></div>
+          <input type="range" min="0" max="30" step="1" value="12" oninput="updateSim()" id="sl-gpu-gr">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Inference API MoM Growth</span><span class="slider-val" id="lv-api-gr">22%</span></div>
+          <input type="range" min="0" max="50" step="1" value="22" oninput="updateSim()" id="sl-api-gr">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Training Revenue MoM</span><span class="slider-val" id="lv-tr-gr">8%</span></div>
+          <input type="range" min="-5" max="25" step="1" value="8" oninput="updateSim()" id="sl-tr-gr">
+        </div>
+      </div>
+      <div class="sim-section">
+        <div class="sim-section-title">🏗️ CapEx Controls</div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Monthly GPU CapEx ($M)</span><span class="slider-val" id="lv-capex">$72M</span></div>
+          <input type="range" min="10" max="150" step="5" value="72" oninput="updateSim()" id="sl-capex">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>GPU Useful Life (months)</span><span class="slider-val" id="lv-life">36 mo</span></div>
+          <input type="range" min="24" max="60" step="6" value="36" oninput="updateSim()" id="sl-life">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>CapEx Ramp-Down Month</span><span class="slider-val" id="lv-ramp">Mo 7</span></div>
+          <input type="range" min="1" max="12" step="1" value="7" oninput="updateSim()" id="sl-ramp">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Post-Ramp CapEx ($M/mo)</span><span class="slider-val" id="lv-capex2">$38M</span></div>
+          <input type="range" min="5" max="80" step="5" value="38" oninput="updateSim()" id="sl-capex2">
+        </div>
+      </div>
+      <div class="sim-section">
+        <div class="sim-section-title">⚡ Margin Levers</div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Starting GPU Utilization</span><span class="slider-val" id="lv-util">91%</span></div>
+          <input type="range" min="60" max="99" step="1" value="91" oninput="updateSim()" id="sl-util">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Utilization Monthly Gain (pp)</span><span class="slider-val" id="lv-util-gr">+0.5pp</span></div>
+          <input type="range" min="-2" max="3" step="0.5" value="0.5" oninput="updateSim()" id="sl-util-gr">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Power Cost $/kWh</span><span class="slider-val" id="lv-power">$0.070</span></div>
+          <input type="range" min="0.03" max="0.15" step="0.005" value="0.070" oninput="updateSim()" id="sl-power">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>Software Optimization Lift (GM pp)</span><span class="slider-val" id="lv-sw">+2.0pp</span></div>
+          <input type="range" min="0" max="10" step="0.5" value="2.0" oninput="updateSim()" id="sl-sw">
+        </div>
+      </div>
+      <div class="sim-section">
+        <div class="sim-section-title">🎛️ Strategic Toggles</div>
+        <div class="toggle-row">
+          <span class="toggle-label">GB200 Fleet Activation (Mo 4+)</span>
+          <label class="toggle"><input type="checkbox" id="tog-gb200" checked onchange="updateSim()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Hyperscaler Anchor Contract</span>
+          <label class="toggle"><input type="checkbox" id="tog-hyper" checked onchange="updateSim()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">GPU Spot Price Correction (-20%)</span>
+          <label class="toggle"><input type="checkbox" id="tog-spot" onchange="updateSim()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Debt Financing ($500M Term Loan)</span>
+          <label class="toggle"><input type="checkbox" id="tog-debt" onchange="updateSim()"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: outputs -->
+    <div class="sim-output">
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div class="sim-panel" style="padding:14px">
+          <div style="font-size:10px;color:var(--gray4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">FCF Breakeven</div>
+          <div id="sim-breakeven" style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--green)">—</div>
+          <div id="sim-breakeven-sub" style="font-size:10px;color:var(--gray4);margin-top:4px">month projection</div>
+        </div>
+        <div class="sim-panel" style="padding:14px">
+          <div style="font-size:10px;color:var(--gray4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Gross Margin Mo 12</div>
+          <div id="sim-gm12" style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--teal2)">—</div>
+          <div id="sim-gm12-sub" style="font-size:10px;color:var(--gray4);margin-top:4px">end of period</div>
+        </div>
+        <div class="sim-panel" style="padding:14px">
+          <div style="font-size:10px;color:var(--gray4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Cash at Mo 12</div>
+          <div id="sim-cash12" style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--amber)">—</div>
+          <div id="sim-cash12-sub" style="font-size:10px;color:var(--gray4);margin-top:4px">ending balance</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="chart-card">
+        <div class="chart-title">Projected Gross Margin % — 12 Months Forward</div>
+        <div class="chart-subtitle">Driven by utilization · GB200 mix · software efficiency · power cost</div>
+        <div class="chart-wrap"><canvas id="sim-chart-gm" height="160"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Projected Free Cash Flow ($M/mo)</div>
+        <div class="chart-subtitle">FCF = EBITDA (pre-D&A) – CapEx – ΔWC</div>
+        <div class="chart-wrap"><canvas id="sim-chart-fcf" height="160"></canvas></div>
+      </div>
+
+      <!-- Narrative -->
+      <div class="sim-panel" style="padding:16px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--amber);margin-bottom:10px">CFO Narrative — What the Model Tells You</div>
+        <div id="sim-narrative" style="font-size:11px;color:var(--gray5);line-height:1.7"></div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+</div><!-- end content-root -->
+</div><!-- end app -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA — NovaSpark AI Infrastructure ($M)
+// ═══════════════════════════════════════════════════════
+const MONTHS_ACT = ['Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25',
+                    'Jan-26','Feb-26','Mar-26','Apr-26','May-26','Jun-26'];
+const MONTHS_FCAST = ['Jul-26','Aug-26','Sep-26','Oct-26','Nov-26','Dec-26','Jan-27','Feb-27'];
+
+// Segments: gpu=GPU Cloud, api=Inference API, train=Training-as-a-Service, other
+const ACT = {
+  gpu:    [18.2, 22.4, 28.1, 33.6, 38.9, 44.2, 49.8, 54.3, 61.2, 70.1, 80.4, 91.8],
+  api:    [0.4,  0.7,  1.2,  2.1,  3.8,  6.2,  9.4, 13.8, 18.9, 24.2, 30.1, 14.6],
+  train:  [4.2,  4.8,  5.3,  5.9,  6.4,  7.1,  7.8,  8.4,  9.1,  9.8, 10.4, 5.9],
+  other:  [0.1,  0.1,  0.2,  0.2,  0.3,  0.3,  0.4,  0.4,  0.5,  0.5,  0.6, 0.1],
+  rev:    [22.9, 28.0, 34.8, 41.8, 49.4, 57.8, 67.4, 76.9, 89.7, 104.6,121.5,112.4],
+  // COGS breakdown
+  power:  [3.8,  4.6,  5.8,  6.9,  8.1,  9.4, 10.8, 12.2, 14.1, 16.3, 18.9, 17.4],
+  bw:     [1.2,  1.5,  1.9,  2.3,  2.7,  3.1,  3.6,  4.1,  4.8,  5.6,  6.4,  5.9],
+  da:     [8.4, 12.2, 16.8, 21.4, 26.2, 31.8, 37.4, 42.8, 48.6, 54.2, 58.8, 62.1],
+  colo:   [2.1,  2.5,  3.1,  3.6,  4.2,  4.9,  5.5,  6.2,  7.1,  8.1,  9.2,  8.4],
+  cogs_p: [1.4,  1.7,  2.0,  2.4,  2.8,  3.1,  3.5,  3.9,  4.4,  4.9,  5.3,  4.8],
+  cor:    [16.9, 22.5, 29.6, 36.6, 44.0, 52.3, 60.8, 69.2, 79.0, 89.1, 98.6, 98.6],// corrected for June
+  gp:     [6.0,  5.5,  5.2,  5.2,  5.4,  5.5,  6.6,  7.7,  10.7, 15.5, 22.9, 43.0],
+  gm:     [26.2, 19.6, 14.9, 12.4, 10.9,  9.5,  9.8, 10.0, 11.9, 14.8, 18.8, 38.2],
+  sm:     [4.2,  4.8,  5.5,  6.3,  7.2,  8.2,  9.4, 10.6, 12.2, 14.0, 16.1, 18.4],
+  rd:     [8.1,  9.2, 10.4, 11.6, 12.9, 14.3, 15.8, 17.4, 19.1, 20.9, 22.8, 24.8],
+  ga:     [2.8,  3.0,  3.3,  3.6,  3.9,  4.2,  4.5,  4.8,  5.2,  5.6,  6.0,  6.5],
+  opex:   [15.1, 17.0, 19.2, 21.5, 24.0, 26.7, 29.7, 32.8, 36.5, 40.5, 44.9, 49.7],
+  ebitda: [-9.1,-11.5,-14.0,-16.3,-18.6,-21.2,-23.1,-25.1,-25.8,-25.0,-22.0,-6.7],
+  // CapEx (cash, not D&A)
+  capex:  [42.0, 58.0, 74.0, 88.0, 96.0,104.0, 98.0, 88.0, 80.0, 76.0, 74.0, 74.0],
+  // Working capital change (positive = cash inflow)
+  wc:     [-2.1,-2.8,-3.4,-4.1,-4.6,-5.2,-5.8,-6.2,-6.8,-7.4,-8.0,-8.5],
+  fcf:    [-53.2,-72.3,-91.4,-108.4,-119.2,-130.4,-127.9,-119.3,-112.6,-108.4,-104.0,-89.2],
+  cash:   [1800, 1740, 1650, 1540, 1420, 1290, 1160, 1040,  930,  820,  720,  630],
+  // GPU utilization %
+  util:   [72.1, 74.3, 76.8, 79.2, 81.6, 83.9, 85.1, 86.4, 88.2, 89.7, 90.8, 91.3],
+};
+
+// Adjust June to match stated values
+ACT.cor[11] = ACT.rev[11] - 43.0; // GP = $43M → ~$69.4 COR — recalc
+ACT.gp[11] = 43.0;
+ACT.cor[11] = ACT.rev[11] - ACT.gp[11];
+
+// Base forecast arrays
+const BASE = {
+  revMom:  [0.08, 0.10, 0.12, 0.14, 0.15, 0.16, 0.16, 0.17],
+  gm:      [0.42, 0.44, 0.46, 0.48, 0.50, 0.52, 0.54, 0.55],
+  smPct:   [0.155,0.148,0.142,0.136,0.130,0.125,0.120,0.116],
+  rdPct:   [0.210,0.205,0.200,0.195,0.190,0.185,0.180,0.176],
+  gaPct:   [0.057,0.055,0.053,0.051,0.050,0.048,0.047,0.046],
+  capex:   [72, 70, 65, 58, 50, 45, 42, 40],
+};
+const BULL = {
+  revMom:  [0.15, 0.18, 0.20, 0.22, 0.23, 0.24, 0.24, 0.25],
+  gm:      [0.46, 0.49, 0.52, 0.54, 0.56, 0.58, 0.59, 0.61],
+  smPct:   [0.14, 0.132,0.126,0.120,0.115,0.110,0.106,0.102],
+  rdPct:   [0.19, 0.184,0.178,0.172,0.167,0.162,0.158,0.154],
+  gaPct:   [0.052,0.050,0.048,0.046,0.044,0.043,0.042,0.041],
+  capex:   [80, 78, 72, 65, 56, 50, 46, 42],
+};
+const BEAR = {
+  revMom:  [0.02, 0.04, 0.06, 0.07, 0.08, 0.09, 0.09, 0.10],
+  gm:      [0.36, 0.37, 0.38, 0.39, 0.40, 0.41, 0.42, 0.43],
+  smPct:   [0.175,0.170,0.165,0.160,0.156,0.152,0.148,0.145],
+  rdPct:   [0.230,0.225,0.220,0.215,0.210,0.206,0.202,0.198],
+  gaPct:   [0.062,0.060,0.058,0.057,0.056,0.055,0.054,0.053],
+  capex:   [68, 65, 60, 55, 48, 42, 40, 38],
+};
+
+function calcFcast(cfg) {
+  const out = []; let prevRev = ACT.rev[ACT.rev.length - 1];
+  let prevCash = ACT.cash[ACT.cash.length - 1];
+  for (let i = 0; i < 8; i++) {
+    const rev = prevRev * (1 + cfg.revMom[i]);
+    const gm  = cfg.gm[i];
+    const gp  = rev * gm;
+    const cor = rev * (1 - gm);
+    const sm  = rev * cfg.smPct[i];
+    const rd  = rev * cfg.rdPct[i];
+    const ga  = rev * cfg.gaPct[i];
+    const opex = sm + rd + ga;
+    const ebitda = gp - opex;
+    const capex  = cfg.capex[i];
+    const da     = ACT.da[ACT.da.length-1] * (1 + i * 0.005); // gradual D&A growth
+    const wc     = -rev * 0.065;
+    const fcf    = ebitda - capex + da + wc; // EBITDA already pre-DA; FCF = EBITDA(pre-DA) - capex
+    // Actually FCF = Cash EBITDA - CapEx - ΔWC = (EBITDA+D&A) - CapEx - ΔWC
+    const cashEbitda = ebitda + da;
+    const fcf2 = cashEbitda - capex + wc;
+    const cash   = prevCash + fcf2;
+    const arr    = rev * 0.82 * 12;
+    out.push({rev, gm: gm*100, gp, cor, sm, rd, ga, opex,
+              ebitda, ebitdaMgn: ebitda/rev*100, capex, da, fcf: fcf2,
+              fcfMgn: fcf2/rev*100, cash, arr, cashEbitda});
+    prevRev = rev;
+    prevCash = cash;
+  }
+  return out;
+}
+
+const FCAST = {
+  base: calcFcast(BASE),
+  bull: calcFcast(BULL),
+  bear: calcFcast(BEAR),
+};
+
+// ═══════════════════════════════════════════════════════
+// CHART HELPERS
+// ═══════════════════════════════════════════════════════
+const DARK_GRID = 'rgba(255,255,255,0.05)';
+const TT = {
+  backgroundColor:'rgba(7,11,24,0.95)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,
+  titleColor:'rgba(255,255,255,0.9)',bodyColor:'rgba(255,255,255,0.6)',padding:10,
+  titleFont:{family:"'DM Sans',sans-serif",size:11,weight:'600'},
+  bodyFont:{family:"'DM Mono',monospace",size:10},
+};
+const XSCALE = {
+  grid:{color:DARK_GRID},
+  ticks:{color:'rgba(255,255,255,0.25)',font:{size:9,family:"'DM Sans'"}},
+  border:{display:false}
+};
+const YSCALE = (cb) => ({
+  grid:{color:DARK_GRID},
+  ticks:{color:'rgba(255,255,255,0.25)',font:{size:9,family:"'DM Mono'"},callback:cb},
+  border:{display:false}
+});
+
+const charts = {};
+function mkChart(id, cfg) {
+  const ctx = document.getElementById(id); if (!ctx) return;
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(ctx, cfg);
+}
+function mkSpark(id, data, color) {
+  const ctx = document.getElementById(id); if (!ctx) return;
+  new Chart(ctx, {
+    type:'line',
+    data:{labels:data.map((_,i)=>i),datasets:[{data,borderColor:color,borderWidth:1.5,pointRadius:0,tension:0.4,fill:true,backgroundColor:color+'18'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:800}}
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const ids=['overview','pl','capex','margin','scenarios','sector','simulator'];
+    t.classList.toggle('active', ids[i]===id);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-'+id)?.classList.add('active');
+  if (id==='overview') buildAllCharts();
+  if (id==='pl') buildPLTable();
+  if (id==='capex') buildCapexTab();
+  if (id==='margin') buildMarginTab();
+  if (id==='scenarios') {switchScen('base');}
+  if (id==='sector') buildSectorTab();
+  if (id==='simulator') {updateSim();}
+}
+
+// ═══════════════════════════════════════════════════════
+// OVERVIEW CHARTS
+// ═══════════════════════════════════════════════════════
+function buildAllCharts() {
+  const allM = [...MONTHS_ACT, ...MONTHS_FCAST];
+  const frev = FCAST.base.map(r=>r.rev);
+  const fgp  = FCAST.base.map(r=>r.gp);
+  const fgm  = FCAST.base.map(r=>r.gm);
+  const febitda = FCAST.base.map(r=>r.ebitda);
+  const fcapex  = FCAST.base.map(r=>r.capex);
+  const ffcf    = FCAST.base.map(r=>r.fcf);
+
+  // Revenue stacked
+  mkChart('chart-rev', {
+    type:'bar',
+    data:{labels:allM,datasets:[
+      {label:'GPU Cloud',data:[...ACT.gpu,...FCAST.base.map(r=>r.rev*0.812)],backgroundColor:'rgba(249,115,22,0.8)',stack:'s'},
+      {label:'Inference API',data:[...ACT.api,...FCAST.base.map(r=>r.rev*0.115)],backgroundColor:'rgba(124,58,237,0.8)',stack:'s'},
+      {label:'Training-as-a-Service',data:[...ACT.train,...FCAST.base.map(r=>r.rev*0.068)],backgroundColor:'rgba(79,106,240,0.8)',stack:'s'},
+      {label:'Other',data:[...ACT.other,...FCAST.base.map(r=>r.rev*0.005)],backgroundColor:'rgba(20,184,166,0.7)',stack:'s'},
+      {label:'Forecast',type:'line',data:[...Array(12).fill(null),...frev],
+       borderColor:'rgba(20,184,166,0.7)',borderWidth:2,borderDash:[4,3],pointRadius:3,
+       pointBackgroundColor:'var(--teal2)',tension:0.3,stack:undefined,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:10,family:"'DM Sans'"},boxWidth:10,padding:12}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(1)}M`}}},
+      scales:{x:{...XSCALE,ticks:{...XSCALE.ticks,maxRotation:45}},y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),stacked:true}}}
+  });
+
+  // Gross Margin
+  const gmColors = ACT.gm.map(v=>v<20?'#EF4444':v<35?'#F59E0B':'#14B8A6');
+  mkChart('chart-gm', {
+    type:'line',
+    data:{labels:allM,datasets:[
+      {label:'GM %',data:[...ACT.gm,...fgm],borderColor:'#14B8A6',borderWidth:2,
+       pointRadius:2.5,pointBackgroundColor:[...gmColors,...fgm.map(()=>'#14B8A6')],
+       tension:0.3,fill:true,backgroundColor:'rgba(20,184,166,0.06)'},
+      {label:'Forecast',data:[...Array(12).fill(null),...fgm],borderColor:'rgba(20,184,166,0.4)',
+       borderWidth:2,borderDash:[4,3],pointRadius:0,tension:0.3,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`}}},
+      scales:{x:XSCALE,y:{...YSCALE(v=>v+'%'),min:0,max:70}}}
+  });
+
+  // CapEx vs Revenue
+  mkChart('chart-capex', {
+    type:'bar',
+    data:{labels:allM,datasets:[
+      {label:'CapEx ($M)',data:[...ACT.capex,...fcapex],
+       backgroundColor:[...ACT.capex.map(()=>'rgba(245,158,11,0.7)'),
+                        ...fcapex.map(()=>'rgba(245,158,11,0.35)')],borderRadius:3},
+      {label:'Revenue',type:'line',data:[...ACT.rev,...frev],
+       borderColor:'rgba(249,115,22,0.7)',borderWidth:2,pointRadius:2,tension:0.3,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:9},boxWidth:8,padding:8}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(0)}M`}}},
+      scales:{x:XSCALE,y:YSCALE(v=>'$'+v.toFixed(0)+'M')}}
+  });
+
+  // FCF
+  const fcfAll = [...ACT.fcf,...ffcf];
+  mkChart('chart-fcf', {
+    type:'bar',
+    data:{labels:allM,datasets:[
+      {label:'FCF ($M)',data:fcfAll,
+       backgroundColor:fcfAll.map(v=>v>=0?'rgba(16,185,129,0.7)':'rgba(239,68,68,0.65)'),
+       borderRadius:3,borderSkipped:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`FCF: $${c.parsed.y.toFixed(0)}M`}}},
+      scales:{x:XSCALE,y:YSCALE(v=>'$'+v.toFixed(0)+'M')}}
+  });
+
+  // EBITDA
+  mkChart('chart-ebitda', {
+    type:'bar',
+    data:{labels:allM,datasets:[
+      {label:'Adj. EBITDA',data:[...ACT.ebitda,...febitda],
+       backgroundColor:[...ACT.ebitda.map(v=>v>=0?'rgba(16,185,129,0.75)':'rgba(239,68,68,0.65)'),
+                        ...febitda.map(v=>v>=0?'rgba(16,185,129,0.4)':'rgba(239,68,68,0.4)')],
+       borderRadius:3,borderSkipped:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`$${c.parsed.y.toFixed(1)}M`}}},
+      scales:{x:XSCALE,y:YSCALE(v=>'$'+v.toFixed(0)+'M')}}
+  });
+
+  // Cash
+  mkChart('chart-cash', {
+    type:'bar',
+    data:{labels:allM,datasets:[
+      {label:'Cash Balance',data:[...ACT.cash,...FCAST.base.map(r=>r.cash)],
+       backgroundColor:'rgba(16,185,129,0.25)',borderColor:'rgba(16,185,129,0.6)',borderWidth:1,type:'bar'},
+      {label:'FCF Burn',type:'line',data:[...ACT.fcf,...ffcf].map(v=>Math.abs(v)),
+       borderColor:'#EF4444',borderWidth:2,pointRadius:2,tension:0.3,fill:false,yAxisID:'y2'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:9},boxWidth:8,padding:8}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(0)}M`}}},
+      scales:{
+        x:XSCALE,
+        y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),position:'left'},
+        y2:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),position:'right',grid:{display:false}}
+      }}
+  });
+
+  // GPU Gauges
+  buildGPUGauges();
+
+  // Sparklines
+  mkSpark('spark-rev', ACT.rev, '#F97316');
+  mkSpark('spark-gm', ACT.gm, '#14B8A6');
+  mkSpark('spark-fcf', ACT.fcf, '#EF4444');
+  mkSpark('spark-arr', ACT.rev.map(v=>v*0.82*12), '#7C3AED');
+}
+
+function buildGPUGauges() {
+  const clusters = [
+    {name:'H100 SXM5 — Cluster A (Austin, TX)', util:93.8, color:'#10B981', gpus:8192},
+    {name:'H100 SXM5 — Cluster B (Chicago, IL)', util:91.2, color:'#10B981', gpus:8192},
+    {name:'H100 PCIe — Cluster C (Dublin, IE)',  util:88.6, color:'#F59E0B', gpus:4096},
+    {name:'A100 80GB — Cluster D (Singapore)',   util:82.4, color:'#F59E0B', gpus:4096},
+    {name:'GB200 NVL72 — Cluster E (Phoenix)',   util:71.3, color:'#F97316', gpus:1728},
+    {name:'RTX 4090 — Inference Pool (Multi)',   util:96.1, color:'#10B981', gpus:16384},
+  ];
+  const el = document.getElementById('gpu-gauges');
+  el.innerHTML = clusters.map(c=>`
+    <div class="gauge-row">
+      <div class="gauge-label">${c.name} <span style="font-size:9px;color:var(--gray4)">(${c.gpus.toLocaleString()} GPUs)</span></div>
+      <div class="gauge-wrap"><div class="gauge-fill" style="width:${c.util}%;background:${c.color}22;border:1px solid ${c.color}66">
+        <div style="width:${c.util}%;height:100%;background:linear-gradient(90deg,${c.color}66,${c.color});border-radius:4px"></div>
+      </div></div>
+      <div class="gauge-pct" style="color:${c.color}">${c.util}%</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// P&L TABLE
+// ═══════════════════════════════════════════════════════
+function buildPLTable() {
+  const NAM = MONTHS_ACT.slice(-6);
+  const NF  = MONTHS_FCAST.slice(0, 6);
+  const head = document.getElementById('pl-head');
+  const body = document.getElementById('pl-body');
+  head.innerHTML = `<tr><th>Line Item</th>${NAM.map(m=>`<th class="col-head-act">${m}</th>`).join('')}${NF.map(m=>`<th class="col-head-fcast">${m}</th>`).join('')}</tr>`;
+
+  const av = (key) => ACT[key].slice(-6).map(v=>v.toFixed(1));
+  const fv = (key) => FCAST.base.slice(0,6).map(r=>r[key].toFixed(1));
+  const fm = (v, isNeg=false) => {
+    const n=parseFloat(v); const cls=isNeg?(n<0?'pos':'neg'):(n<0?'neg':'');
+    const disp=n<0?`(${Math.abs(n).toFixed(1)})`:`${n.toFixed(1)}`;
+    return `<td class="act-col ${cls}">${disp}</td>`;
+  };
+  const ff = (v, isNeg=false) => {
+    const n=parseFloat(v); const cls=isNeg?(n<0?'pos':'neg'):(n<0?'neg':'');
+    const disp=n<0?`(${Math.abs(n).toFixed(1)})`:`${n.toFixed(1)}`;
+    return `<td class="fcast-col ${cls}">${disp}</td>`;
+  };
+
+  const rows = [
+    {t:'section',label:'REVENUE ($M)'},
+    {t:'row',label:'GPU Cloud',ak:'gpu',fk:r=>r.rev*0.812},
+    {t:'row',label:'Inference API',ak:'api',fk:r=>r.rev*0.115},
+    {t:'row',label:'Training-as-a-Service',ak:'train',fk:r=>r.rev*0.068},
+    {t:'row',label:'Other',ak:'other',fk:r=>r.rev*0.005},
+    {t:'total',label:'TOTAL REVENUE',ak:'rev',fk:r=>r.rev},
+    {t:'section',label:'COST OF REVENUE ($M)'},
+    {t:'row',label:'  Power & Cooling',ak:'power',fk:null},
+    {t:'row',label:'  Bandwidth & Networking',ak:'bw',fk:null},
+    {t:'row',label:'  Depreciation & Amortization',ak:'da',fk:r=>r.da},
+    {t:'row',label:'  Colocation & Facilities',ak:'colo',fk:null},
+    {t:'row',label:'  Ops Personnel',ak:'cogs_p',fk:null},
+    {t:'total',label:'TOTAL COST OF REVENUE',ak:'cor',fk:r=>r.cor},
+    {t:'pct',label:'  Gross Margin %',ak:'gm',base:'rev',fpct:FCAST.base.slice(0,6).map(r=>r.gm.toFixed(1)+'%')},
+    {t:'section',label:'OPERATING EXPENSES ($M)'},
+    {t:'row',label:'  Sales & Marketing',ak:'sm',fk:r=>r.sm},
+    {t:'row',label:'  Research & Development',ak:'rd',fk:r=>r.rd},
+    {t:'row',label:'  General & Administrative',ak:'ga',fk:r=>r.ga},
+    {t:'total',label:'TOTAL OPEX',ak:'opex',fk:r=>r.opex},
+    {t:'total',label:'ADJ. EBITDA',ak:'ebitda',fk:r=>r.ebitda,neg:true},
+    {t:'pct',label:'  EBITDA Margin %',ak:'ebitda',base:'rev',fpct:FCAST.base.slice(0,6).map(r=>r.ebitdaMgn.toFixed(1)+'%'),isNeg:true},
+    {t:'section',label:'CAPEX & CASH ($M)'},
+    {t:'row',label:'  Capital Expenditure',ak:'capex',fk:r=>r.capex,neg:true,always:true},
+    {t:'total',label:'FREE CASH FLOW',ak:'fcf',fk:r=>r.fcf,neg:true},
+    {t:'row',label:'  Cash Balance',ak:'cash',fk:r=>r.cash},
+  ];
+
+  const cols = [...NAM,...NF];
+  body.innerHTML = rows.map(row => {
+    if (row.t==='section') return `<tr class="section"><td colspan="${cols.length+1}">${row.label}</td></tr>`;
+    if (row.t==='pct') {
+      const actVals = ACT[row.ak].slice(-6).map((v,i) => {
+        const b=ACT[row.base].slice(-6)[i]; return b?(v/b*100).toFixed(1)+'%':'';
+      });
+      const cls = row.isNeg?'neg':'';
+      return `<tr class="indent"><td>${row.label}</td>${actVals.map(v=>`<td class="act-col ${v&&parseFloat(v)<0?'neg':''}">${v}</td>`).join('')}${(row.fpct||[]).map(v=>`<td class="fcast-col">${v}</td>`).join('')}</tr>`;
+    }
+    const aVals = av(row.ak);
+    const fVals = row.fk ? FCAST.base.slice(0,6).map(r=>row.fk(r).toFixed(1)) : [];
+    const cls = row.t==='total' ? 'total' : row.t==='total-green' ? 'total-green' : '';
+    const actCells = aVals.map(v=>fm(v, row.neg||false)).join('');
+    const fcastCells = fVals.map(v=>ff(v, row.neg||false)).join('');
+    return `<tr class="${cls}"><td>${row.label}</td>${actCells}${fcastCells}</tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// CAPEX TAB
+// ═══════════════════════════════════════════════════════
+function buildCapexTab() {
+  // FCF Bridge
+  const ltmEBITDA  = ACT.ebitda.reduce((a,b)=>a+b,0);
+  const ltmDA      = ACT.da.reduce((a,b)=>a+b,0);
+  const ltmCapex   = ACT.capex.reduce((a,b)=>a+b,0);
+  const ltmWC      = ACT.wc.reduce((a,b)=>a+b,0);
+  const ltmFCF     = ACT.fcf.reduce((a,b)=>a+b,0);
+  const cashEBITDA = ltmEBITDA + ltmDA;
+
+  const bridgeItems = [
+    {label:'Adj. EBITDA (pre-D&A)',    val:cashEBITDA, color:'#10B981', pct:100},
+    {label:'Capital Expenditure',      val:-ltmCapex,  color:'#EF4444', neg:true},
+    {label:'Working Capital Change',   val:ltmWC,      color:'#F59E0B', neg:true},
+    {label:'Free Cash Flow (LTM)',     val:ltmFCF,     color:'#6B83F5', pct:100, total:true},
+  ];
+  const maxAbs = Math.max(...bridgeItems.map(b=>Math.abs(b.val)));
+  const el = document.getElementById('fcf-bridge-rows');
+  el.innerHTML = bridgeItems.map(b => {
+    const w = Math.abs(b.val)/maxAbs*100;
+    const valStr = b.val < 0 ? `($${Math.abs(b.val).toFixed(0)}M)` : `$${b.val.toFixed(0)}M`;
+    const sign = b.val >= 0 ? '+' : '–';
+    return `<div class="bridge-row" style="${b.total?'border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;margin-top:4px':''}">
+      <div class="bridge-label" style="${b.total?'color:var(--white);font-weight:600':'color:var(--gray5)'}">${b.label}</div>
+      <div style="flex:1;display:flex;align-items:center;gap:8px">
+        <span style="font-size:10px;color:${b.color};width:12px">${sign}</span>
+        <div class="gauge-wrap" style="max-width:400px"><div class="bridge-bar" style="width:${w}%;background:${b.color}33;border:1px solid ${b.color}55">
+          <div style="width:${w}%;height:100%;background:${b.color};border-radius:4px"></div>
+        </div></div>
+      </div>
+      <div class="bridge-val" style="color:${b.val>=0?'var(--green)':'var(--red2)'}">${valStr}</div>
+    </div>`;
+  }).join('');
+
+  // CapEx mix chart
+  mkChart('chart-capex-mix', {
+    type:'bar',
+    data:{labels:MONTHS_ACT, datasets:[
+      {label:'GPU Hardware',data:ACT.capex.map(v=>v*0.72),backgroundColor:'rgba(249,115,22,0.8)',stack:'s'},
+      {label:'Networking',data:ACT.capex.map(v=>v*0.12),backgroundColor:'rgba(124,58,237,0.8)',stack:'s'},
+      {label:'Data Center',data:ACT.capex.map(v=>v*0.11),backgroundColor:'rgba(79,106,240,0.8)',stack:'s'},
+      {label:'Software',data:ACT.capex.map(v=>v*0.05),backgroundColor:'rgba(20,184,166,0.7)',stack:'s'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:9},boxWidth:8,padding:8}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(0)}M`}}},
+      scales:{x:XSCALE,y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),stacked:true}}}
+  });
+
+  // D&A vs Revenue chart
+  mkChart('chart-da', {
+    type:'line',
+    data:{labels:MONTHS_ACT, datasets:[
+      {label:'D&A ($M)',data:ACT.da,borderColor:'#F59E0B',borderWidth:2,
+       pointRadius:2,tension:0.3,fill:true,backgroundColor:'rgba(245,158,11,0.08)',yAxisID:'y'},
+      {label:'D&A / Rev %',data:ACT.da.map((v,i)=>v/ACT.rev[i]*100),
+       borderColor:'#7C3AED',borderWidth:2,borderDash:[3,3],pointRadius:2,tension:0.3,fill:false,yAxisID:'y2'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:9},boxWidth:8,padding:8}},
+        tooltip:{...TT,callbacks:{label:c=>c.datasetIndex===0?`D&A: $${c.parsed.y.toFixed(1)}M`:`D&A%: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{
+        x:XSCALE,
+        y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),position:'left'},
+        y2:{...YSCALE(v=>v.toFixed(0)+'%'),position:'right',grid:{display:false}}
+      }}
+  });
+
+  // CapEx intensity
+  const capexPct = ACT.capex.map((v,i)=>v/ACT.rev[i]*100);
+  const fcfPct   = ACT.fcf.map((v,i)=>v/ACT.rev[i]*100);
+  mkChart('chart-capex-intensity', {
+    type:'line',
+    data:{labels:MONTHS_ACT, datasets:[
+      {label:'CapEx / Revenue %',data:capexPct,borderColor:'#F59E0B',borderWidth:2,
+       pointRadius:3,tension:0.3,fill:true,backgroundColor:'rgba(245,158,11,0.06)',yAxisID:'y'},
+      {label:'FCF Margin %',data:fcfPct,borderColor:'#EF4444',borderWidth:2,
+       pointRadius:3,tension:0.3,fill:true,backgroundColor:'rgba(239,68,68,0.06)',yAxisID:'y'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:10},boxWidth:10,padding:12}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{x:XSCALE,y:{...YSCALE(v=>v.toFixed(0)+'%')}}}
+  });
+
+  // FCF table
+  buildFCFTable();
+}
+
+function buildFCFTable() {
+  const NF = MONTHS_FCAST;
+  const head = document.getElementById('fcf-head');
+  const body = document.getElementById('fcf-body');
+  head.innerHTML = `<tr><th>Line Item</th>${NF.map(m=>`<th class="col-head-fcast">${m}</th>`).join('')}</tr>`;
+  const f = (val, neg=false) => {
+    const n=parseFloat(val); const cls=(neg&&n<0)?'pos':(n<0?'neg':'');
+    const disp=n<0?`(${Math.abs(n).toFixed(1)})`:n.toFixed(1);
+    return `<td class="fcast-col ${cls}">${disp}</td>`;
+  };
+  const rows = [
+    {label:'Revenue',fn:r=>r.rev},
+    {label:'Adj. EBITDA (pre-D&A = Cash EBITDA)',fn:r=>r.cashEbitda},
+    {label:'  EBITDA Margin (pre-D&A) %',fn:r=>r.cashEbitda/r.rev*100,pct:true},
+    {label:'Capital Expenditure',fn:r=>r.capex,neg:true,bold:true},
+    {label:'Working Capital Change',fn:r=>-r.rev*0.065,neg:false},
+    {label:'FREE CASH FLOW',fn:r=>r.fcf,neg:true,total:true},
+    {label:'  FCF Margin %',fn:r=>r.fcfMgn,pct:true,neg:true},
+    {label:'Ending Cash Balance',fn:r=>r.cash},
+    {label:'CapEx / Revenue %',fn:r=>r.capex/r.rev*100,pct:true},
+  ];
+  body.innerHTML = rows.map(row => {
+    const cls = row.total ? 'total' : '';
+    const cells = FCAST.base.map(r => {
+      const val = row.fn(r);
+      if (row.pct) return `<td class="fcast-col ${val<0?(row.neg?'pos':'neg'):''}">${val.toFixed(1)}%</td>`;
+      return f(val.toFixed(1), row.neg||false);
+    }).join('');
+    return `<tr class="${cls}"><td style="${row.bold?'font-weight:600':''}">${row.label}</td>${cells}</tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// MARGIN DEEP-DIVE
+// ═══════════════════════════════════════════════════════
+function buildMarginTab() {
+  // GM by segment
+  const segGM = {
+    gpuCloud: ACT.gpu.map((v,i) => {
+      const gmRatio = 0.68; // H100 at 90% util
+      return (v * gmRatio - ACT.da[i]*0.72) / v * 100;
+    }),
+    api: [58,59,60,61,61.5,62,62.5,63,63.5,64,64.5,65].map(v=>Math.max(v,0)),
+    train: [38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,43.5],
+  };
+  mkChart('chart-gm-seg', {
+    type:'line',
+    data:{labels:MONTHS_ACT,datasets:[
+      {label:'Blended GM %',data:ACT.gm,borderColor:'#14B8A6',borderWidth:2.5,pointRadius:3,tension:0.3,fill:false},
+      {label:'GPU Cloud GM %',data:segGM.gpuCloud,borderColor:'#F97316',borderWidth:1.5,borderDash:[3,2],pointRadius:2,tension:0.3,fill:false},
+      {label:'Inference API GM %',data:segGM.api,borderColor:'#7C3AED',borderWidth:1.5,borderDash:[3,2],pointRadius:2,tension:0.3,fill:false},
+      {label:'Training GM %',data:segGM.train,borderColor:'#4F6AF0',borderWidth:1.5,borderDash:[3,2],pointRadius:2,tension:0.3,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:9},boxWidth:8,padding:8}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{x:XSCALE,y:{...YSCALE(v=>v.toFixed(0)+'%'),min:-10,max:80}}}
+  });
+
+  // COGS mix
+  mkChart('chart-cogs-mix', {
+    type:'bar',
+    data:{labels:MONTHS_ACT,datasets:[
+      {label:'Power & Cooling',data:ACT.power,backgroundColor:'rgba(239,68,68,0.8)',stack:'c'},
+      {label:'D&A',data:ACT.da,backgroundColor:'rgba(245,158,11,0.7)',stack:'c'},
+      {label:'Bandwidth',data:ACT.bw,backgroundColor:'rgba(79,106,240,0.8)',stack:'c'},
+      {label:'Colocation',data:ACT.colo,backgroundColor:'rgba(20,184,166,0.7)',stack:'c'},
+      {label:'Personnel',data:ACT.cogs_p,backgroundColor:'rgba(124,58,237,0.7)',stack:'c'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:9},boxWidth:8,padding:8}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(1)}M`}}},
+      scales:{x:XSCALE,y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),stacked:true}}}
+  });
+
+  // Margin driver table
+  const head = document.getElementById('margin-head');
+  const body = document.getElementById('margin-body');
+  const cols = MONTHS_ACT.slice(-6);
+  head.innerHTML = `<tr><th>Margin Driver</th>${cols.map(m=>`<th class="col-head-act">${m}</th>`).join('')}</tr>`;
+  const rows = [
+    {label:'GPU Utilization %', vals: ACT.util.slice(-6).map(v=>v.toFixed(1)+'%'), color: v=>parseFloat(v)>88?'pos':parseFloat(v)<80?'neg':''},
+    {label:'Power Cost / GPU-hr ($)', vals: ACT.power.slice(-6).map((v,i)=>('$'+(v/ACT.rev.slice(-6)[i]*12).toFixed(3)))},
+    {label:'D&A / Revenue %', vals: ACT.da.slice(-6).map((v,i)=>(v/ACT.rev.slice(-6)[i]*100).toFixed(1)+'%'), color: v=>parseFloat(v)>55?'neg':parseFloat(v)<40?'pos':''},
+    {label:'Blended ASP ($M/mo/1K GPUs)', vals: ACT.rev.slice(-6).map(v=>('$'+(v/(42.688)*1000).toFixed(2)+'K'))},
+    {label:'Gross Margin % (Blended)', vals: ACT.gm.slice(-6).map(v=>v.toFixed(1)+'%'), color: v=>parseFloat(v)>35?'pos':parseFloat(v)<20?'neg':''},
+    {label:'Inference API Mix %', vals: ACT.api.slice(-6).map((v,i)=>Math.max(v/ACT.rev.slice(-6)[i]*100,0).toFixed(1)+'%'), color: v=>parseFloat(v)>15?'pos':''},
+    {label:'CapEx Intensity (CapEx/Rev %)', vals: ACT.capex.slice(-6).map((v,i)=>(v/ACT.rev.slice(-6)[i]*100).toFixed(0)+'%'), color: v=>parseFloat(v)>80?'neg':parseFloat(v)<50?'pos':''},
+  ];
+  body.innerHTML = rows.map(row => `<tr>
+    <td>${row.label}</td>
+    ${row.vals.map(v=>`<td class="act-col ${row.color?row.color(v):''}">${v}</td>`).join('')}
+  </tr>`).join('');
+
+  // GM path to target
+  const allM = [...MONTHS_ACT,...MONTHS_FCAST];
+  const fgm  = FCAST.base.map(r=>r.gm);
+  const target = allM.map((_,i)=>{
+    if (i < 12) return null;
+    const progress = (i-12)/7;
+    return 38.2 + (55-38.2)*progress;
+  });
+  mkChart('chart-gm-path', {
+    type:'line',
+    data:{labels:allM,datasets:[
+      {label:'Actual GM %',data:[...ACT.gm,...Array(8).fill(null)],borderColor:'#14B8A6',borderWidth:2.5,pointRadius:3,tension:0.3,fill:true,backgroundColor:'rgba(20,184,166,0.06)'},
+      {label:'Base Forecast',data:[...Array(12).fill(null),...fgm],borderColor:'rgba(20,184,166,0.55)',borderWidth:2,borderDash:[4,3],pointRadius:3,tension:0.3,fill:false},
+      {label:'Target Path (55%)',data:[...Array(12).fill(null),...FCAST.base.map((_,i)=>38.2+(55-38.2)*i/7)],borderColor:'rgba(16,185,129,0.35)',borderWidth:1.5,borderDash:[6,4],pointRadius:0,tension:0.3,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:10},boxWidth:10,padding:12}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y?.toFixed(1)}%`}}},
+      scales:{x:XSCALE,y:{...YSCALE(v=>v+'%'),min:0,max:70}}}
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// SCENARIOS
+// ═══════════════════════════════════════════════════════
+let activeScen = 'base';
+function switchScen(s) {
+  activeScen = s;
+  ['base','bull','bear'].forEach(id => {
+    const el = document.getElementById('stab-'+id);
+    el.className = 'scen-tab' + (id===s ? ' active-'+id : '');
+  });
+  const titles = {base:'Revenue + FCF — Base Case ($M)', bull:'Revenue + FCF — Bull Case: Hyperscaler Ramp ($M)', bear:'Revenue + FCF — Bear Case: GPU Oversupply ($M)'};
+  document.getElementById('scen-title').textContent = titles[s];
+
+  const data = FCAST[s];
+  mkChart('chart-scen', {
+    type:'bar',
+    data:{labels:MONTHS_FCAST,datasets:[
+      {label:'Revenue',data:data.map(r=>r.rev),backgroundColor:'rgba(249,115,22,0.7)',borderRadius:4,yAxisID:'y'},
+      {label:'FCF',data:data.map(r=>r.fcf),backgroundColor:data.map(r=>r.fcf>=0?'rgba(16,185,129,0.7)':'rgba(239,68,68,0.65)'),borderRadius:3,yAxisID:'y2'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{color:'rgba(255,255,255,0.45)',font:{size:10},boxWidth:10,padding:12}},
+        tooltip:{...TT,callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(0)}M`}}},
+      scales:{
+        x:XSCALE,
+        y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),position:'left'},
+        y2:{...YSCALE(v=>'$'+v.toFixed(0)+'M'),position:'right',grid:{display:false}}
+      }}
+  });
+
+  // Scen table
+  const head = document.getElementById('scen-head');
+  const body = document.getElementById('scen-body');
+  head.innerHTML = `<tr><th>Metric</th>${MONTHS_FCAST.map(m=>`<th class="col-head-fcast">${m}</th>`).join('')}</tr>`;
+  const rows = [
+    {label:'Revenue ($M)',fn:r=>r.rev.toFixed(0)},
+    {label:'Gross Margin %',fn:r=>r.gm.toFixed(1)+'%'},
+    {label:'Adj. EBITDA ($M)',fn:r=>r.ebitda.toFixed(0)},
+    {label:'CapEx ($M)',fn:r=>r.capex.toFixed(0)},
+    {label:'Free Cash Flow ($M)',fn:r=>r.fcf.toFixed(0)},
+    {label:'FCF Margin %',fn:r=>r.fcfMgn.toFixed(1)+'%'},
+    {label:'Cash Balance ($M)',fn:r=>r.cash.toFixed(0)},
+  ];
+  body.innerHTML = rows.map(row => `<tr>
+    <td>${row.label}</td>
+    ${data.map(r=>{const v=row.fn(r); const n=parseFloat(v); return `<td class="fcast-col ${n<0?'neg':''}">${n<0?`(${Math.abs(n).toFixed(n===Math.round(n)?0:1)})`:v}</td>`}).join('')}
+  </tr>`).join('');
+
+  // Assumptions table
+  const assumptions = {
+    base:[{k:'MoM Revenue Growth',v:'8–17%'},{k:'Terminal GM',v:'55%'},{k:'CapEx Ramp-Down',v:'Mo 4 to $40M'},{k:'GPU Utilization',v:'91→95%'},{k:'FCF Breakeven',v:'Feb-27'}],
+    bull:[{k:'MoM Revenue Growth',v:'15–25%'},{k:'Terminal GM',v:'61%'},{k:'CapEx Ramp-Down',v:'Mo 5 to $42M'},{k:'GPU Utilization',v:'93→98%'},{k:'FCF Breakeven',v:'Dec-26'}],
+    bear:[{k:'MoM Revenue Growth',v:'2–10%'},{k:'Terminal GM',v:'43%'},{k:'CapEx Ramp-Down',v:'Mo 3 to $38M'},{k:'GPU Utilization',v:'87→90%'},{k:'FCF Breakeven',v:'Q3-27'}],
+  };
+  const aHead = document.getElementById('assump-head');
+  const aBody = document.getElementById('assump-body');
+  aHead.innerHTML = `<tr><th style="text-align:left">Assumption</th><th class="col-head-act">Base</th><th class="col-head-act">Bull</th><th class="col-head-act">Bear</th></tr>`;
+  aBody.innerHTML = assumptions.base.map((a,i) => `<tr>
+    <td>${a.k}</td>
+    <td class="act-col" style="text-align:right">${assumptions.base[i].v}</td>
+    <td class="act-col pos" style="text-align:right">${assumptions.bull[i].v}</td>
+    <td class="act-col neg" style="text-align:right">${assumptions.bear[i].v}</td>
+  </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// SECTOR BENCHMARKS
+// ═══════════════════════════════════════════════════════
+function buildSectorTab() {
+  const peers = [
+    {name:'NovaSpark AI',        arr:'$1.35B',gm:'38.2%',capexInt:'65%',fcfMgn:'-79%', util:'91%', gmCls:'me', capexCls:'lo'},
+    {name:'CoreWeave',          arr:'$4.2B', gm:'42.0%',capexInt:'88%',fcfMgn:'-95%', util:'93%', gmCls:'me', capexCls:'lo'},
+    {name:'Lambda Labs',        arr:'$0.62B',gm:'29.0%',capexInt:'55%',fcfMgn:'-68%', util:'84%', gmCls:'lo', capexCls:'me'},
+    {name:'Together AI',        arr:'$0.38B',gm:'61.0%',capexInt:'18%',fcfMgn:'-12%', util:'N/A', gmCls:'hi', capexCls:'hi'},
+    {name:'Crusoe Energy',      arr:'$0.29B',gm:'34.0%',capexInt:'72%',fcfMgn:'-88%', util:'88%', gmCls:'lo', capexCls:'lo'},
+    {name:'Vast.ai (platform)', arr:'$0.18B',gm:'71.0%',capexInt:'8%', fcfMgn:'22%',  util:'N/A', gmCls:'hi', capexCls:'hi'},
+  ];
+  const el = document.getElementById('sector-grid');
+  el.innerHTML = `
+    <div class="sc head">Company</div>
+    <div class="sc head">ARR</div>
+    <div class="sc head">Gross Margin</div>
+    <div class="sc head">CapEx / Rev</div>
+    <div class="sc head">FCF Margin</div>
+    <div class="sc head">GPU Util.</div>
+    ${peers.map((p,i) => `
+      <div class="sc rl" style="${i===0?'color:var(--orange);font-weight:600':''}">${p.name}${i===0?' ◀':''}  </div>
+      <div class="sc">${p.arr}</div>
+      <div class="sc ${p.gmCls}">${p.gm}</div>
+      <div class="sc ${p.capexCls==='hi'?'hi':p.capexCls==='lo'?'lo':'me'}">${p.capexInt}</div>
+      <div class="sc ${parseFloat(p.fcfMgn)>=0?'hi':'lo'}">${p.fcfMgn}</div>
+      <div class="sc">${p.util}</div>
+    `).join('')}
+  `;
+
+  // Peer GM bar chart
+  mkChart('chart-peer-gm', {
+    type:'bar',
+    data:{labels:peers.map(p=>p.name.split(' ')[0]),datasets:[
+      {label:'Gross Margin %',data:peers.map(p=>parseFloat(p.gm)),
+       backgroundColor:peers.map((p,i)=>i===0?'rgba(249,115,22,0.85)':'rgba(79,106,240,0.55)'),
+       borderRadius:4},
+    ]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`GM: ${c.parsed.x.toFixed(0)}%`}}},
+      scales:{x:{...YSCALE(v=>v+'%'),max:80},y:XSCALE}}
+  });
+
+  // CapEx intensity scatter
+  mkChart('chart-peer-capex', {
+    type:'scatter',
+    data:{datasets:[{
+      label:'Peers',
+      data:peers.map(p=>({x:parseFloat(p.capexInt),y:parseFloat(p.fcfMgn),label:p.name.split(' ')[0]})),
+      backgroundColor:peers.map((p,i)=>i===0?'rgba(249,115,22,0.9)':'rgba(79,106,240,0.6)'),
+      pointRadius:peers.map((_,i)=>i===0?10:7),
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{
+        label:c=>`${peers[c.dataIndex].name}: CapEx ${c.parsed.x}% | FCF ${c.parsed.y}%`
+      }}},
+      scales:{
+        x:{...YSCALE(v=>v+'%'),title:{display:true,text:'CapEx / Revenue %',color:'rgba(255,255,255,0.3)',font:{size:10}}},
+        y:{...YSCALE(v=>v+'%'),title:{display:true,text:'FCF Margin %',color:'rgba(255,255,255,0.3)',font:{size:10}}}
+      }}
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// CFO SIMULATOR
+// ═══════════════════════════════════════════════════════
+const simCharts = {};
+function mkSimChart(id, cfg) {
+  const ctx = document.getElementById(id); if (!ctx) return;
+  if (simCharts[id]) simCharts[id].destroy();
+  simCharts[id] = new Chart(ctx, cfg);
+}
+
+function g(id) { return parseFloat(document.getElementById(id).value); }
+function tog(id) { return document.getElementById(id).checked; }
+
+function updateSim() {
+  // Read controls
+  const gpuGr  = g('sl-gpu-gr') / 100;
+  const apiGr  = g('sl-api-gr') / 100;
+  const trGr   = g('sl-tr-gr')  / 100;
+  const capex1 = g('sl-capex');
+  const life   = g('sl-life');
+  const rampMo = g('sl-ramp');
+  const capex2 = g('sl-capex2');
+  const util0  = g('sl-util') / 100;
+  const utilGr = g('sl-util-gr') / 100;
+  const power  = g('sl-power');
+  const swLift = g('sl-sw') / 100;
+  const gb200  = tog('tog-gb200');
+  const hyper  = tog('tog-hyper');
+  const spot   = tog('tog-spot');
+  const debt   = tog('tog-debt');
+
+  // Update labels
+  document.getElementById('lv-gpu-gr').textContent  = Math.round(g('sl-gpu-gr'))+'%';
+  document.getElementById('lv-api-gr').textContent  = Math.round(g('sl-api-gr'))+'%';
+  document.getElementById('lv-tr-gr').textContent   = Math.round(g('sl-tr-gr'))+'%';
+  document.getElementById('lv-capex').textContent   = '$'+g('sl-capex')+'M';
+  document.getElementById('lv-life').textContent    = g('sl-life')+' mo';
+  document.getElementById('lv-ramp').textContent    = 'Mo '+g('sl-ramp');
+  document.getElementById('lv-capex2').textContent  = '$'+g('sl-capex2')+'M';
+  document.getElementById('lv-util').textContent    = Math.round(g('sl-util'))+'%';
+  document.getElementById('lv-util-gr').textContent = (g('sl-util-gr')>0?'+':'')+g('sl-util-gr')+'pp';
+  document.getElementById('lv-power').textContent   = '$'+parseFloat(g('sl-power')).toFixed(3);
+  document.getElementById('lv-sw').textContent      = (g('sl-sw')>0?'+':'')+g('sl-sw')+'pp';
+
+  // Simulate 12 months forward
+  const months = Array.from({length:12},(_,i)=>`Mo ${i+1}`);
+  let prevRev = ACT.rev[ACT.rev.length-1];
+  let prevCash = ACT.cash[ACT.cash.length-1];
+  if (debt) prevCash += 500;
+
+  const simGM = [], simFCF = [], simCash = [], simCapex = [], simRev = [];
+  let fcfBreakeven = -1;
+
+  // Accumulated D&A from past fleet
+  const fleetDA = ACT.da[ACT.da.length-1];
+
+  for (let i = 0; i < 12; i++) {
+    // Revenue
+    const gpuRev  = ACT.gpu[ACT.gpu.length-1] * Math.pow(1+gpuGr, i+1);
+    const apiRev  = ACT.api[ACT.api.length-1] * Math.pow(1+apiGr, i+1);
+    const trainRev= ACT.train[ACT.train.length-1] * Math.pow(1+trGr, i+1);
+    let rev = gpuRev + apiRev + trainRev;
+    if (hyper) rev *= 1.08; // hyperscaler anchor contract boost
+    if (spot)  rev *= (1 - 0.12); // spot price correction hit
+
+    simRev.push(rev);
+
+    // Utilization
+    const util = Math.min(util0 + utilGr * i, 0.99);
+
+    // Base GM from utilization (sigmoid-like: higher util → better margin)
+    const utilLift = (util - 0.75) * 1.2; // each pp of util above 75% = 1.2pp GM
+    const basePowerCostPct = power / 0.07 * 0.065; // scale from baseline
+    let gm = 0.32 + utilLift - basePowerCostPct + swLift;
+    if (gb200 && i >= 3) gm += 0.05; // GB200 efficiency premium kicks in month 4
+    gm = Math.max(0.15, Math.min(gm, 0.75));
+
+    simGM.push(gm * 100);
+
+    // CapEx
+    const capex = i < rampMo - 1 ? capex1 : capex2;
+    simCapex.push(capex);
+
+    // D&A (grows with fleet)
+    const da = fleetDA + (i * capex1 / life);
+
+    // EBITDA (pre-DA)
+    const opexPct = 0.35 - i * 0.008; // opex leverage over time
+    const ebitda  = rev * gm - rev * Math.max(opexPct, 0.22);
+    const cashEbitda = ebitda + da;
+
+    // FCF
+    const wc  = -rev * 0.065;
+    const fcf = cashEbitda - capex + wc;
+    simFCF.push(fcf);
+
+    const cash = prevCash + fcf;
+    simCash.push(cash);
+    prevCash = cash;
+    prevRev  = rev;
+
+    if (fcfBreakeven < 0 && fcf >= 0) fcfBreakeven = i;
+  }
+
+  // Update KPI outputs
+  const beEl  = document.getElementById('sim-breakeven');
+  const beSub = document.getElementById('sim-breakeven-sub');
+  if (fcfBreakeven >= 0) {
+    beEl.textContent = `Mo ${fcfBreakeven+1}`;
+    beEl.style.color = 'var(--green)';
+    beSub.textContent = `(~${['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'][Math.min(fcfBreakeven,12)]}-${fcfBreakeven<6?'26':'27'})`;
+  } else {
+    beEl.textContent = '>12 mo';
+    beEl.style.color = 'var(--red2)';
+    beSub.textContent = 'beyond forecast window';
+  }
+
+  const gm12 = simGM[11];
+  document.getElementById('sim-gm12').textContent = gm12.toFixed(1)+'%';
+  document.getElementById('sim-gm12').style.color = gm12 > 50 ? 'var(--green)' : gm12 > 35 ? 'var(--amber)' : 'var(--red2)';
+
+  const cash12 = simCash[11];
+  document.getElementById('sim-cash12').textContent = `$${cash12.toFixed(0)}M`;
+  document.getElementById('sim-cash12').style.color = cash12 > 800 ? 'var(--green)' : cash12 > 400 ? 'var(--amber)' : 'var(--red2)';
+
+  // Charts
+  mkSimChart('sim-chart-gm', {
+    type:'line',
+    data:{labels:months,datasets:[
+      {label:'Gross Margin %',data:simGM,borderColor:'#14B8A6',borderWidth:2,
+       pointRadius:3,tension:0.4,fill:true,backgroundColor:'rgba(20,184,166,0.08)',
+       pointBackgroundColor:simGM.map(v=>v>50?'#10B981':v>35?'#F59E0B':'#EF4444')},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`GM: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{x:XSCALE,y:{...YSCALE(v=>v.toFixed(0)+'%'),min:10,max:70}}}
+  });
+
+  mkSimChart('sim-chart-fcf', {
+    type:'bar',
+    data:{labels:months,datasets:[
+      {label:'FCF ($M)',data:simFCF,
+       backgroundColor:simFCF.map(v=>v>=0?'rgba(16,185,129,0.7)':'rgba(239,68,68,0.65)'),
+       borderRadius:3,borderSkipped:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...TT,callbacks:{label:c=>`FCF: $${c.parsed.y.toFixed(0)}M`}}},
+      scales:{x:XSCALE,y:YSCALE(v=>'$'+v.toFixed(0)+'M')}}
+  });
+
+  // Narrative
+  buildSimNarrative({simGM,simFCF,simCash,fcfBreakeven,gpuGr,apiGr,capex1,capex2,rampMo,util0,gb200,hyper,spot,debt,gm12,cash12});
+}
+
+function buildSimNarrative(p) {
+  let n = '';
+  const {simGM,simFCF,fcfBreakeven,gpuGr,apiGr,capex1,capex2,rampMo,util0,gb200,hyper,spot,debt,gm12,cash12} = p;
+
+  // GM analysis
+  n += `<p style="margin-bottom:8px"><strong style="color:var(--teal2)">Gross Margin trajectory:</strong> `;
+  if (gm12 > 55) {
+    n += `The model projects gross margin reaching <strong>${gm12.toFixed(1)}%</strong> by month 12 — comfortably inside the 55%+ target range. At this level, NovaSpark's economics start to look more like a hyperscaler (AWS GM ~62%, Azure ~67%) than a pure colocation reseller. The key driver: GB200 fleet reaching critical mass at high utilization shifts the revenue mix away from costly H100 spot inference toward higher-margin reserved and training workloads.`;
+  } else if (gm12 > 38) {
+    n += `Gross margin reaches <strong>${gm12.toFixed(1)}%</strong> — improving but still well below the 55% target. The gap is structural: power costs represent ~15% of revenue at current pricing, and the D&A load from last year's capital cycle won't roll off until 2028. The path to 50%+ requires either (1) a 25% reduction in power cost through PPA renegotiation, (2) Inference API growing to >30% of revenue mix at 65%+ margins, or (3) a software optimization breakthrough in GPU scheduling density.`;
+  } else {
+    n += `Gross margin is stuck at <strong>${gm12.toFixed(1)}%</strong> — below current levels. This scenario is driven by ${util0 < 0.80 ? 'GPU utilization remaining below the 85% economic break-even threshold' : 'high power costs eating into the revenue-side gains'}. At sub-35% gross margin, NovaSpark cannot self-fund its CapEx cycle and will need to raise additional equity within 18 months, likely at a punitive valuation.`;
+  }
+  n += `</p>`;
+
+  // FCF analysis
+  n += `<p style="margin-bottom:8px"><strong style="color:var(--orange)">Free Cash Flow inflection:</strong> `;
+  if (fcfBreakeven >= 0) {
+    n += `FCF turns positive in <strong>month ${fcfBreakeven+1}</strong>. This is the single most important milestone for NovaSpark's institutional investors — it's the moment the company transitions from "capital destruction" to "capital generation" and unlocks a completely different valuation conversation. The CapEx ramp-down from $${capex1}M to $${capex2}M in month ${rampMo} is the mechanical trigger. Miss the ramp-down, and the timeline slides by 3–6 months.`;
+  } else {
+    n += `FCF does not turn positive within the 12-month window. The combination of $${capex1}M/month CapEx${spot?' + spot price headwinds':''}${util0<0.82?' + utilization below threshold':''} is too much for the current revenue base to overcome. The board needs to see a credible path before the next fundraise — this scenario means Series D will happen at a distressed valuation unless the operating plan changes materially.`;
+  }
+  n += `</p>`;
+
+  // Toggle analysis
+  const toggleNotes = [];
+  if (gb200) toggleNotes.push('GB200 fleet activation adds ~5pp to gross margin from month 4, driven by the higher ASP ($9.80/GPU-hr vs $3.20) and better thermal efficiency at scale.');
+  if (hyper) toggleNotes.push('The hyperscaler anchor contract provides 8% revenue uplift and locks 85% utilization on 12,000 GPUs for 24 months — this is the most valuable single asset in the portfolio.');
+  if (spot)  toggleNotes.push('A 20% spot price correction (driven by Nvidia B200 supply arriving and AWS capacity expansion) cuts revenue by ~12% and margin by ~3pp — the scenario the competitive analysis team most fears.');
+  if (debt)  toggleNotes.push('The $500M term loan extends cash runway by ~6 months but introduces ~$32M/year of interest expense, slightly delaying the FCF breakeven. Net-positive if the incremental CapEx generates >6.4% cash yield.');
+
+  if (toggleNotes.length > 0) {
+    n += `<p style="margin-bottom:8px"><strong style="color:rgba(255,255,255,0.5)">Toggle effects:</strong> ${toggleNotes.join(' ')}</p>`;
+  }
+
+  // Bottom line
+  n += `<p style="color:rgba(255,255,255,0.4);font-size:10px;margin-top:4px">If you are the CFO right now, the one conversation that unlocks this model is negotiating power purchase agreements — each $0.01/kWh reduction in power cost is worth approximately $${(0.01/0.07*8*100).toFixed(0)}M/year in gross profit at current GPU fleet scale.</p>`;
+
+  document.getElementById('sim-narrative').innerHTML = n;
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.getElementById('ts').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+switchTab('overview');
+</script>
+</body>
+</html>
