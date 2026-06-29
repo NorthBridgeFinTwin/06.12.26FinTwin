@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Intelligence · Templates & Frameworks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@300;400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAFAF8;
+  --bg2:#F2F0EB;
+  --bg3:#E8E4DC;
+  --ink:#1A1915;
+  --ink2:#3D3B35;
+  --ink3:#6B6860;
+  --gold:#9B7D3A;
+  --gold2:#C4A35A;
+  --gold3:#E8D5A8;
+  --gold4:#FBF5E8;
+  --green:#2D6A4F;
+  --green2:#52B788;
+  --red:#9B2335;
+  --line:rgba(26,25,21,0.1);
+  --line2:rgba(26,25,21,0.06);
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#141410;--bg2:#1C1C18;--bg3:#252520;
+    --ink:#F0EDE6;--ink2:#C8C4BC;--ink3:#888580;
+    --gold:#C4A35A;--gold2:#9B7D3A;--gold3:#3D3520;--gold4:#2A2618;
+    --green:#52B788;--green2:#2D6A4F;
+    --red:#E05252;
+    --line:rgba(240,237,230,0.1);--line2:rgba(240,237,230,0.05);
+  }
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;line-height:1.6}
+::selection{background:var(--gold3);color:var(--ink)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gold2);border-radius:2px}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 60px;height:64px;
+  background:rgba(250,250,248,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line2);
+  transition:background .3s;
+}
+@media(prefers-color-scheme:dark){
+  nav{background:rgba(20,20,16,0.88)}
+}
+.nav-name{
+  font-family:var(--serif);font-size:17px;font-weight:400;
+  color:var(--ink);letter-spacing:-.01em;
+}
+.nav-name span{font-style:italic;color:var(--gold)}
+.nav-links{display:flex;gap:28px}
+.nav-links a{
+  font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);text-decoration:none;transition:color .2s;
+}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{
+  font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 20px;border:1px solid var(--gold);color:var(--gold);
+  text-decoration:none;transition:background .2s,color .2s;
+}
+.nav-cta:hover{background:var(--gold);color:var(--bg)}
+
+/* ── HERO ── */
+.hero{
+  min-height:92vh;display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  padding:0 60px;
+  gap:80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::after{
+  content:'';
+  position:absolute;right:-100px;top:50%;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(155,125,58,0.08) 0%,transparent 70%);
+  transform:translateY(-50%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:400;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:20px;display:flex;align-items:center;gap:10px;
+}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--gold)}
+.hero-h1{
+  font-family:var(--serif);font-size:clamp(44px,5vw,72px);
+  font-weight:400;line-height:.95;letter-spacing:-.02em;
+  margin-bottom:24px;
+}
+.hero-h1 em{font-style:italic;color:var(--gold)}
+.hero-bio{
+  font-family:var(--sans);font-size:16px;color:var(--ink2);
+  line-height:1.7;max-width:460px;margin-bottom:36px;
+}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:40px}
+.pill{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 12px;border:1px solid var(--line);color:var(--ink3);
+  background:var(--bg2);
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:14px 32px;background:var(--gold);color:var(--bg);
+  text-decoration:none;transition:transform .2s var(--ease),box-shadow .2s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(155,125,58,0.3)}
+.btn-outline{
+  font-family:var(--sans);font-size:13px;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:14px 32px;border:1px solid var(--line);color:var(--ink2);
+  text-decoration:none;transition:border-color .2s,color .2s;
+}
+.btn-outline:hover{border-color:var(--ink2);color:var(--ink)}
+.hero-right{position:relative}
+.stat-cluster{
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;
+  background:var(--line);border:1px solid var(--line);
+}
+.stat-box{
+  background:var(--bg);padding:28px 24px;
+  opacity:0;transform:translateY(16px);
+  animation:fadeUp .6s var(--ease) both;
+}
+.stat-box:nth-child(1){animation-delay:.1s}
+.stat-box:nth-child(2){animation-delay:.2s}
+.stat-box:nth-child(3){animation-delay:.3s}
+.stat-box:nth-child(4){animation-delay:.4s}
+.stat-num{
+  font-family:var(--serif);font-size:38px;font-weight:400;
+  letter-spacing:-.02em;line-height:1;margin-bottom:6px;
+}
+.stat-num.gold{color:var(--gold)}
+.stat-num.green{color:var(--green)}
+.stat-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero-left{opacity:0;animation:fadeUp .7s var(--ease) .05s both}
+
+/* ── SECTION ── */
+section{border-top:1px solid var(--line2)}
+.si{max-width:1200px;margin:0 auto;padding:100px 60px}
+.sec-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:10px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--line)}
+.sec-title{
+  font-family:var(--serif);font-size:clamp(32px,3.5vw,52px);
+  font-weight:400;line-height:1.05;letter-spacing:-.02em;margin-bottom:12px;
+}
+.sec-title em{font-style:italic;color:var(--gold)}
+.sec-desc{
+  font-family:var(--sans);font-size:15px;color:var(--ink3);
+  line-height:1.7;max-width:520px;margin-bottom:60px;
+}
+
+/* ── FRAMEWORKS GRID ── */
+.fw-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;background:var(--line);
+}
+.fw-card{
+  background:var(--bg);padding:36px 28px;
+  position:relative;overflow:hidden;
+  transition:background .2s;
+}
+.fw-card:hover{background:var(--bg2)}
+.fw-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s var(--ease);
+}
+.fw-card:hover::before{transform:scaleX(1)}
+.fw-num{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  color:var(--gold);margin-bottom:20px;
+}
+.fw-icon{
+  width:40px;height:40px;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;font-size:18px;color:var(--gold);
+}
+.fw-title{
+  font-family:var(--serif);font-size:22px;font-weight:400;
+  line-height:1.2;margin-bottom:10px;letter-spacing:-.01em;
+}
+.fw-desc{
+  font-family:var(--sans);font-size:13px;color:var(--ink3);
+  line-height:1.65;margin-bottom:20px;
+}
+.fw-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.fw-tag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 8px;border:1px solid var(--line);color:var(--ink3);
+}
+.fw-link{
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+  color:var(--gold);text-decoration:none;
+  display:flex;align-items:center;gap:6px;
+}
+.fw-link::after{content:'→';transition:transform .2s}
+.fw-link:hover::after{transform:translateX(4px)}
+.fw-bg{
+  position:absolute;right:16px;bottom:-16px;
+  font-family:var(--serif);font-size:96px;font-weight:700;
+  color:var(--line2);pointer-events:none;user-select:none;line-height:1;
+}
+
+/* ── PHILOSOPHY ── */
+.phil-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.phil-list{list-style:none}
+.phil-item{
+  padding:20px 0;border-bottom:1px solid var(--line2);
+  display:flex;gap:20px;align-items:flex-start;
+  opacity:0;transform:translateX(-16px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease);
+}
+.phil-item.visible{opacity:1;transform:translateX(0)}
+.phil-num{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  color:var(--gold);padding-top:4px;min-width:24px;
+}
+.phil-text-title{
+  font-family:var(--serif);font-size:18px;font-weight:400;
+  margin-bottom:4px;letter-spacing:-.01em;
+}
+.phil-text-body{font-family:var(--sans);font-size:13px;color:var(--ink3);line-height:1.6}
+.phil-quote{
+  background:var(--bg2);border-left:3px solid var(--gold);
+  padding:36px 32px;position:relative;
+}
+.phil-q-text{
+  font-family:var(--serif);font-size:26px;font-weight:400;
+  font-style:italic;line-height:1.4;letter-spacing:-.01em;
+  color:var(--ink);margin-bottom:20px;
+}
+.phil-q-text em{color:var(--gold);font-style:normal}
+.phil-q-attr{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);
+}
+
+/* ── SKILLS MATRIX ── */
+.skills-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px}
+.skill-group-title{
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px;padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+}
+.skill-item{
+  padding:8px 0;border-bottom:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.skill-name{font-family:var(--sans);font-size:13px;color:var(--ink2)}
+.skill-bar{
+  width:80px;height:3px;background:var(--line);border-radius:2px;overflow:hidden;
+}
+.skill-fill{
+  height:100%;background:var(--gold);border-radius:2px;
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .8s var(--ease);
+}
+.skill-fill.visible{transform:scaleX(1)}
+
+/* ── PROCESS STRIP ── */
+.process-strip{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  background:var(--line);gap:1px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.ps-step{
+  background:var(--bg);padding:32px 24px;position:relative;
+  transition:background .2s;
+}
+.ps-step:hover{background:var(--gold4)}
+.ps-n{
+  font-family:var(--serif);font-size:48px;font-weight:400;
+  color:var(--gold3);line-height:1;margin-bottom:12px;
+}
+.ps-title{font-family:var(--sans);font-size:13px;font-weight:600;margin-bottom:6px}
+.ps-text{font-family:var(--sans);font-size:12px;color:var(--ink3);line-height:1.55}
+
+/* ── IMPACT NUMBERS ── */
+.impact-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;border:1px solid var(--line);
+}
+.impact-cell{
+  padding:40px 32px;border-right:1px solid var(--line);
+  position:relative;overflow:hidden;
+  opacity:0;transition:opacity .6s var(--ease);
+}
+.impact-cell.visible{opacity:1}
+.impact-cell:last-child{border-right:none}
+.impact-val{
+  font-family:var(--serif);font-size:52px;font-weight:400;
+  letter-spacing:-.03em;line-height:1;margin-bottom:8px;
+}
+.impact-val.gold{color:var(--gold)}
+.impact-val.green{color:var(--green)}
+.impact-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.impact-desc{font-family:var(--sans);font-size:12px;color:var(--ink3);line-height:1.5}
+.impact-icon{
+  position:absolute;bottom:20px;right:20px;
+  font-size:32px;color:var(--line);
+}
+
+/* ── TOOLS ── */
+.tools-row{display:flex;flex-wrap:wrap;gap:10px}
+.tool-badge{
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+  padding:8px 16px;border:1px solid var(--line);
+  color:var(--ink2);background:var(--bg2);
+  transition:border-color .2s,color .2s;
+}
+.tool-badge:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── CONTACT ── */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.contact-lead{
+  font-family:var(--serif);font-size:clamp(28px,3vw,42px);
+  font-weight:400;line-height:1.15;letter-spacing:-.02em;margin-bottom:20px;
+}
+.contact-lead em{font-style:italic;color:var(--gold)}
+.contact-text{font-family:var(--sans);font-size:15px;color:var(--ink3);line-height:1.7;margin-bottom:32px}
+.contact-links{display:flex;flex-direction:column;gap:0;border:1px solid var(--line)}
+.contact-link{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;border-bottom:1px solid var(--line2);
+  text-decoration:none;color:var(--ink);
+  transition:background .2s;
+  font-family:var(--sans);font-size:14px;
+}
+.contact-link:last-child{border-bottom:none}
+.contact-link:hover{background:var(--bg2)}
+.contact-link span{font-family:var(--mono);font-size:11px;color:var(--gold)}
+.contact-form{background:var(--bg2);padding:36px;border:1px solid var(--line)}
+.form-group{margin-bottom:20px}
+.form-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:8px}
+.form-input,.form-textarea{
+  width:100%;background:var(--bg);border:1px solid var(--line);
+  padding:12px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);
+  outline:none;transition:border-color .2s;
+  resize:none;
+}
+.form-input:focus,.form-textarea:focus{border-color:var(--gold)}
+.form-submit{
+  width:100%;padding:14px;background:var(--gold);color:var(--bg);
+  border:none;font-family:var(--sans);font-size:13px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  transition:opacity .2s;
+}
+.form-submit:hover{opacity:.88}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--line2);
+  padding:40px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-name{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--ink3)}
+.footer-name em{font-style:italic;color:var(--gold)}
+.footer-copy{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink3)}
+
+/* ── ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-l{opacity:0;transform:translateX(-24px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal-l.visible{opacity:1;transform:translateX(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:60px 24px;gap:48px;min-height:auto;padding-top:80px}
+  .hero::after{display:none}
+  .si{padding:72px 24px}
+  nav{padding:0 24px}
+  .fw-grid,.skills-cols,.process-strip{grid-template-columns:1fr}
+  .process-strip{grid-template-columns:1fr 1fr}
+  .impact-grid{grid-template-columns:1fr 1fr}
+  .phil-grid,.contact-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;gap:12px;text-align:center;padding:32px 24px}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-name">Finance <span>Systems Leader</span></div>
+  <div class="nav-links">
+    <a href="#frameworks">Frameworks</a>
+    <a href="#philosophy">Philosophy</a>
+    <a href="#skills">Skills</a>
+    <a href="#impact">Impact</a>
+    <a href="#contact">Contact</a>
+    <a href="#library" style="color:var(--gold);font-weight:600">Library</a>
+  </div>
+  <a href="#contact" class="nav-cta">Hire Me</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section style="border:none">
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">ERP Architecture · AI Automation · Finance Systems Leadership</div>
+    <h1 class="hero-h1">
+      Building the systems<br>
+      that make <em>finance</em><br>
+      unstoppable
+    </h1>
+    <p class="hero-bio">
+      Finance Systems leader specialising in ERP architecture, AI agent deployment, and Order-to-Cash / Procure-to-Pay excellence. I eliminate manual workflows, connect financial data ecosystems, and lead the teams that keep fast-growing companies audit-ready and board-confident.
+    </p>
+    <div class="hero-pills">
+      <span class="pill">NetSuite Architecture</span>
+      <span class="pill">AI / LLM Agents</span>
+      <span class="pill">Order-to-Cash</span>
+      <span class="pill">Procure-to-Pay</span>
+      <span class="pill">SOX IT Controls</span>
+      <span class="pill">iPaaS Integration</span>
+      <span class="pill">Revenue Recognition</span>
+      <span class="pill">Change Management</span>
+    </div>
+    <div class="hero-actions">
+      <a href="#frameworks" class="btn-primary">View Frameworks</a>
+      <a href="#contact" class="btn-outline">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat-cluster">
+      <div class="stat-box">
+        <div class="stat-num gold">8+</div>
+        <div class="stat-label">Years leading finance systems</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num green">60%</div>
+        <div class="stat-label">Manual close tasks eliminated via AI</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num gold">$0</div>
+        <div class="stat-label">Audit findings on my SOX watch</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num green">40%</div>
+        <div class="stat-label">Faster close after ERP rebuild</div>
+      </div>
+    </div>
+    <div style="margin-top:2px;background:var(--gold4);border:1px solid var(--line);padding:16px 20px">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Target · Head of Financial Systems</div>
+      <div style="font-family:var(--sans);font-size:13px;color:var(--ink3)">Trajectory: ERP ownership → AI agent deployment → Finance Systems VP at a Series D+ or pre-IPO AI company.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ── PROCESS STRIP ── -->
+<div class="process-strip">
+  <div class="ps-step">
+    <div class="ps-n">01</div>
+    <div class="ps-title">Diagnose the system</div>
+    <div class="ps-text">Audit the ERP architecture, integration gaps, and manual workarounds before touching a single config.</div>
+  </div>
+  <div class="ps-step">
+    <div class="ps-n">02</div>
+    <div class="ps-title">Map the data flows</div>
+    <div class="ps-text">Chart every source system to GL touchpoint — billing, procurement, payroll, expense — and find where data breaks down.</div>
+  </div>
+  <div class="ps-step">
+    <div class="ps-n">03</div>
+    <div class="ps-title">Build the integrations</div>
+    <div class="ps-text">Design and deploy scalable APIs and iPaaS workflows (Workato) that move data cleanly, governed, and audit-ready.</div>
+  </div>
+  <div class="ps-step">
+    <div class="ps-n">04</div>
+    <div class="ps-title">Deploy AI agents</div>
+    <div class="ps-text">Replace manual reconciliation, variance analysis, and close task management with LLM-powered agents that surface insights, not just numbers.</div>
+  </div>
+  <div class="ps-step">
+    <div class="ps-n">05</div>
+    <div class="ps-title">Move the people</div>
+    <div class="ps-text">Change management, training, and adoption measurement — because the best system fails without the team behind it.</div>
+  </div>
+</div>
+
+<!-- ── FRAMEWORKS ── -->
+<section id="frameworks">
+<div class="si">
+  <div class="sec-label reveal">Proprietary frameworks</div>
+  <h2 class="sec-title reveal">Systems built in the <em>field</em></h2>
+  <p class="sec-desc reveal">Every framework, integration pattern, and AI workflow here was developed for a real finance environment, pressure-tested under audit, and measured by whether it actually made the close faster.</p>
+
+  <div class="fw-grid reveal">
+
+    <div class="fw-card">
+      <div class="fw-num">FW-01</div>
+      <div class="fw-icon">◈</div>
+      <div class="fw-title">NetSuite Architecture Blueprint</div>
+      <div class="fw-desc">A full ERP design framework covering GL structure, subsidiary hierarchy, intercompany eliminations, revenue recognition configuration, and the integration layer from upstream billing and procurement systems to the general ledger.</div>
+      <div class="fw-tags">
+        <span class="fw-tag">NetSuite</span>
+        <span class="fw-tag">GL · AR · AP</span>
+        <span class="fw-tag">Revenue Rec ASC 606</span>
+        <span class="fw-tag">International Consolidation</span>
+      </div>
+      <div class="fw-link" href="#">View framework</div>
+      <div class="fw-bg">01</div>
+    </div>
+
+    <div class="fw-card">
+      <div class="fw-num">FW-02</div>
+      <div class="fw-icon">⬡</div>
+      <div class="fw-title">AI Agent Deployment Playbook</div>
+      <div class="fw-desc">A structured methodology for identifying, designing, and deploying LLM-powered agents inside the finance close. Covers variance analysis automation, reconciliation agents, close task orchestration, and the governance layer that keeps outputs audit-ready.</div>
+      <div class="fw-tags">
+        <span class="fw-tag">LLM / AI agents</span>
+        <span class="fw-tag">Close automation</span>
+        <span class="fw-tag">Variance analysis</span>
+        <span class="fw-tag">SOX-safe design</span>
+      </div>
+      <div class="fw-link" href="#">View framework</div>
+      <div class="fw-bg">02</div>
+    </div>
+
+    <div class="fw-card">
+      <div class="fw-num">FW-03</div>
+      <div class="fw-icon">△</div>
+      <div class="fw-title">Order-to-Cash Operating Model</div>
+      <div class="fw-desc">End-to-end O2C design covering contract-to-invoice, sales audit, revenue recognition, collections, and cash application. Includes the integration map between CRM, CPQ, billing, and ERP — and where data breaks happen at each handoff.</div>
+      <div class="fw-tags">
+        <span class="fw-tag">O2C process design</span>
+        <span class="fw-tag">Sales audit</span>
+        <span class="fw-tag">Billing → ERP</span>
+        <span class="fw-tag">AR automation</span>
+      </div>
+      <div class="fw-link" href="#">View framework</div>
+      <div class="fw-bg">03</div>
+    </div>
+
+    <div class="fw-card">
+      <div class="fw-num">FW-04</div>
+      <div class="fw-icon">◉</div>
+      <div class="fw-title">Procure-to-Pay Integration Design</div>
+      <div class="fw-desc">P2P architecture from requisition to payment — covering purchase order management, three-way match, supplier onboarding, indirect spend governance, and the automated AP workflow from invoice receipt to GL posting with no human touches on routine transactions.</div>
+      <div class="fw-tags">
+        <span class="fw-tag">P2P process design</span>
+        <span class="fw-tag">3-way match</span>
+        <span class="fw-tag">AP automation</span>
+        <span class="fw-tag">Spend governance</span>
+      </div>
+      <div class="fw-link" href="#">View framework</div>
+      <div class="fw-bg">04</div>
+    </div>
+
+    <div class="fw-card">
+      <div class="fw-num">FW-05</div>
+      <div class="fw-icon">◫</div>
+      <div class="fw-title">SOX IT General Controls Framework</div>
+      <div class="fw-desc">A repeatable SOX ITGC implementation covering access controls, change management, computer operations, and financial reporting IT dependencies — designed specifically for ERP environments. Includes the evidence library structure that survives external audit without heroics at quarter end.</div>
+      <div class="fw-tags">
+        <span class="fw-tag">SOX ITGC</span>
+        <span class="fw-tag">Access controls</span>
+        <span class="fw-tag">Change management</span>
+        <span class="fw-tag">Audit-ready</span>
+      </div>
+      <div class="fw-link" href="#">View framework</div>
+      <div class="fw-bg">05</div>
+    </div>
+
+    <div class="fw-card">
+      <div class="fw-num">FW-06</div>
+      <div class="fw-icon">⊟</div>
+      <div class="fw-title">iPaaS Integration Architecture</div>
+      <div class="fw-desc">A scalable integration design pattern using Workato (or equivalent iPaaS) to connect the ERP to billing, expense, FP&A, payroll, and treasury tools. Covers recipe design, error handling, data governance, and the monitoring layer that catches breaks before the close does.</div>
+      <div class="fw-tags">
+        <span class="fw-tag">Workato</span>
+        <span class="fw-tag">API design</span>
+        <span class="fw-tag">SaaS integration</span>
+        <span class="fw-tag">Data governance</span>
+      </div>
+      <div class="fw-link" href="#">View framework</div>
+      <div class="fw-bg">06</div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- ── IMPACT NUMBERS ── -->
+<div class="impact-grid" id="impact-row">
+  <div class="impact-cell">
+    <div class="impact-lbl">Close cycle reduction</div>
+    <div class="impact-val gold">40%</div>
+    <div class="impact-desc">Reduction in monthly close time after ERP re-architecture and automated reconciliation agent deployment</div>
+  </div>
+  <div class="impact-cell">
+    <div class="impact-lbl">Manual tasks eliminated</div>
+    <div class="impact-val green">60%</div>
+    <div class="impact-desc">Of routine finance workflows replaced by AI agents — variance analysis, journal entry validation, reconciliation, and close task orchestration</div>
+  </div>
+  <div class="impact-cell">
+    <div class="impact-lbl">Audit findings on SOX watch</div>
+    <div class="impact-val gold">Zero</div>
+    <div class="impact-desc">SOX ITGC findings across all audits where I owned the controls framework and evidence library</div>
+  </div>
+  <div class="impact-cell">
+    <div class="impact-lbl">Integration gaps closed</div>
+    <div class="impact-val green">100%</div>
+    <div class="impact-desc">Of identified O2C and P2P data breaks between upstream systems and ERP resolved through disciplined iPaaS integration design</div>
+  </div>
+</div>
+
+<!-- ── PHILOSOPHY ── -->
+<section id="philosophy">
+<div class="si">
+  <div class="sec-label reveal">Design principles</div>
+  <h2 class="sec-title reveal">What I believe about <em>finance systems</em></h2>
+
+  <div class="phil-grid">
+    <ul class="phil-list">
+      <li class="phil-item">
+        <div class="phil-num">01</div>
+        <div>
+          <div class="phil-text-title">The ERP is not an accounting tool — it is the operating system of the company</div>
+          <div class="phil-text-body">Every business decision flows through the ERP sooner or later — revenue recognition, headcount cost allocation, procurement approval, cash position. When the ERP is well-architected, the whole company moves faster. When it's patched together with workarounds, every team builds shadow systems and the finance close becomes archaeology.</div>
+        </div>
+      </li>
+      <li class="phil-item">
+        <div class="phil-num">02</div>
+        <div>
+          <div class="phil-text-title">AI agents belong inside the close, not after it</div>
+          <div class="phil-text-body">Most companies use AI to summarise what already happened. The better use is to run it during the close itself — catching anomalies as journal entries post, validating reconciliations before sign-off, flagging SOX control deviations in real time. The agent that prevents the error is worth ten that explain it.</div>
+        </div>
+      </li>
+      <li class="phil-item">
+        <div class="phil-num">03</div>
+        <div>
+          <div class="phil-text-title">Integration debt is financial risk</div>
+          <div class="phil-text-body">Every manual data transfer between systems — every CSV export, every copy-paste between billing and ERP, every spreadsheet that "reconciles" two systems — is a control risk, an audit exposure, and a close delay waiting to happen. Closing integration gaps is not an IT project; it is a financial controls imperative.</div>
+        </div>
+      </li>
+      <li class="phil-item">
+        <div class="phil-num">04</div>
+        <div>
+          <div class="phil-text-title">SOX is a discipline, not a deadline</div>
+          <div class="phil-text-body">Companies that treat SOX compliance as a Q4 scramble build fragile control environments that break under growth. The ones that embed controls into system configuration — access provisioning, change management workflows, automated evidence collection — barely notice audit season because every day is audit-ready.</div>
+        </div>
+      </li>
+      <li class="phil-item">
+        <div class="phil-num">05</div>
+        <div>
+          <div class="phil-text-title">Systems adoption is the real project</div>
+          <div class="phil-text-body">A perfectly configured ERP that the accounting team works around is a failed implementation. The technical build is 40% of the work. Change management — training, process documentation, adoption measurement, and making the new system easier than the old spreadsheet — is the other 60%. The measure of success is zero shadow systems, not go-live day.</div>
+        </div>
+      </li>
+    </ul>
+    <div>
+      <div class="phil-quote">
+        <div class="phil-q-text">"The best finance system doesn't just record what happened — it <em>prevents</em> the error, closes the gap, and makes the next close faster than the last."</div>
+        <div class="phil-q-attr">Core principle · Finance systems leadership</div>
+      </div>
+      <div style="margin-top:32px;padding:24px;border:1px solid var(--line);background:var(--bg2)">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Formats delivered</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span class="fw-tag">ERP architecture</span>
+          <span class="fw-tag">AI agent deployment</span>
+          <span class="fw-tag">iPaaS integrations</span>
+          <span class="fw-tag">SOX ITGC programs</span>
+          <span class="fw-tag">O2C / P2P redesigns</span>
+          <span class="fw-tag">Close automation</span>
+          <span class="fw-tag">Finance team enablement</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills" style="background:var(--bg2)">
+<div class="si">
+  <div class="sec-label reveal">Capability matrix</div>
+  <h2 class="sec-title reveal">Where the <em>depth</em> lives</h2>
+  <p class="sec-desc reveal">Built through direct implementation — not certifications. Each skill rated by how often I've used it under real audit, real deadlines, and real board pressure.</p>
+
+  <div class="skills-cols reveal" id="skills-grid">
+    <div>
+      <div class="skill-group-title">ERP & Systems</div>
+      <div class="skill-item"><span class="skill-name">NetSuite (GL, AR, AP, Fixed Assets)</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.1s" data-w="0.97"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Revenue Recognition (ASC 606)</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.15s" data-w="0.95"></div></div></div>
+      <div class="skill-item"><span class="skill-name">International Consolidations</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.2s" data-w="0.90"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Procure-to-Pay design</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.25s" data-w="0.93"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Order-to-Cash architecture</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.3s" data-w="0.94"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Sales Audit processes</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.35s" data-w="0.88"></div></div></div>
+    </div>
+    <div>
+      <div class="skill-group-title">AI & Automation</div>
+      <div class="skill-item"><span class="skill-name">LLM agent design & deployment</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.1s" data-w="0.92"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Close automation workflows</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.15s" data-w="0.95"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Variance analysis agents</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.2s" data-w="0.90"></div></div></div>
+      <div class="skill-item"><span class="skill-name">iPaaS (Workato / Boomi / MuleSoft)</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.25s" data-w="0.93"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Python / SQL for automation audit</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.3s" data-w="0.85"></div></div></div>
+      <div class="skill-item"><span class="skill-name">API design & data governance</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.35s" data-w="0.88"></div></div></div>
+    </div>
+    <div>
+      <div class="skill-group-title">Controls & Leadership</div>
+      <div class="skill-item"><span class="skill-name">SOX IT General Controls</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.1s" data-w="0.96"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Change management & adoption</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.15s" data-w="0.95"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Finance stakeholder partnership</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.2s" data-w="0.97"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Team building & culture</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.25s" data-w="0.90"></div></div></div>
+      <div class="skill-item"><span class="skill-name">Audit readiness programs</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.3s" data-w="0.94"></div></div></div>
+      <div class="skill-item"><span class="skill-name">SLA design & data governance</span><div class="skill-bar"><div class="skill-fill" style="transition-delay:.35s" data-w="0.89"></div></div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px" class="reveal">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Tools & systems worked with</div>
+    <div class="tools-row">
+      <span class="tool-badge">NetSuite</span>
+      <span class="tool-badge">Workato</span>
+      <span class="tool-badge">Boomi</span>
+      <span class="tool-badge">MuleSoft</span>
+      <span class="tool-badge">Salesforce / CPQ</span>
+      <span class="tool-badge">Zuora</span>
+      <span class="tool-badge">Stripe</span>
+      <span class="tool-badge">Coupa</span>
+      <span class="tool-badge">Zip</span>
+      <span class="tool-badge">Ramp / Brex</span>
+      <span class="tool-badge">Snowflake</span>
+      <span class="tool-badge">dbt</span>
+      <span class="tool-badge">Looker</span>
+      <span class="tool-badge">Anaplan / Adaptive</span>
+      <span class="tool-badge">Avalara</span>
+      <span class="tool-badge">Python / SQL</span>
+      <span class="tool-badge">Claude AI</span>
+      <span class="tool-badge">Ironclad</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ── IMPACT ── -->
+<section id="impact">
+<div class="si">
+  <div class="sec-label reveal">Real-world outcomes</div>
+  <h2 class="sec-title reveal">What this work <em>produces</em></h2>
+  <p class="sec-desc reveal">Every metric came from a real implementation — a real close, a real audit, a real system that either worked or was made to work. Anonymous where required.</p>
+
+  <div class="impact-grid reveal" id="impact-cells">
+    <div class="impact-cell">
+      <div class="impact-lbl">Close cycle acceleration</div>
+    <div class="impact-val gold">40%</div>
+    <div class="impact-desc">Reduction in monthly close time after ERP re-architecture, AI-powered reconciliation agents, and automated close task orchestration</div>
+    </div>
+    <div class="impact-cell">
+      <div class="impact-lbl">Finance workflows automated</div>
+      <div class="impact-val gold">60%</div>
+      <div class="impact-desc">Of manual close tasks replaced by AI agents — variance analysis, journal validation, three-way match exceptions, and reconciliation routing</div>
+    </div>
+    <div class="impact-cell">
+      <div class="impact-lbl">Balance sheet error flagged</div>
+      <div class="impact-val green">$15.7M</div>
+      <div class="impact-desc">Intercompany elimination gap identified before board presentation — prevented a materially misstated consolidated balance sheet going to the board</div>
+    </div>
+    <div class="impact-cell">
+      <div class="impact-lbl">Close time improvement</div>
+      <div class="impact-val green">40%</div>
+      <div class="impact-desc">Estimated reduction in monthly close effort from manual pack to automated financial twin — freeing the CFO for analysis rather than production</div>
+    </div>
+  </div>
+
+  <div style="margin-top:2px;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--line)" class="reveal">
+    <div style="background:var(--bg);padding:36px;border:1px solid transparent">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">What I look for in a management pack</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:var(--sans);font-size:13px;color:var(--ink3);padding-left:14px;border-left:2px solid var(--gold3)">Does the balance sheet check? (Assets = L + E)</div>
+        <div style="font-family:var(--sans);font-size:13px;color:var(--ink3);padding-left:14px;border-left:2px solid var(--gold3)">Are accounting methodology changes disclosed?</div>
+        <div style="font-family:var(--sans);font-size:13px;color:var(--ink3);padding-left:14px;border-left:2px solid var(--gold3)">Is there an MoM flux commentary for every large move?</div>
+        <div style="font-family:var(--sans);font-size:13px;color:var(--ink3);padding-left:14px;border-left:2px solid var(--gold3)">Are one-time items separated from recurring?</div>
+        <div style="font-family:var(--sans);font-size:13px;color:var(--ink3);padding-left:14px;border-left:2px solid var(--gold3)">Does the revenue split by segment match the driver tree?</div>
+      </div>
+    </div>
+    <div style="background:var(--gold4);padding:36px;border:1px solid transparent">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">The one question that predicts board meeting quality</div>
+      <div style="font-family:var(--serif);font-size:22px;font-weight:400;font-style:italic;line-height:1.4;color:var(--ink);margin-bottom:12px">"Can the CFO tell me, in one sentence, what the clean underlying EBITDA is after removing one-time items?"</div>
+      <div style="font-family:var(--sans);font-size:13px;color:var(--ink3)">If they can, the close process is working. If they can't, the numbers are managing the CFO rather than the other way around.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact" style="background:var(--bg2)">
+<div class="si">
+  <div class="sec-label reveal">Get in touch</div>
+  <div class="contact-grid">
+    <div class="reveal-l">
+      <h2 class="contact-lead">Let's build something that <em>scales</em></h2>
+      <p class="contact-text">I'm building toward a Head of Financial Systems role at a high-growth AI or Series D+ company. If you're a CFO or finance leader who needs someone to own the ERP architecture, deploy AI agents into the close, and build a finance systems team that ships clean reconciliations as proudly as any product team ships code — let's talk.</p>
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/" class="contact-link" target="_blank">
+          LinkedIn Profile
+          <span>→</span>
+        </a>
+        <a href="mailto:hello@example.com" class="contact-link">
+          Email
+          <span>→</span>
+        </a>
+        <a href="#frameworks" class="contact-link">
+          View all frameworks
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="contact-form">
+        <div style="font-family:var(--serif);font-size:20px;font-weight:400;margin-bottom:24px">Send a message</div>
+        <div class="form-group">
+          <label class="form-label">Your name</label>
+          <input type="text" class="form-input" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company & role</label>
+          <input type="text" class="form-input" placeholder="CFO at Acme Inc.">
+        </div>
+        <div class="form-group">
+          <label class="form-label">What you're working on</label>
+          <textarea class="form-textarea" rows="4" placeholder="Board prep, model build, automation audit..."></textarea>
+        </div>
+        <button class="form-submit" onclick="handleSubmit()">Send Message →</button>
+        <div id="form-success" style="display:none;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.08em"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- ── LIBRARY TAB ── -->
+<section id="library" style="background:var(--bg)">
+<div class="si">
+  <div class="sec-label reveal">Resource library</div>
+  <h2 class="sec-title reveal">Files & <em>notes</em></h2>
+  <p class="sec-desc reveal">Upload frameworks, templates, or any file you want to share. Add notes and annotations alongside each one. Everything saves in your browser.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px" class="reveal">
+
+    <!-- LEFT: upload + note form -->
+    <div>
+      <div style="background:var(--bg2);border:1px solid var(--line);padding:28px">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--line)">Add new entry</div>
+
+        <!-- Drop zone -->
+        <div id="lib-drop" style="border:1px dashed rgba(155,125,58,0.35);padding:32px;text-align:center;transition:background .2s;margin-bottom:16px;cursor:pointer"
+          ondragover="event.preventDefault();this.style.background='var(--gold4)'"
+          ondragleave="this.style.background=''"
+          ondrop="libDrop(event)">
+          <div style="font-size:22px;margin-bottom:8px;color:var(--gold)">↑</div>
+          <div style="font-family:var(--sans);font-size:14px;color:var(--ink2);margin-bottom:4px">Drop a file here</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--ink3);margin-bottom:14px">or click to browse · any format</div>
+          <label style="display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:7px 18px;border:1px solid var(--gold);color:var(--gold);cursor:pointer;transition:background .2s">
+            Choose File
+            <input type="file" id="lib-file-input" multiple style="display:none" onchange="libFileChosen(this.files)">
+          </label>
+          <div id="lib-chosen-name" style="font-family:var(--mono);font-size:10px;color:var(--gold);margin-top:10px;display:none"></div>
+        </div>
+
+        <!-- Title -->
+        <div style="margin-bottom:12px">
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:6px">Title</label>
+          <input type="text" id="lib-title" placeholder="e.g. Commission Framework v3" style="width:100%;background:var(--bg);border:1px solid var(--line);padding:11px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor=''">
+        </div>
+
+        <!-- Category -->
+        <div style="margin-bottom:12px">
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:6px">Category</label>
+          <select id="lib-cat" style="width:100%;background:var(--bg);border:1px solid var(--line);padding:11px 13px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;appearance:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor=''">
+            <option value="framework">Framework / Template</option>
+            <option value="model">Financial Model</option>
+            <option value="dashboard">Dashboard</option>
+            <option value="research">Research / Data</option>
+            <option value="presentation">Presentation</option>
+            <option value="note">Note only</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <!-- Notes -->
+        <div style="margin-bottom:16px">
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:6px">Notes & annotation</label>
+          <textarea id="lib-note" rows="4" placeholder="Add context, key insights, how to use this, version notes, what problem it solves..." style="width:100%;background:var(--bg);border:1px solid var(--line);padding:11px 13px;font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;resize:none;line-height:1.6;transition:border-color .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor=''"></textarea>
+        </div>
+
+        <!-- Tags -->
+        <div style="margin-bottom:20px">
+          <label style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:6px">Tags <span style="opacity:.5;font-weight:400">(comma separated)</span></label>
+          <input type="text" id="lib-tags" placeholder="commission design, SaaS, board-ready" style="width:100%;background:var(--bg);border:1px solid var(--line);padding:11px 13px;font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;transition:border-color .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor=''">
+        </div>
+
+        <button onclick="libSave()" style="width:100%;padding:13px;background:var(--gold);color:var(--bg);border:none;font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Save to Library →</button>
+        <div id="lib-save-msg" style="display:none;margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.06em;text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: stats + filter -->
+    <div>
+      <div id="lib-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);margin-bottom:16px">
+        <div style="background:var(--bg2);padding:20px">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Total entries</div>
+          <div id="stat-count" style="font-family:'Playfair Display',serif;font-size:36px;font-weight:400;color:var(--ink)">0</div>
+        </div>
+        <div style="background:var(--bg2);padding:20px">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Files attached</div>
+          <div id="stat-files" style="font-family:'Playfair Display',serif;font-size:36px;font-weight:400;color:var(--ink)">0</div>
+        </div>
+        <div style="background:var(--bg2);padding:20px">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Last updated</div>
+          <div id="stat-last" style="font-family:var(--mono);font-size:13px;color:var(--ink2);margin-top:4px">—</div>
+        </div>
+        <div style="background:var(--bg2);padding:20px">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Categories</div>
+          <div id="stat-cats" style="font-family:var(--mono);font-size:13px;color:var(--ink2);margin-top:4px">—</div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="lib-filters">
+        <button onclick="libFilter('all')" id="lf-all" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border:1px solid var(--gold);background:var(--gold);color:var(--bg);cursor:pointer">All</button>
+        <button onclick="libFilter('framework')" id="lf-framework" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border:1px solid var(--line);background:transparent;color:var(--ink3);cursor:pointer">Framework</button>
+        <button onclick="libFilter('model')" id="lf-model" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border:1px solid var(--line);background:transparent;color:var(--ink3);cursor:pointer">Model</button>
+        <button onclick="libFilter('dashboard')" id="lf-dashboard" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border:1px solid var(--line);background:transparent;color:var(--ink3);cursor:pointer">Dashboard</button>
+        <button onclick="libFilter('note')" id="lf-note" style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border:1px solid var(--line);background:transparent;color:var(--ink3);cursor:pointer">Note</button>
+      </div>
+
+      <!-- Search -->
+      <input type="text" id="lib-search" placeholder="Search titles, notes, tags..." oninput="libSearch(this.value)" style="width:100%;background:var(--bg);border:1px solid var(--line);padding:10px 13px;font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;margin-bottom:16px;transition:border-color .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor=''">
+    </div>
+
+  </div>
+
+  <!-- LIBRARY LIST -->
+  <div id="lib-list">
+    <div id="lib-empty" style="text-align:center;padding:64px 0;border:1px dashed var(--line)">
+      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--ink3);font-style:italic;margin-bottom:8px">Your library is empty</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.08em">Add your first file or note using the form above</div>
+    </div>
+    <div id="lib-cards" style="display:flex;flex-direction:column;gap:1px;background:var(--line)"></div>
+  </div>
+
+</div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-name">Finance <em>Systems Leader</em></div>
+  <div class="footer-copy">
+    PROPRIETARY FRAMEWORKS · ALL RIGHTS RESERVED · <span id="year"></span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('visible');
+    if (e.target.classList.contains('impact-cell')) return;
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal,.reveal-l,.phil-item,.impact-cell').forEach(el => io.observe(el));
+
+const skillsIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    document.querySelectorAll('.skill-fill').forEach(bar => {
+      const w = bar.dataset.w || '0.5';
+      bar.style.transitionDuration = '1s';
+      bar.style.transform = 'scaleX(' + w + ')';
+    });
+    skillsIO.disconnect();
+  });
+}, { threshold: 0.3 });
+const sg = document.getElementById('skills-grid');
+if (sg) skillsIO.observe(sg);
+
+function handleSubmit() {
+  const btn = document.querySelector('.form-submit');
+  btn.textContent = 'Sending...';
+  btn.style.opacity = '.6';
+  setTimeout(() => {
+    btn.textContent = 'Sent ✓';
+    const s = document.getElementById('form-success');
+    s.style.display = 'block';
+    s.textContent = 'Message received. Will respond within 24 hours.';
+  }, 900);
+}
+// ═══════════════════════════════════════
+// LIBRARY ENGINE
+// Saves entries to localStorage so they
+// persist across sessions in the same browser.
+// ═══════════════════════════════════════
+const LIB_KEY = 'fin_portfolio_library_v1';
+let libEntries = [];
+let libActiveFilter = 'all';
+let libSearchQuery = '';
+let libPendingFiles = [];
+
+function libLoad() {
+  try {
+    const raw = localStorage.getItem(LIB_KEY);
+    libEntries = raw ? JSON.parse(raw) : [];
+  } catch(e) { libEntries = []; }
+  libRender();
+}
+
+function libPersist() {
+  try { localStorage.setItem(LIB_KEY, JSON.stringify(libEntries)); } catch(e) {}
+}
+
+function libFileChosen(files) {
+  libPendingFiles = Array.from(files);
+  const nameEl = document.getElementById('lib-chosen-name');
+  if (libPendingFiles.length > 0) {
+    nameEl.style.display = 'block';
+    nameEl.textContent = libPendingFiles.map(f => f.name).join(', ');
+    if (!document.getElementById('lib-title').value) {
+      document.getElementById('lib-title').value = libPendingFiles[0].name.replace(/\.[^.]+$/, '');
+    }
+  }
+}
+
+function libDrop(e) {
+  e.preventDefault();
+  e.currentTarget.style.background = '';
+  libPendingFiles = Array.from(e.dataTransfer.files);
+  const nameEl = document.getElementById('lib-chosen-name');
+  if (libPendingFiles.length > 0) {
+    nameEl.style.display = 'block';
+    nameEl.textContent = libPendingFiles.map(f => f.name).join(', ');
+    if (!document.getElementById('lib-title').value) {
+      document.getElementById('lib-title').value = libPendingFiles[0].name.replace(/\.[^.]+$/, '');
+    }
+  }
+}
+
+function libSave() {
+  const title = document.getElementById('lib-title').value.trim();
+  const note  = document.getElementById('lib-note').value.trim();
+  const cat   = document.getElementById('lib-cat').value;
+  const tags  = document.getElementById('lib-tags').value.split(',').map(t => t.trim()).filter(Boolean);
+
+  if (!title && libPendingFiles.length === 0 && !note) {
+    const msg = document.getElementById('lib-save-msg');
+    msg.style.display = 'block';
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'Add a title, file, or note to save.';
+    setTimeout(() => { msg.style.display = 'none'; }, 2500);
+    return;
+  }
+
+  const files = libPendingFiles.map(f => ({
+    name: f.name,
+    size: f.size,
+    type: f.type,
+    lastModified: f.lastModified,
+  }));
+
+  const entry = {
+    id: Date.now(),
+    title: title || (files[0] ? files[0].name : 'Untitled note'),
+    note,
+    cat,
+    tags,
+    files,
+    date: new Date().toISOString(),
+    pinned: false,
+  };
+
+  libEntries.unshift(entry);
+  libPersist();
+
+  // Reset form
+  document.getElementById('lib-title').value = '';
+  document.getElementById('lib-note').value = '';
+  document.getElementById('lib-tags').value = '';
+  document.getElementById('lib-cat').value = 'framework';
+  document.getElementById('lib-chosen-name').style.display = 'none';
+  document.getElementById('lib-file-input').value = '';
+  libPendingFiles = [];
+
+  const msg = document.getElementById('lib-save-msg');
+  msg.style.display = 'block';
+  msg.style.color = 'var(--green)';
+  msg.textContent = '✓ Saved to library';
+  setTimeout(() => { msg.style.display = 'none'; }, 2000);
+
+  libRender();
+}
+
+function libDelete(id) {
+  if (!confirm('Remove this entry from the library?')) return;
+  libEntries = libEntries.filter(e => e.id !== id);
+  libPersist();
+  libRender();
+}
+
+function libPin(id) {
+  const entry = libEntries.find(e => e.id === id);
+  if (entry) { entry.pinned = !entry.pinned; libPersist(); libRender(); }
+}
+
+function libEditNote(id) {
+  const entry = libEntries.find(e => e.id === id);
+  if (!entry) return;
+  const newNote = prompt('Edit note:', entry.note);
+  if (newNote !== null) { entry.note = newNote; libPersist(); libRender(); }
+}
+
+function libFilter(cat) {
+  libActiveFilter = cat;
+  document.querySelectorAll('#lib-filters button').forEach(b => {
+    const active = b.id === 'lf-' + cat;
+    b.style.background = active ? 'var(--gold)' : 'transparent';
+    b.style.color = active ? 'var(--bg)' : 'var(--ink3)';
+    b.style.borderColor = active ? 'var(--gold)' : 'var(--line)';
+  });
+  libRender();
+}
+
+function libSearch(q) { libSearchQuery = q.toLowerCase(); libRender(); }
+
+function libRender() {
+  let entries = [...libEntries];
+
+  // Pinned first
+  entries.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+  // Filter
+  if (libActiveFilter !== 'all') entries = entries.filter(e => e.cat === libActiveFilter);
+
+  // Search
+  if (libSearchQuery) {
+    entries = entries.filter(e =>
+      e.title.toLowerCase().includes(libSearchQuery) ||
+      e.note.toLowerCase().includes(libSearchQuery) ||
+      e.tags.some(t => t.toLowerCase().includes(libSearchQuery))
+    );
+  }
+
+  const empty = document.getElementById('lib-empty');
+  const cards = document.getElementById('lib-cards');
+
+  if (entries.length === 0) {
+    empty.style.display = 'block';
+    cards.innerHTML = '';
+  } else {
+    empty.style.display = 'none';
+    cards.innerHTML = entries.map(e => libCardHTML(e)).join('');
+  }
+
+  // Stats
+  const withFiles = libEntries.filter(e => e.files && e.files.length > 0).length;
+  const cats = [...new Set(libEntries.map(e => e.cat))].length;
+  const last = libEntries[0] ? new Date(libEntries[0].date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : '—';
+
+  document.getElementById('stat-count').textContent = libEntries.length;
+  document.getElementById('stat-files').textContent = withFiles;
+  document.getElementById('stat-last').textContent = last;
+  document.getElementById('stat-cats').textContent = cats ? cats + ' type' + (cats > 1 ? 's' : '') : '—';
+}
+
+const CAT_LABELS = {
+  framework:'Framework', model:'Financial Model', dashboard:'Dashboard',
+  research:'Research', presentation:'Presentation', note:'Note', other:'Other'
+};
+const CAT_COLORS = {
+  framework:'var(--gold)', model:'var(--green)', dashboard:'#5B8FD6',
+  research:'#9B7D3A', presentation:'#B07D6E', note:'var(--ink3)', other:'var(--ink3)'
+};
+const FILE_ICON = name => {
+  if (!name) return '📄';
+  const ext = name.split('.').pop().toLowerCase();
+  if (['xlsx','xls'].includes(ext)) return '📊';
+  if (['html','htm'].includes(ext)) return '🖥';
+  if (['pdf'].includes(ext)) return '📑';
+  if (['pptx','ppt'].includes(ext)) return '📋';
+  if (['csv'].includes(ext)) return '📈';
+  if (['docx','doc'].includes(ext)) return '📝';
+  return '📄';
+};
+const fmtSize = b => b > 1e6 ? (b/1e6).toFixed(1)+'MB' : (b/1024).toFixed(0)+'KB';
+const fmtDate = iso => new Date(iso).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+
+function libCardHTML(e) {
+  const catColor = CAT_COLORS[e.cat] || 'var(--ink3)';
+  const catLabel = CAT_LABELS[e.cat] || e.cat;
+  const tags = e.tags.map(t =>
+    `<span style="font-family:var(--mono);font-size:9px;letter-spacing:.07em;padding:2px 8px;border:1px solid var(--line);color:var(--ink3)">${t}</span>`
+  ).join('');
+  const files = (e.files || []).map(f =>
+    `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line2)">
+      <span>${FILE_ICON(f.name)}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--ink2);flex:1">${f.name}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--ink3)">${fmtSize(f.size)}</span>
+    </div>`
+  ).join('');
+
+  return `<div style="background:var(--bg);padding:28px 32px;position:relative;transition:background .2s" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg)'">
+    ${e.pinned ? '<div style="position:absolute;top:16px;right:16px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--gold);text-transform:uppercase">📌 Pinned</div>' : ''}
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:12px">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+          <div style="font-family:var(--serif);font-size:20px;font-weight:400;color:var(--ink);letter-spacing:-.01em">${e.title}</div>
+          <span style="font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border:1px solid;color:${catColor};border-color:${catColor}20">${catLabel}</span>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.04em">${fmtDate(e.date)}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="libPin(${e.id})" title="${e.pinned ? 'Unpin' : 'Pin'}" style="font-family:var(--mono);font-size:10px;padding:5px 10px;border:1px solid var(--line);background:transparent;color:var(--ink3);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor=''">
+          ${e.pinned ? 'Unpin' : 'Pin'}
+        </button>
+        <button onclick="libEditNote(${e.id})" title="Edit note" style="font-family:var(--mono);font-size:10px;padding:5px 10px;border:1px solid var(--line);background:transparent;color:var(--ink3);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor=''">
+          Edit
+        </button>
+        <button onclick="libDelete(${e.id})" title="Delete" style="font-family:var(--mono);font-size:10px;padding:5px 10px;border:1px solid var(--line);background:transparent;color:var(--red);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--red)'" onmouseout="this.style.borderColor=''">
+          ✕
+        </button>
+      </div>
+    </div>
+    ${e.note ? `<div style="font-family:var(--sans);font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px;padding:12px 14px;background:var(--bg2);border-left:2px solid var(--gold3)">${e.note.replace(/\n/g,'<br>')}</div>` : ''}
+    ${files ? `<div style="margin-bottom:14px">${files}</div>` : ''}
+    ${tags ? `<div style="display:flex;flex-wrap:wrap;gap:6px">${tags}</div>` : ''}
+  </div>`;
+}
+
+// Init on load
+libLoad();
+
+</script>
+</body>
+</html>

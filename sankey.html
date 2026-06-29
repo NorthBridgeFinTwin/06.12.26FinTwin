@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC · Financial Digital Twin · Sankey Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f4efe5;
+  --surface:#fdf8f0;
+  --border:rgba(100,80,40,0.12);
+  --text:#26211a;
+  --muted:#8a7a62;
+  --blue:#2c5fa8;   --blue-l:rgba(44,95,168,0.13);  --blue-b:rgba(44,95,168,0.3);
+  --purple:#5b3fa8; --purple-l:rgba(91,63,168,0.13); --purple-b:rgba(91,63,168,0.3);
+  --coral:#a83228;  --coral-l:rgba(168,50,40,0.11);  --coral-b:rgba(168,50,40,0.3);
+  --teal:#0d7a5c;   --teal-l:rgba(13,122,92,0.12);   --teal-b:rgba(13,122,92,0.3);
+  --green:#2a6e3a;  --green-l:rgba(42,110,58,0.12);  --green-b:rgba(42,110,58,0.3);
+  --amber:#8a5a00;  --amber-l:rgba(138,90,0,0.12);   --amber-b:rgba(138,90,0,0.3);
+  --gray:#6a5f50;   --gray-l:rgba(106,95,80,0.1);    --gray-b:rgba(106,95,80,0.28);
+  --red:#a02020;
+}
+html,body{height:100%;overflow-x:hidden;}
+body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--text);}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(100,80,40,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(100,80,40,0.025) 1px,transparent 1px);background-size:24px 24px;pointer-events:none;z-index:0;}
+
+/* HEADER */
+header{position:relative;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.h1{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--text);}
+.hsub{font-size:8px;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-top:1px;}
+.pills{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+.pill{padding:2px 8px;border-radius:20px;font-size:8px;font-weight:500;border:1px solid;white-space:nowrap;}
+.pill.blue{background:var(--blue-l);border-color:var(--blue-b);color:var(--blue);}
+.pill.amber{background:var(--amber-l);border-color:var(--amber-b);color:var(--amber);}
+.pill.teal{background:var(--teal-l);border-color:var(--teal-b);color:var(--teal);}
+.pill.red{background:rgba(160,32,32,0.08);border-color:rgba(160,32,32,0.25);color:var(--red);}
+
+/* BANNER */
+.banner{position:relative;z-index:10;background:var(--surface);border-bottom:2px solid var(--border);padding:8px 24px;display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;}
+.bn{text-align:center;}
+.bn-lbl{font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.bn-val{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--blue);}
+.bn-val.red{color:var(--red);}
+.bn-warn{font-size:8px;color:var(--red);background:rgba(160,32,32,0.07);border:1px solid rgba(160,32,32,0.2);border-radius:4px;padding:2px 7px;margin-top:2px;display:none;}
+.bn-warn.show{display:inline-block;}
+
+/* SANKEY CONTAINER */
+.sankey-wrap{position:relative;z-index:1;padding:16px 16px 8px;display:flex;gap:0;align-items:stretch;}
+
+/* Column label row */
+.col-labels{display:flex;gap:0;padding:0 16px 4px;}
+.cl{font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-align:center;}
+
+/* LEFT NODES */
+.left-nodes{display:flex;flex-direction:column;gap:0;flex-shrink:0;}
+.src-node{border-radius:8px;border:1.5px solid;padding:9px 11px 8px;cursor:pointer;transition:all 0.25s;position:relative;}
+.src-node:hover{filter:brightness(0.94);}
+.src-node.purple{background:var(--purple-l);border-color:var(--purple-b);}
+.src-node.coral{background:var(--coral-l);border-color:var(--coral-b);}
+.src-node.teal{background:var(--teal-l);border-color:var(--teal-b);}
+.src-node.gray{background:var(--gray-l);border-color:var(--gray-b);}
+.src-node.active.purple{background:rgba(91,63,168,0.32);border-color:rgba(91,63,168,0.85);box-shadow:0 0 0 1px rgba(91,63,168,0.4);}
+.src-node.active.coral{background:rgba(168,50,40,0.28);border-color:rgba(168,50,40,0.85);box-shadow:0 0 0 1px rgba(168,50,40,0.4);}
+.src-node.active.teal{background:rgba(13,122,92,0.28);border-color:rgba(13,122,92,0.85);box-shadow:0 0 0 1px rgba(13,122,92,0.4);}
+.src-node.active.gray{background:rgba(106,95,80,0.22);border-color:rgba(106,95,80,0.85);box-shadow:0 0 0 1px rgba(106,95,80,0.4);}
+.src-node.active .sn-name{color:var(--text);}
+.src-node.active .sn-sub{color:var(--muted);}
+.sn-name{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;line-height:1.2;}
+.sn-sub{font-size:8px;color:var(--muted);line-height:1.4;margin-top:2px;}
+.sn-foot{display:flex;align-items:center;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.sn-date-wrap{display:flex;align-items:center;gap:3px;}
+.sn-date-lbl{font-size:7px;color:var(--muted);}
+.sn-date-input{font-family:'DM Mono',monospace;font-size:8px;border:1px solid var(--border);border-radius:3px;padding:1px 4px;background:var(--surface);color:var(--text);outline:none;transition:border-color 0.15s;width:82px;cursor:pointer;}
+.sn-date-input:focus{border-color:var(--blue);}
+.sn-date-input.changed{border-color:var(--amber);background:var(--amber-l);}
+.sbadge{font-size:7px;padding:1px 5px;border-radius:5px;border:1px solid;font-weight:500;text-transform:uppercase;}
+.sbadge.open{background:var(--blue-l);border-color:var(--blue-b);color:var(--blue);}
+.sbadge.progress{background:var(--amber-l);border-color:var(--amber-b);color:var(--amber);}
+.sbadge.lock{background:rgba(160,32,32,0.07);border-color:rgba(160,32,32,0.22);color:var(--red);}
+.sbadge.blk{background:rgba(138,90,0,0.1);border-color:rgba(138,90,0,0.28);color:var(--amber);}
+/* Node checkbox */
+.node-check{width:13px;height:13px;accent-color:var(--blue);cursor:pointer;flex-shrink:0;margin-left:auto;}
+.ext-node .node-check{accent-color:var(--teal);}
+
+/* CENTER NODES (outputs) */
+.center-nodes{display:flex;flex-direction:column;gap:0;flex-shrink:0;align-items:center;}
+.out-node:hover{filter:brightness(0.94);}
+.out-node.blue{background:var(--blue-l);border-color:var(--blue-b);}
+.out-node.green{background:var(--green-l);border-color:var(--green-b);}
+.out-node.amber{background:var(--amber-l);border-color:var(--amber-b);}
+.on-name{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;line-height:1.2;}
+.on-sub{font-size:8px;color:var(--muted);line-height:1.4;margin-top:2px;}
+.on-foot{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;position:relative;z-index:1;}
+/* Proportional fill bar — sits behind content */
+.on-fill{position:absolute;inset:0;border-radius:6px;width:0%;transition:width 0.4s cubic-bezier(0.34,1.3,0.64,1),opacity 0.3s;opacity:0;pointer-events:none;}
+.out-node{border-radius:8px;border:1.5px solid;padding:9px 11px 8px;cursor:pointer;transition:border-color 0.25s,box-shadow 0.25s;width:170px;position:relative;overflow:hidden;}
+.out-node .on-name,.out-node .on-sub,.out-node .on-foot{position:relative;z-index:1;}
+.out-node.blue .on-fill{background:rgba(44,95,168,0.22);}
+.out-node.green .on-fill{background:rgba(42,110,58,0.22);}
+.out-node.amber .on-fill{background:rgba(138,90,0,0.22);}
+/* Border intensifies when any contributor active */
+.out-node.partlit.blue{border-color:rgba(44,95,168,0.65);box-shadow:0 0 0 1px rgba(44,95,168,0.25);}
+.out-node.partlit.green{border-color:rgba(42,110,58,0.65);box-shadow:0 0 0 1px rgba(42,110,58,0.25);}
+.out-node.partlit.amber{border-color:rgba(138,90,0,0.65);box-shadow:0 0 0 1px rgba(138,90,0,0.25);}
+/* Contribution count label */
+.on-pct{position:absolute;top:5px;right:7px;font-size:7px;font-family:'DM Mono',monospace;font-weight:500;opacity:0;transition:opacity 0.3s;z-index:2;}
+
+/* RIGHT NODES (external) */
+.right-nodes{display:flex;flex-direction:column;gap:0;flex-shrink:0;}
+.ext-node{border-radius:8px;border:1.5px solid;padding:9px 11px 8px;cursor:pointer;transition:all 0.25s;}
+.ext-node:hover{filter:brightness(0.94);}
+.ext-node.teal{background:var(--teal-l);border-color:var(--teal-b);}
+.ext-node.amber{background:var(--amber-l);border-color:var(--amber-b);}
+.ext-node.active.teal{background:rgba(13,122,92,0.28);border-color:rgba(13,122,92,0.85);box-shadow:0 0 0 1px rgba(13,122,92,0.4);}
+.ext-node.active.amber{background:rgba(138,90,0,0.28);border-color:rgba(138,90,0,0.85);box-shadow:0 0 0 1px rgba(138,90,0,0.4);}
+.en-tag{font-size:7px;letter-spacing:0.06em;text-transform:uppercase;color:var(--teal);font-weight:500;margin-bottom:2px;}
+.en-tag.amber{color:var(--amber);}
+.en-name{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;line-height:1.2;}
+.en-sub{font-size:8px;color:var(--muted);line-height:1.4;margin-top:2px;}
+.en-foot{display:flex;gap:4px;margin-top:5px;align-items:center;}
+/* Output node active state */
+.out-node{border-radius:8px;border:1.5px solid;padding:9px 11px 8px;cursor:pointer;transition:all 0.25s;width:170px;}
+.out-node.lit.blue{background:rgba(44,95,168,0.32);border-color:rgba(44,95,168,0.85);box-shadow:0 0 0 1px rgba(44,95,168,0.35);}
+.out-node.lit.green{background:rgba(42,110,58,0.32);border-color:rgba(42,110,58,0.85);box-shadow:0 0 0 1px rgba(42,110,58,0.35);}
+.out-node.lit.amber{background:rgba(138,90,0,0.28);border-color:rgba(138,90,0,0.85);box-shadow:0 0 0 1px rgba(138,90,0,0.35);}
+
+/* SVG FLOW */
+.flow-svg{position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:0;overflow:visible;}
+
+/* BOTTOM SECTIONS */
+.bottom-wrap{position:relative;z-index:1;padding:0 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* SaaS Analytics Engine */
+.modules-box{background:var(--surface);border:1.5px solid var(--blue-b);border-radius:8px;padding:12px 14px;}
+.mb-title{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;}
+.mod-list{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+.mod-pill{background:var(--blue-l);border:1px solid var(--blue-b);border-radius:20px;padding:3px 10px;font-size:8px;color:var(--blue);cursor:pointer;transition:filter 0.15s;font-family:'Syne',sans-serif;font-weight:600;}
+.mod-pill:hover{filter:brightness(0.9);}
+.formula-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.formula-card{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;cursor:pointer;transition:all 0.18s;}
+.formula-card:hover{border-color:var(--blue-b);background:var(--blue-l);transform:translateY(-1px);}
+.fc-name{font-family:'Syne',sans-serif;font-weight:700;font-size:9px;color:var(--text);margin-bottom:4px;}
+.fc-formula{font-family:'DM Mono',monospace;font-size:8px;color:var(--blue);background:rgba(44,95,168,0.06);border-radius:4px;padding:3px 6px;line-height:1.5;word-break:break-word;}
+.fc-bench{font-size:7px;color:var(--muted);margin-top:4px;}
+
+/* Blockers */
+.blockers-box{background:var(--surface);border:1.5px solid rgba(160,32,32,0.2);border-radius:8px;padding:10px 12px;}
+.bb-title{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:7px;}
+.blk-list{display:flex;flex-direction:column;gap:5px;}
+.blk-item{display:flex;align-items:flex-start;gap:7px;padding:5px 7px;border-radius:5px;cursor:pointer;transition:background 0.15s;}
+.blk-item:hover{background:rgba(160,32,32,0.05);}
+.blk-item.amber:hover{background:var(--amber-l);}
+.blk-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:2px;}
+.blk-dot.amber{background:var(--amber);}
+.blk-title{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;color:var(--text);}
+.blk-desc{font-size:8px;color:var(--muted);line-height:1.5;margin-top:1px;}
+
+/* DETAIL OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(42,36,24,0.5);z-index:200;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.dpanel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;max-width:560px;width:100%;position:relative;max-height:85vh;overflow-y:auto;}
+.dclose{position:absolute;top:10px;right:10px;width:22px;height:22px;background:rgba(100,80,40,0.08);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--muted);}
+.dclose:hover{color:var(--text);}
+.d-tag{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.d-title{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--text);margin-bottom:10px;}
+.d-body{font-size:10px;color:var(--muted);line-height:1.8;}
+.d-body p{margin-bottom:8px;}
+.d-body strong{color:var(--text);font-weight:500;}
+.d-subtasks{margin:8px 0 4px;display:flex;flex-direction:column;gap:3px;}
+.d-task{display:flex;align-items:flex-start;gap:7px;padding:4px 8px;border-radius:5px;background:var(--surface2);border:1px solid var(--border);}
+.d-task-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.d-task-name{font-size:10px;color:var(--text);line-height:1.5;flex:1;}
+.d-task-meta{font-size:8px;color:var(--muted);white-space:nowrap;margin-top:1px;}
+.d-section-lbl{font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px;}
+
+footer{padding:8px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:8px;color:var(--muted);background:var(--surface);}
+</style>
+</head>
+<body>
+
+<header>
+  <div><div class="h1">ABC · Financial Digital Twin · May 2026</div><div class="hsub">Month-end close · Live flow tracker · Jun 1, 2026</div></div>
+  <div class="pills">
+    <span class="pill blue">20 tasks</span>
+    <span class="pill amber">NS lock Jun 11</span>
+    <span class="pill teal">Close call Jun 9</span>
+    <span class="pill red">ROUA $168K variance</span>
+    <span class="pill red">2 blockers</span>
+  </div>
+</header>
+
+<div class="banner">
+  <div class="bn"><div class="bn-lbl">Critical path clears</div><div class="bn-val" id="last-src">Jun 5, 2026</div></div>
+  <div class="bn"><div class="bn-lbl">Digital twin — estimated completion</div><div class="bn-val" id="twin-done">Jun 9, 2026</div><div class="bn-warn" id="bn-warn"></div></div>
+  <div class="bn"><div class="bn-lbl">NetSuite hard lock</div><div class="bn-val red">Jun 11, 2026</div></div>
+  <div class="bn"><div class="bn-lbl">Buffer days</div><div class="bn-val" id="buf-days" style="font-size:16px;">4</div></div>
+</div>
+
+<!-- COL LABELS -->
+<div class="col-labels" id="col-labels" style="display:flex;gap:0;padding:6px 16px 2px;position:relative;z-index:1;">
+  <div class="cl" id="lbl-left" style="text-align:left;"></div>
+  <div class="cl" id="lbl-spine1" style="text-align:center;"></div>
+  <div class="cl" id="lbl-center" style="text-align:center;flex:1;"></div>
+  <div class="cl" id="lbl-spine2" style="text-align:center;"></div>
+  <div class="cl" id="lbl-right" style="text-align:right;"></div>
+</div>
+
+<!-- SANKEY MAIN -->
+<div class="sankey-wrap" id="sankey-wrap" style="position:relative;">
+
+  <!-- LEFT: Accounting source nodes -->
+  <div class="left-nodes" id="left-nodes" style="width:180px;flex-shrink:0;z-index:1;position:relative;padding:4px 0;gap:6px;"></div>
+
+  <!-- CLOSE PROCESS SPINE (SVG column, drawn by JS) -->
+  <div id="spine-col" style="flex:1;flex-shrink:0;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;"></div>
+
+  <!-- CENTER: Output nodes -->
+  <div class="center-nodes" id="center-nodes" style="flex:1;z-index:1;position:relative;padding:4px 0;gap:7px;align-items:center;justify-content:center;"></div>
+
+  <!-- EXTERNAL SPINE (SVG column, drawn by JS) -->
+  <div id="ext-spine-col" style="flex:1;flex-shrink:0;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;"></div>
+
+  <!-- RIGHT: External signal nodes -->
+  <div class="right-nodes" id="right-nodes" style="width:180px;flex-shrink:0;z-index:1;position:relative;padding:4px 0;gap:6px;"></div>
+
+  <!-- FLOW SVG overlay -->
+  <svg id="flow-svg" class="flow-svg"></svg>
+
+</div><!-- /sankey-wrap -->
+
+<!-- BOTTOM: SaaS Analytics Engine + Blockers -->
+<div class="bottom-wrap">
+  <div class="modules-box">
+    <div class="mb-title">SaaS Performance Analytics Engine</div>
+    <div class="mod-list">
+      <div class="mod-pill" onclick="openDetail('glmod')">GL consolidation</div>
+      <div class="mod-pill" onclick="openDetail('scenmod')">What-if scenarios</div>
+      <div class="mod-pill" onclick="openDetail('varmod')">Variance / flux</div>
+      <div class="mod-pill" onclick="openDetail('kpimod')">KPI alerting</div>
+      <div class="mod-pill" onclick="openDetail('drvmod')">P&amp;L driver tree</div>
+      <div class="mod-pill" onclick="openDetail('ipomod')">IPO readiness</div>
+    </div>
+    <div class="formula-grid">
+      <div class="formula-card" onclick="openDetail('f_rule40')">
+        <div class="fc-name">Rule of 40</div>
+        <div class="fc-formula">Revenue Growth% + Profit Margin%</div>
+        <div class="fc-bench">Benchmark: ≥ 40 · ABC: ~82% growth</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_arr')">
+        <div class="fc-name">ARR / MRR</div>
+        <div class="fc-formula">MRR × 12 = ARR<br>Δ ARR = New + Expansion − Churn</div>
+        <div class="fc-bench">ABC: +82% YoY TTM</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_nrr')">
+        <div class="fc-name">Net Revenue Retention</div>
+        <div class="fc-formula">(BOM ARR + Expansion − Churn) ÷ BOM ARR</div>
+        <div class="fc-bench">Benchmark: &gt;120% best-in-class</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_gm')">
+        <div class="fc-name">Gross Margin</div>
+        <div class="fc-formula">(Revenue − COGS) ÷ Revenue</div>
+        <div class="fc-bench">SaaS benchmark: 70–80% · affects IPO multiple</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_cac')">
+        <div class="fc-name">CAC &amp; Payback</div>
+        <div class="fc-formula">CAC = S&amp;M Spend ÷ New Customers<br>Payback = CAC ÷ (ACV × GM%)</div>
+        <div class="fc-bench">Benchmark: &lt;18 months payback</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_ltv')">
+        <div class="fc-name">LTV : CAC</div>
+        <div class="fc-formula">LTV = ARPU × GM% ÷ Churn Rate<br>LTV:CAC = LTV ÷ CAC</div>
+        <div class="fc-bench">Benchmark: ≥ 3× · &gt;5× exceptional</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_burn')">
+        <div class="fc-name">Burn Multiple</div>
+        <div class="fc-formula">Net Burn ÷ Net New ARR</div>
+        <div class="fc-bench">&lt;1× great · 1–1.5× good · &gt;2× concerning</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_magic')">
+        <div class="fc-name">Magic Number</div>
+        <div class="fc-formula">Δ ARR (Qtrly) × 4 ÷ Prior Q S&amp;M</div>
+        <div class="fc-bench">&gt;0.75 efficient · &gt;1.0 accelerate spend</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_ntm')">
+        <div class="fc-name">NTM Revenue Multiple</div>
+        <div class="fc-formula">EV ÷ NTM Revenue</div>
+        <div class="fc-bench">ABC: $9.3B / NTM Rev · public SaaS ~8–15×</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_opex')">
+        <div class="fc-name">OpEx Efficiency</div>
+        <div class="fc-formula">R&amp;D + S&amp;M + G&amp;A as % of Revenue</div>
+        <div class="fc-bench">IPO target: R&amp;D &lt;25% · G&amp;A &lt;10%</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_runway')">
+        <div class="fc-name">Cash Runway</div>
+        <div class="fc-formula">Cash Balance ÷ Monthly Net Burn</div>
+        <div class="fc-bench">Target: &gt;24 months pre-IPO</div>
+      </div>
+      <div class="formula-card" onclick="openDetail('f_fcf')">
+        <div class="fc-name">FCF Margin</div>
+        <div class="fc-formula">Free Cash Flow ÷ Revenue</div>
+        <div class="fc-bench">IPO readiness: positive FCF margin &gt;0%</div>
+      </div>
+    </div>
+  </div>
+  <div class="blockers-box">
+    <div class="bb-title">Active blockers</div>
+    <div class="blk-list">
+      <div class="blk-item" onclick="openDetail('b1')"><div class="blk-dot"></div><div><div class="blk-title">FP&amp;A vendor budget access</div><div class="blk-desc">Raised to Shubs · blocks accruals PO list · unresolved</div></div></div>
+      <div class="blk-item" onclick="openDetail('b2')"><div class="blk-dot"></div><div><div class="blk-title">AI Desk accrual calc missing</div><div class="blk-desc">A: must document how AI Desk amount was calculated</div></div></div>
+      <div class="blk-item" onclick="openDetail('b3')"><div class="blk-dot"></div><div><div class="blk-title">ROUA lease variance $168K</div><div class="blk-desc">GL $137,858 vs Excel $306,446 · blocks FS sign-off · B/A</div></div></div>
+      <div class="blk-item amber" onclick="openDetail('b4')"><div class="blk-dot amber"></div><div><div class="blk-title">Security accrual TBD</div><div class="blk-desc">April 2026 breach · amount unknown · Mandiant ongoing</div></div></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>ABC · Financial Digital Twin · May 2026 Close</div>
+  <div>Sources: FloQast · NetSuite · Tasks_v5_29_26 · Month_End_Close_Timeline</div>
+  <div>Entities: US · GmbH · UK · Canada · NuxtLabs</div>
+</footer>
+
+<!-- DETAIL OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeDetail(event)">
+  <div class="dpanel">
+    <div class="dclose" onclick="closeDetail(null)">×</div>
+    <div class="d-tag" id="d-tag"></div>
+    <div class="d-title" id="d-title"></div>
+    <div class="d-body" id="d-body"></div>
+  </div>
+</div>
+
+<script>
+/* ── Data ───────────────────────────────────────────────────────────────── */
+const SOURCES = [
+  {id:'payroll',  color:'teal',   name:'Payroll / EOR',     sub:'Remote · ADP · bonus accruals',          dueKey:'payroll',  def:'2026-06-02', status:'progress', statusLbl:'In progress', blockers:[]},
+  {id:'subs',     color:'gray',   name:'Subsidiaries',      sub:'GmbH · UK · Canada · NuxtLabs',          dueKey:'subs',     def:'2026-06-03', status:'open',     statusLbl:'Open',        blockers:[]},
+  {id:'rev',      color:'teal',   name:'Revenue / Stripe',  sub:'Subscriptions · marketplace',            dueKey:'rev',      def:'2026-06-04', status:'open',     statusLbl:'Open',        blockers:[]},
+  {id:'fa',       color:'purple', name:'Fixed assets',      sub:'Depreciation · FA register · LHI',       dueKey:'fa',       def:'2026-06-04', status:'open',     statusLbl:'Open',        blockers:['Register gap']},
+  {id:'accruals', color:'coral',  name:'Accruals',          sub:'Hosting · legal · contractors · MDF',    dueKey:'accruals', def:'2026-06-04', status:'open',     statusLbl:'Open',        blockers:["FP&A access"]},
+  {id:'capsoft',  color:'purple', name:'Cap software',      sub:'Additions · amortization · SBC qtrly',   dueKey:'capsoft',  def:'2026-06-05', status:'progress', statusLbl:'In progress', blockers:['A review']},
+  {id:'gl',       color:'gray',   name:'NetSuite GL',       sub:'Trial balance · JE review · FloQast',    dueKey:'gl',       def:'2026-06-11', status:'lock',     statusLbl:'Lock Jun 11', blockers:[]},
+];
+
+const OUTPUTS = [
+  {id:'finpkg',  color:'blue',  name:'Financial package',    sub:'P&L · BS · flux · Werner review',           foot:[{cls:'date',t:'Jun 6'},{cls:'open',t:'Pending'}]},
+  {id:'scenout', color:'blue',  name:'Scenario model',        sub:'What-if · IPO readiness · growth ranges',  foot:[{cls:'date',t:'BD4+'},{cls:'open',t:'Building'}]},
+  {id:'varout',  color:'green', name:'Variance / flux',       sub:'Auto MoM commentary · Finance review',     foot:[{cls:'date',t:'BD3'},{cls:'open',t:'Open'}]},
+  {id:'kpiout',  color:'green', name:'C-suite KPI alerts',    sub:'Rule of 40 · NTM multiples · real-time',   foot:[{cls:'done',t:'Real-time'}]},
+  {id:'ipoout',  color:'blue',  name:'IPO readiness score',   sub:'vs public SaaS benchmarks · Rule of 40',   foot:[{cls:'date',t:'BD4+'},{cls:'open',t:'Building'}]},
+  {id:'awsout',  color:'amber', name:'AWS spend report',      sub:'Partner v0 dashboard · compute by service', foot:[{cls:'date',t:'Jun 16'},{cls:'date',t:'Post-close'}]},
+  {id:'pkgout',  color:'blue',  name:'BOD package',           sub:'Werner → Marten · board-ready narrative',  foot:[{cls:'date',t:'Jun 10'},{cls:'open',t:'Pending'}]},
+];
+
+const EXTERNALS = [
+  {id:'cloud',    color:'teal',  tag:'Cloud infra',    name:'Cloud spend',        sub:'AWS · GCP · Datadog',           foot:[{cls:'done',t:'Live'}]},
+  {id:'sfdc',     color:'teal',  tag:'Sales',          name:'SFDC pipeline',      sub:'ENT deals · Stripe check',      foot:[{cls:'done',t:'Real-time'}]},
+  {id:'talent',   color:'teal',  tag:'Labor',          name:'Talent market',      sub:'Comp benchmarks · Radford',     foot:[{cls:'done',t:'Quarterly'}]},
+  {id:'cpi',      color:'teal',  tag:'Macro',          name:'Inflation / CPI',    sub:'Macro · GBP/EUR/CAD FX',        foot:[{cls:'done',t:'Monthly'}]},
+  {id:'growth',   color:'teal',  tag:'Competitive',    name:'Growth signals',     sub:'ARR +82% YoY · v0 6M users',    foot:[{cls:'done',t:'Real-time'}]},
+  {id:'ipo',      color:'teal',  tag:'Capital mkts',   name:'IPO benchmarks',     sub:'NTM multiples · public SaaS',   foot:[{cls:'done',t:'Live'}]},
+  {id:'security', color:'amber', tag:'Risk',           name:'Security incident',  sub:'Mandiant feed · accrual TBD',   foot:[{cls:'progress',t:'Active'}]},
+];
+
+const CLOSE_MILESTONES = [
+  {id:'bd1',  label:'Jun 1', bd:'BD1 · Hosting'},
+  {id:'bd2',  label:'Jun 3', bd:'BD2 · Partnership'},
+  {id:'bd3',  label:'Jun 4', bd:'BD3 · FA + Legal'},
+  {id:'bd4',  label:'Jun 5', bd:'BD4 · Cap soft'},
+  {id:'bd5',  label:'Jun 8', bd:'Prelim to Finance'},
+  {id:'cc',   label:'Jun 9', bd:'Close call'},
+  {id:'lock', label:'Jun 11',bd:'NS Lock', lock:true},
+];
+
+const EXT_MILESTONES = [
+  {id:'e1', label:'Live',      bd:'Cloud · SFDC'},
+  {id:'e2', label:'Real-time', bd:'ARR · Pipeline'},
+  {id:'e3', label:'Monthly',   bd:'CPI · FX rates'},
+  {id:'e4', label:'Quarterly', bd:'Talent · Comps'},
+  {id:'e5', label:'Quarterly', bd:'IPO benchmarks'},
+  {id:'e6', label:'Pre-close', bd:'Accrual inputs'},
+  {id:'e7', label:'Active',    bd:'Security data', warn:true},
+];
+
+/* ── Due date state ─────────────────────────────────────────────────────── */
+const dueDates = {};
+SOURCES.forEach(s => { dueDates[s.dueKey] = new Date(s.def); });
+
+// Checked state
+const srcActive = new Set();
+const extActive = new Set();
+
+function fmt(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function addBD(d,n){let r=new Date(d),a=0;while(a<n){r.setDate(r.getDate()+1);if(r.getDay()!==0&&r.getDay()!==6)a++;}return r;}
+
+function recalc(){
+  const last=new Date(Math.max(...Object.values(dueDates).map(d=>d.getTime())));
+  const done=addBD(last,4);
+  const lock=new Date('2026-06-11');
+  const late=done>lock;
+  document.getElementById('last-src').textContent=fmt(last);
+  const el=document.getElementById('twin-done');
+  el.textContent=fmt(done); el.className='bn-val'+(late?' red':'');
+  const w=document.getElementById('bn-warn');
+  if(late){const d=Math.round((done-lock)/864e5);w.textContent=`${d}d past NS lock`;w.className='bn-warn show';}
+  else{w.className='bn-warn';}
+  document.getElementById('buf-days').textContent=Math.max(0,Math.round((lock-done)/864e5));
+}
+
+// Which outputs light up when each source is checked
+// srcId → set of output ids
+const SRC_LIGHTS = {
+  payroll:  ['finpkg','varout','pkgout'],
+  subs:     ['finpkg','varout','pkgout'],
+  rev:      ['finpkg','scenout','varout','kpiout','pkgout'],
+  fa:       ['finpkg','varout','pkgout'],
+  accruals: ['finpkg','varout','kpiout','awsout','pkgout'],
+  capsoft:  ['finpkg','scenout','varout','ipoout','pkgout'],
+  gl:       ['finpkg','varout','kpiout','pkgout'],
+};
+// extId → set of output ids
+const EXT_LIGHTS = {
+  cloud:    ['awsout','finpkg','varout'],
+  sfdc:     ['finpkg','scenout','kpiout'],
+  talent:   ['scenout','ipoout'],
+  cpi:      ['finpkg','scenout','varout'],
+  growth:   ['scenout','kpiout','ipoout'],
+  ipo:      ['ipoout','scenout','kpiout'],
+  security: ['finpkg','varout'],
+};
+
+// Total contributors per output (src + ext combined)
+function totalContributors(outId){
+  let n=0;
+  Object.values(SRC_LIGHTS).forEach(arr=>{ if(arr.includes(outId)) n++; });
+  Object.values(EXT_LIGHTS).forEach(arr=>{ if(arr.includes(outId)) n++; });
+  return n;
+}
+function activeContributors(outId){
+  let n=0;
+  srcActive.forEach(id=>{ if((SRC_LIGHTS[id]||[]).includes(outId)) n++; });
+  extActive.forEach(id=>{ if((EXT_LIGHTS[id]||[]).includes(outId)) n++; });
+  return n;
+}
+function litOutputs(){
+  const lit=new Set();
+  srcActive.forEach(id=>(SRC_LIGHTS[id]||[]).forEach(o=>lit.add(o)));
+  extActive.forEach(id=>(EXT_LIGHTS[id]||[]).forEach(o=>lit.add(o)));
+  return lit;
+}
+
+function applyOutputLit(){
+  document.querySelectorAll('#center-nodes .out-node').forEach(nd=>{
+    const id=nd.id.replace('on-','');
+    const active=activeContributors(id);
+    const total=totalContributors(id);
+    const pct=total>0?active/total:0;
+    const fill=nd.querySelector('.on-fill');
+    const pctEl=nd.querySelector('.on-pct');
+    if(fill){ fill.style.width=pct>0?`${Math.round(pct*100)}%`:'0%'; fill.style.opacity=pct>0?'1':'0'; }
+    if(pctEl){ pctEl.textContent=pct>0?`${active}/${total}`:''; pctEl.style.opacity=pct>0?'1':'0'; }
+    if(pct>0) nd.classList.add('partlit'); else nd.classList.remove('partlit');
+  });
+}
+/* ── Render source nodes ──────────────────────────────────────────────────── */
+function dayDelta(key){
+  const orig=SOURCES.find(s=>s.dueKey===key);
+  if(!orig)return 0;
+  return Math.round((dueDates[key]-new Date(orig.def))/(864e5));
+}
+
+function cardBorderStyle(delta){
+  if(delta===0)return'';
+  const thick=Math.min(6,1.5+Math.abs(delta)*0.5).toFixed(1);
+  const color=delta>0
+    ?`rgba(160,32,32,${Math.min(0.9,0.4+Math.abs(delta)*0.1)})`
+    :`rgba(30,120,60,${Math.min(0.9,0.4+Math.abs(delta)*0.1)})`;
+  return`border:${thick}px solid ${color}!important;`;
+}
+
+function buildSources(){
+  const col=document.getElementById('left-nodes');
+  col.innerHTML='';
+  const sorted=[...SOURCES].sort((a,b)=>dueDates[a.dueKey]-dueDates[b.dueKey]);
+  sorted.forEach((s,i)=>{
+    const nd=document.createElement('div');
+    const isActive=srcActive.has(s.id);
+    nd.className=`src-node ${s.color}${isActive?' active':''}`;
+    nd.id=`sn-${s.id}`;
+    nd.setAttribute('data-src',s.id);
+    const delta=dayDelta(s.dueKey);
+    let styleStr=`animation-delay:${i*0.04}s;`;
+    if(delta!==0) styleStr+=cardBorderStyle(delta);
+    nd.setAttribute('style',styleStr);
+    nd.onclick=()=>openDetail(s.id+'src');
+    const blkHtml=s.blockers.map(b=>`<span class="sbadge blk">${b}</span>`).join('');
+    const deltaLabel=delta>0?`<span class="sbadge" style="background:rgba(160,32,32,0.08);border-color:rgba(160,32,32,0.3);color:#a02020;">+${delta}d late</span>`
+      :delta<0?`<span class="sbadge" style="background:rgba(30,120,60,0.08);border-color:rgba(30,120,60,0.3);color:#1e7840;">${delta}d early</span>`:'';
+    nd.innerHTML=`
+      <div style="display:flex;align-items:flex-start;gap:5px;">
+        <div style="flex:1;">
+          <div class="sn-name">${s.name}</div>
+          <div class="sn-sub">${s.sub}</div>
+        </div>
+        <input type="checkbox" class="node-check" ${isActive?'checked':''} title="Activate in twin"
+          onclick="event.stopPropagation()"
+          onchange="toggleSrc('${s.id}',this)">
+      </div>
+      <div class="sn-foot">
+        <div class="sn-date-wrap">
+          <span class="sn-date-lbl">Due:</span>
+          <input type="date" class="sn-date-input" id="di-${s.dueKey}"
+            value="${dueDates[s.dueKey].toISOString().split('T')[0]}"
+            onclick="event.stopPropagation()"
+            onchange="onDC('${s.dueKey}','${s.def}',this)">
+        </div>
+        <span class="sbadge ${s.status}">${s.statusLbl}</span>
+        ${blkHtml}${deltaLabel}
+      </div>`;
+    col.appendChild(nd);
+  });
+}
+
+function toggleSrc(id, cb){
+  if(cb.checked) srcActive.add(id); else srcActive.delete(id);
+  buildSources();
+  buildOutputs();
+  setTimeout(drawFlows,30);
+}
+
+function onDC(key,orig,inp){
+  const nd=new Date(inp.value);if(isNaN(nd.getTime()))return;
+  dueDates[key]=nd;
+  buildSources(); recalc(); setTimeout(drawFlows,60);
+}
+
+/* ── Render output nodes ─────────────────────────────────────────────────── */
+function buildOutputs(){
+  const col=document.getElementById('center-nodes');
+  col.innerHTML='';
+  OUTPUTS.forEach((o,i)=>{
+    const nd=document.createElement('div');
+    const active=activeContributors(o.id);
+    const total=totalContributors(o.id);
+    const pct=total>0?active/total:0;
+    nd.className=`out-node ${o.color}${pct>0?' partlit':''}`;
+    nd.id=`on-${o.id}`;
+    nd.style.animationDelay=`${i*0.04}s`;
+    nd.onclick=()=>openDetail(o.id);
+    const footHtml=o.foot.map(f=>`<span class="sbadge ${f.cls}">${f.t}</span>`).join('');
+    nd.innerHTML=`
+      <div class="on-fill" style="width:${pct>0?Math.round(pct*100)+'%':'0%'};opacity:${pct>0?1:0};"></div>
+      <div class="on-pct" style="opacity:${pct>0?1:0};">${pct>0?active+'/'+total:''}</div>
+      <div class="on-name">${o.name}</div>
+      <div class="on-sub">${o.sub}</div>
+      <div class="on-foot">${footHtml}</div>`;
+    col.appendChild(nd);
+  });
+}
+
+/* ── Render external nodes ───────────────────────────────────────────────── */
+function buildExternals(){
+  const col=document.getElementById('right-nodes');
+  col.innerHTML='';
+  EXTERNALS.forEach((e,i)=>{
+    const isActive=extActive.has(e.id);
+    const nd=document.createElement('div');
+    nd.className=`ext-node ${e.color}${isActive?' active':''}`;
+    nd.id=`en-${e.id}`;
+    nd.style.animationDelay=`${i*0.04}s`;
+    nd.onclick=()=>openDetail(e.id);
+    const tagClass=e.color==='amber'?'amber':'';
+    const footHtml=e.foot.map(f=>`<span class="sbadge ${f.cls}">${f.t}</span>`).join('');
+    nd.innerHTML=`
+      <div style="display:flex;align-items:flex-start;gap:5px;">
+        <div style="flex:1;">
+          <div class="en-tag ${tagClass}">${e.tag}</div>
+          <div class="en-name">${e.name}</div>
+          <div class="en-sub">${e.sub}</div>
+        </div>
+        <input type="checkbox" class="node-check" ${isActive?'checked':''} title="Activate in twin"
+          onclick="event.stopPropagation()"
+          onchange="toggleExt('${e.id}',this)">
+      </div>
+      <div class="en-foot">${footHtml}</div>`;
+    col.appendChild(nd);
+  });
+}
+
+function toggleExt(id, cb){
+  if(cb.checked) extActive.add(id); else extActive.delete(id);
+  buildExternals();
+  buildOutputs();
+  setTimeout(drawFlows,30);
+}
+
+/* ── Render spine boxes ──────────────────────────────────────────────────── */
+function buildSpines(){
+  // Close process spine
+  const sc=document.getElementById('spine-col');
+  sc.style.cssText='flex:1;flex-shrink:0;position:relative;z-index:1;padding:4px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+  const sb=document.createElement('div');
+  sb.id='spine-box';
+  sb.style.cssText=`width:80px;background:var(--surface);border:1.5px solid var(--blue-b);border-radius:8px;overflow:hidden;`;
+  CLOSE_MILESTONES.forEach((m,i)=>{
+    const item=document.createElement('div');
+    item.id=`sm-${m.id}`;
+    item.style.cssText=`padding:6px 7px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;${m.lock?'border-top:2px solid var(--red);':''}`;
+    item.onclick=()=>openDetail(m.id);
+    item.onmouseenter=()=>{item.style.background='var(--blue-l)';};
+    item.onmouseleave=()=>{item.style.background='';};
+    item.innerHTML=`<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:9px;color:${m.lock?'var(--red)':'var(--text)'};">${m.label}</div><div style="font-size:7px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.bd}</div>`;
+    if(i===CLOSE_MILESTONES.length-1) item.style.borderBottom='none';
+    sb.appendChild(item);
+  });
+  sc.appendChild(sb);
+
+  // External spine
+  const ec=document.getElementById('ext-spine-col');
+  ec.style.cssText='flex:1;flex-shrink:0;position:relative;z-index:1;padding:4px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+  const eb=document.createElement('div');
+  eb.id='ext-spine-box';
+  eb.style.cssText=`width:80px;background:var(--surface);border:1.5px solid var(--teal-b);border-radius:8px;overflow:hidden;`;
+  EXT_MILESTONES.forEach((m,i)=>{
+    const item=document.createElement('div');
+    item.id=`em-${m.id}`;
+    item.style.cssText=`padding:6px 7px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;${m.warn?'border-top:2px solid var(--amber);':''}`;
+    item.onclick=()=>openDetail(m.id.replace('e','ext'));
+    item.onmouseenter=()=>{item.style.background='var(--teal-l)';};
+    item.onmouseleave=()=>{item.style.background='';};
+    item.innerHTML=`<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:9px;color:${m.warn?'var(--amber)':'var(--teal)'};">${m.label}</div><div style="font-size:7px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.bd}</div>`;
+    if(i===EXT_MILESTONES.length-1) item.style.borderBottom='none';
+    eb.appendChild(item);
+  });
+  ec.appendChild(eb);
+}
+
+/* ── Draw Sankey flows ───────────────────────────────────────────────────── */
+function drawFlows(){
+  const svg=document.getElementById('flow-svg');
+  svg.innerHTML='';
+  const wrap=document.getElementById('sankey-wrap');
+  const wr=wrap.getBoundingClientRect();
+  svg.setAttribute('height',wrap.offsetHeight);
+  svg.setAttribute('width',wrap.offsetWidth);
+
+  function R(el){const r=el.getBoundingClientRect();return{top:r.top-wr.top,bot:r.bottom-wr.top,left:r.left-wr.left,right:r.right-wr.left,mid:(r.top+r.bottom)/2-wr.top,h:r.height};}
+
+  const spineItems=document.querySelectorAll('#spine-box > div');
+  const extItems=document.querySelectorAll('#ext-spine-box > div');
+
+  // ── SOURCE → CLOSE SPINE: broad Sankey bands ────────────────────────────
+  // Each source sends a band whose height ~ the source card height
+  // They merge into the spine's full height
+
+  const srcNodes=document.querySelectorAll('#left-nodes .src-node');
+  const spineBox=document.getElementById('spine-box');
+  const spr=R(spineBox);
+
+  // compute spine right x for input
+  const spineLeft=spr.left;
+  const spineTop=spr.top;
+  const spineBot=spr.bot;
+  const spineH=spr.bot-spr.top;
+
+  // proportional band allocation along spine height
+  const totalSrcH=Array.from(srcNodes).reduce((s,n)=>s+R(n).h,0);
+  let spineY=spineTop;
+
+  // color map
+  const cmap={purple:'rgba(91,63,168,',coral:'rgba(168,50,40,',teal:'rgba(13,122,92,',gray:'rgba(106,95,80,'};
+
+  Array.from(srcNodes).forEach((nd,i)=>{
+    const nr=R(nd);
+    const srcId=nd.getAttribute('data-src');
+    const isActive=srcActive.has(srcId);
+    const srcCls=nd.className.replace(/src-node\s*/,'').replace(/active\s*/,'').trim().split(' ')[0];
+    const stroke=cmap[srcCls]||'rgba(100,80,40,';
+    const bandH=nr.h*(spineH/totalSrcH);
+    const tTop=spineY;
+    const tBot=spineY+bandH;
+    spineY+=bandH;
+    const fromTop=nr.top; const fromBot=nr.bot;
+    const fromX=nr.right; const toX=spineLeft;
+    const cx=(fromX+toX)/2;
+    const path=`M${fromX},${fromTop} C${cx},${fromTop} ${cx},${tTop} ${toX},${tTop} L${toX},${tBot} C${cx},${tBot} ${cx},${fromBot} ${fromX},${fromBot} Z`;
+    const fill=isActive?`${stroke}0.55)`:  `${stroke}0.28)`;
+    const brd =isActive?`${stroke}0.9)`:   `${stroke}0.55)`;
+    const sw  =isActive?1.5:0.7;
+    addPath(svg,path,fill,brd,sw);
+  });
+
+  // ── CLOSE SPINE → OUTPUTS: fan-out bands ────────────────────────────────
+  const outNodes=document.querySelectorAll('#center-nodes .out-node');
+  const outBox=document.getElementById('center-nodes');
+  const obr=R(outBox);
+  const spineRight=spr.right;
+  const totalOutH=Array.from(outNodes).reduce((s,n)=>s+R(n).h,0);
+
+  // Each spine item fans to one or more outputs
+  // Map: spineIdx → outIdx[]
+  const s2o=[[0,5],[1,6],[2,2],[3,0],[3,1],[4,2],[5,3],[5,4],[6,6]];
+  const usedSpineColors=['rgba(44,95,168,','rgba(44,95,168,','rgba(42,110,58,','rgba(44,95,168,','rgba(44,95,168,','rgba(42,110,58,','rgba(138,90,0,','rgba(44,95,168,','rgba(44,95,168,'];
+  let spineOutY=spr.top;
+  const spineOutPortions=Array.from(spineItems).map((si,idx)=>({el:si,r:R(si)}));
+  const outPortions=Array.from(outNodes).map((on,idx)=>({el:on,r:R(on)}));
+
+  s2o.forEach(([si,oi],idx)=>{
+    const sp=spineOutPortions[si];
+    const op=outPortions[oi];
+    if(!sp||!op)return;
+    const outId=OUTPUTS[oi]?.id;
+    const active=activeContributors(outId||'');
+    const total=totalContributors(outId||'');
+    const pct=total>0?active/total:0;
+    const fromX=spr.right;
+    const toX=op.r.left;
+    const fromMid=sp.r.mid;
+    const toMid=op.r.mid;
+    const h=Math.max(5,Math.min(sp.r.h,op.r.h)*(0.5+pct*0.3));
+    const c=usedSpineColors[idx]||'rgba(44,95,168,';
+    const cx=(fromX+toX)/2;
+    const path=`M${fromX},${fromMid-h/2} C${cx},${fromMid-h/2} ${cx},${toMid-h/2} ${toX},${toMid-h/2} L${toX},${toMid+h/2} C${cx},${toMid+h/2} ${cx},${fromMid+h/2} ${fromX},${fromMid+h/2} Z`;
+    addPath(svg,path,`${c}${(0.18+pct*0.4).toFixed(2)})`,`${c}${(0.4+pct*0.45).toFixed(2)})`,0.5+pct*0.9);
+  });
+
+  // ── OUTPUTS → EXTERNAL SPINE: bands from center right ───────────────────
+  const extSpineBox=document.getElementById('ext-spine-box');
+  const esr=R(extSpineBox);
+  const extLeft=esr.left;
+  const o2e=[[0,1],[1,4],[1,5],[2,0],[3,4],[4,5],[5,0],[6,1]];
+  o2e.forEach(([oi,ei])=>{
+    const op=outPortions[oi];
+    const ep=extItems[ei];
+    if(!op||!ep)return;
+    const outId=OUTPUTS[oi]?.id;
+    const active=activeContributors(outId||'');
+    const total=totalContributors(outId||'');
+    const pct=total>0?active/total:0;
+    const epR=R(ep);
+    const fromX=op.r.right;
+    const toX=esr.left;
+    const h=Math.max(4,Math.min(op.r.h,epR.h)*(0.42+pct*0.25));
+    const cx=(fromX+toX)/2;
+    const fromMid=op.r.mid; const toMid=epR.mid;
+    const path=`M${fromX},${fromMid-h/2} C${cx},${fromMid-h/2} ${cx},${toMid-h/2} ${toX},${toMid-h/2} L${toX},${toMid+h/2} C${cx},${toMid+h/2} ${cx},${fromMid+h/2} ${fromX},${fromMid+h/2} Z`;
+    addPath(svg,path,`rgba(13,122,92,${(0.2+pct*0.35).toFixed(2)})`,`rgba(13,122,92,${(0.45+pct*0.4).toFixed(2)})`,0.6+pct*0.8);
+  });
+
+  // ── EXT SPINE → RIGHT SIGNAL NODES: reverse fan ─────────────────────────
+  const rightNodes=document.querySelectorAll('#right-nodes .ext-node');
+  const totalExtH=Array.from(rightNodes).reduce((s,n)=>s+R(n).h,0);
+  const e2r=[0,1,2,3,4,5,6];
+
+  let extSpineY=esr.top;
+  const extSpineH=esr.bot-esr.top;
+  Array.from(rightNodes).forEach((rn,i)=>{
+    const rnr=R(rn);
+    const extId=rn.id.replace('en-','');
+    const isActive=extActive.has(extId);
+    const isAmber=rn.className.includes('amber');
+    const stroke=isAmber?'rgba(138,90,0,':'rgba(13,122,92,';
+    const bandH=rnr.h*(extSpineH/totalExtH);
+    const tTop=extSpineY; const tBot=extSpineY+bandH;
+    extSpineY+=bandH;
+    const fromX=esr.right; const toX=rnr.left;
+    const cx=(fromX+toX)/2;
+    const path=`M${fromX},${tTop} C${cx},${tTop} ${cx},${rnr.top} ${toX},${rnr.top} L${toX},${rnr.bot} C${cx},${rnr.bot} ${cx},${tBot} ${fromX},${tBot} Z`;
+    addPath(svg,path,`${stroke}${isActive?0.5:0.24})`,`${stroke}${isActive?0.9:0.52})`,isActive?1.5:0.6);
+  });
+}
+
+function addPath(svg,d,fill,stroke,sw){
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d',d);
+  p.setAttribute('fill',fill);
+  p.setAttribute('stroke',stroke);
+  p.setAttribute('stroke-width',sw);
+  svg.appendChild(p);
+}
+
+/* ── Detail content ──────────────────────────────────────────────────────── */
+const DET={
+  payrollsrc:{tag:'Source · C / B / Ineke',title:'Payroll / EOR',body:`
+    <p>Remote pre-fund and final invoices via multiple JEs. 13th/14th month accruals for GX employees. Bonus amortization for GmbH and US.</p>
+    <div class="d-section-lbl">Subtasks</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">EOR and Remote.com Accrual</div><div class="d-task-meta">BD2 · B/D</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Remote Payroll Accrual JEs</div><div class="d-task-meta">BD-1 · E</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Remote Payroll Cash JEs</div><div class="d-task-meta">BD-1 · E · Done</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Payroll (US &amp; Int'l) — cash</div><div class="d-task-meta">BD1 · B</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Payroll / PTO — accruals</div><div class="d-task-meta">BD3 · Ineke</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Bonus accrual</div><div class="d-task-meta">Monthly · Payroll</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Severance / Vacation accrual</div><div class="d-task-meta">Monthly · Payroll</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Payroll tax accrual</div><div class="d-task-meta">Monthly · Payroll</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Commission Final for payroll processing</div><div class="d-task-meta">BD5 · Brent</div></div></div>
+    </div>`},
+  subssrc:{tag:'Source · D / B',title:'Subsidiaries',body:`
+    <p>NuxtLabs SAS consolidated since Jul 2025. OpEx allocations, Cost Plus entries, and Crowe statutory packages required each close. Intercompany elimination runs after Cost Plus.</p>
+    <div class="d-section-lbl">Subtasks</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Canada, Nuxt, GmbH &amp; UK entity JEs (excl. tax accrual)</div><div class="d-task-meta">BD2 · D</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Canada, Nuxt, GmbH &amp; UK Cost Plus</div><div class="d-task-meta">BD4 · B</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">OpEx allocations (intl subsidiaries)</div><div class="d-task-meta">BD3 · C</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">FX / Oanda entries</div><div class="d-task-meta">BD-1 · Lynzee</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Intercompany entry approval</div><div class="d-task-meta">Post BD4 · F → A approve</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Record acquired entity transactions (Gel)</div><div class="d-task-meta">BD4 · C/D</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Crowe statutory packages (NuxtLabs, GmbH, UK)</div><div class="d-task-meta">BD4 · Crowe</div></div></div>
+    </div>`},
+  revsrc:{tag:'Source · G / H',title:'Revenue / Stripe',body:`
+    <p>Stripe-based billing. Cash receipts applied weekly. ENT deal completeness check SFDC vs Stripe at month-end. Marketplace partner invoices prepared monthly.</p>
+    <div class="d-section-lbl">Subtasks</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Billings Closed</div><div class="d-task-meta">BD1 · Tiffany Tran</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Monthly Net Usage Revenue Final (JE)</div><div class="d-task-meta">BD2 · G</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Monthly Net Usage Revenue by customer (commissions team)</div><div class="d-task-meta">BD2 · G</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Commission Estimate (received from commissions team)</div><div class="d-task-meta">BD3 · Brent</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Commissions JE</div><div class="d-task-meta">BD3 · H/M</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Revenue / AR</div><div class="d-task-meta">BD3 · G/H</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">COGS Allocations</div><div class="d-task-meta">BD4 · G</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Stripe receivable JE</div><div class="d-task-meta">Monthly · AR</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Bad debt estimate</div><div class="d-task-meta">Monthly · AR · G</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--teal)"></div><div><div class="d-task-name">Marketplace partner invoices</div><div class="d-task-meta">Monthly · Revenue</div></div></div>
+    </div>`},
+  fasrc:{tag:'Source · C',title:'Fixed assets',body:`
+    <p>Depreciation run on FA register. New schedules for office equipment and LHI added this period. CIP accrual pending A and I.</p>
+    <p><strong>Blocker:</strong> FA register has blank cells — A flagged for June cleanup.</p>
+    <div class="d-section-lbl">Subtasks</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Fixed Asset Depreciation</div><div class="d-task-meta">BD3 · C · ~2h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">CIP accrual (or FA cost)</div><div class="d-task-meta">BD3 · Pending A &amp; I · Reach out BD-5</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Add new schedules — Office Equipment</div><div class="d-task-meta">Post-ME · per FA training</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Add schedules to LHI (Leasehold Improvements)</div><div class="d-task-meta">Post-ME · per FA training</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Clean up FA register (blank cells)</div><div class="d-task-meta">June cleanup · A flagged</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Intangibles / Leases depreciation</div><div class="d-task-meta">BD-6 · C · Completed</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">LHI depreciation JE (created 5/29)</div><div class="d-task-meta">May close · C</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">FA purchases JE</div><div class="d-task-meta">Monthly · Fixed assets</div></div></div>
+    </div>`},
+  accrualssrc:{tag:'Source · C / E',title:'Accruals',body:`
+    <p><strong>Blocker:</strong> FP&A vendor budget access not yet granted. Security accrual amount TBD.</p>
+    <div class="d-section-lbl">Hosting &amp; Infrastructure</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Hosting (AWS, GCP rebate, Bedrock)</div><div class="d-task-meta">BD1 · C · Need dashboards from A</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Google Cloud rebate calculation &amp; approval</div><div class="d-task-meta">BD1 · Tiffany K. review</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">AWS Partner Portal — review available funds</div><div class="d-task-meta">BD1 · C</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Amazon Bedrock rebate</div><div class="d-task-meta">Monthly · to be corrected at year-end</div></div></div>
+    </div>
+    <div class="d-section-lbl">Legal &amp; Contractors</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Legal</div><div class="d-task-meta">BD3 · ~4h · J/C · Pending attorney estimates</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual Inquiries — legal vendors</div><div class="d-task-meta">BD-5 · reach out deadline</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Consulting / Contractors</div><div class="d-task-meta">BD2-3 · ~8h · DeWinter + Hirewell · GL detail May only</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">IP purchase anniversary payment accruals</div><div class="d-task-meta">Monthly · grep.app &amp; K ✅ done</div></div></div>
+    </div>
+    <div class="d-section-lbl">Subscriptions &amp; Events</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Subscription (Datadog, SaaS tools)</div><div class="d-task-meta">BD2 · ~6h · J · Connect with L on Datadog dashboard</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Lalago / BW Events</div><div class="d-task-meta">BD2 · J · ~0.5h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual Inquiries — BW, Lalago</div><div class="d-task-meta">BD-5 · J · send estimate requests</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Compt accrual</div><div class="d-task-meta">Monthly · perks platform</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Next.js Accrual</div><div class="d-task-meta">BD-1 · J</div></div></div>
+    </div>
+    <div class="d-section-lbl">Partnership &amp; MDF</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — MDF / Reseller</div><div class="d-task-meta">BD-1 to BD2 · ~4h · E</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Amazon MDF Sponsorships accrual</div><div class="d-task-meta">BD-1 · J</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Partnership referral fee accrual</div><div class="d-task-meta">Monthly</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Partnership MDF accruals</div><div class="d-task-meta">Monthly</div></div></div>
+    </div>
+    <div class="d-section-lbl">Invoice &amp; T&amp;E</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Unapproved / Unprocessed invoices</div><div class="d-task-meta">BD-2 · ~1h · J · SURL refresh</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Unapproved Invoices (E)</div><div class="d-task-meta">BD-3 · done</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">T&amp;E accrual — US / UK / Germany</div><div class="d-task-meta">BD-1 · Lynzee · ~2h each</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Ramp Credit Card Accrual (US &amp; UK)</div><div class="d-task-meta">BD2 · Lynzee · statements available BD2</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Others (catch-all)</div><div class="d-task-meta">BD1 · ~6.5h · E</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Vendor Check</div><div class="d-task-meta">BD3 · E</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--coral)"></div><div><div class="d-task-name">Accrual — Tax</div><div class="d-task-meta">BD-4 · J</div></div></div>
+    </div>`},
+  capsoftsrc:{tag:'Source · C / M',title:'Cap software',body:`
+    <p><strong>Monthly non-SBC:</strong> Engineering headcount × qualifying % × salary. Project allocations from managers, confirmed with Paul Wright.</p>
+    <p><strong>Quarterly SBC:</strong> Joint with M. Gated on Connor Group delivering SBC schedule.</p>
+    <p><strong>Blocker:</strong> April file needs A final review. Must incorporate April 2026 security incident capitalization.</p>
+    <div class="d-section-lbl">Subtasks</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Cap Software Additions (excl. SBC)</div><div class="d-task-meta">BD4 · C · ~11h · In progress</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Cap Software Amortization</div><div class="d-task-meta">BD-4 · C · preparer signed 5/19</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Cap Software Additions — SBC only</div><div class="d-task-meta">Quarterly · C/M · ON HOLD — Connor Group</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">FY26 Security cap software amortization</div><div class="d-task-meta">June · Need to prep · Last item</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Get SBC &amp; Bonus data from A (May 2026)</div><div class="d-task-meta">Resolved ✅ · sent via Slack</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Confirm project allocation for new contractors (Carlos Tomás Roig)</div><div class="d-task-meta">Resolved ✅ · via Paul Wright</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Confirm projects for new engineering hires</div><div class="d-task-meta">Resolved ✅ · via Engineering Managers</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Census file upload — all depts</div><div class="d-task-meta">Resolved ✅ · A fixed</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">A final review &amp; sign-off</div><div class="d-task-meta">Pending · incorporate security info · last step</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--purple)"></div><div><div class="d-task-name">Deferred commissions capitalization</div><div class="d-task-meta">Quarterly · Connor Group</div></div></div>
+    </div>`},
+  glsrc:{tag:'Source · Lynzee / All owners',title:'NetSuite GL',body:`
+    <p>Trial balance and JE review via FloQast. Period lock Jun 11 — hard deadline. All JEs must be posted and approved before lock.</p>
+    <div class="d-section-lbl">Subtasks</div>
+    <div class="d-subtasks">
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">AP Closed</div><div class="d-task-meta">BD-2 · Lynzee · Completed</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Prepaids</div><div class="d-task-meta">BD-1 · B · In Progress · Pending Name.com, amortization correction</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Prepaid Amortization (NetSuite)</div><div class="d-task-meta">BD-2 · J · ~0.5h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Prepaid Grossdown / Contra AP</div><div class="d-task-meta">BD-2 · J · ~2h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Prepaid Amortization — Manual</div><div class="d-task-meta">BD-1 · J · ~4h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Prepaid Amortization — Name.com</div><div class="d-task-meta">BD1 · J · pending correction</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Prepaid Amortization (SRS) — Tucows</div><div class="d-task-meta">BD3 · J · ~1h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Navan Credit Card JE</div><div class="d-task-meta">BD2 · Lynzee · ~2h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">ZIP Invoice approval</div><div class="d-task-meta">BD-3 · E</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Refresh unapproved / SURL</div><div class="d-task-meta">BD3 · E · ~1h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">All ABC cash posted (excl. Gel/Magic)</div><div class="d-task-meta">BD1 · B · In Progress</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Cash JE (daily, BD-7 to BD1)</div><div class="d-task-meta">J · ~10h total</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">AP Recon</div><div class="d-task-meta">BD3 · Lynzee · ~2h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Flux commentary</div><div class="d-task-meta">BD3-4 · J/E · ~6.5h</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Reconciliations (FloQast)</div><div class="d-task-meta">BD3-4 · All owners</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--gray)"></div><div><div class="d-task-name">Financial Package ready for review by 5pm PT</div><div class="d-task-meta">BD4 · Accounting team</div></div></div>
+      <div class="d-task"><div class="d-task-dot" style="background:var(--red)"></div><div><div class="d-task-name">NetSuite period lock</div><div class="d-task-meta">Jun 11 · hard deadline · no JEs after</div></div></div>
+    </div>`},
+  bd1:{tag:'Milestone',title:'Jun 1 — BD1 · Hosting + headcount',body:`<p>Accruals – Hosting (Bedrock/GCP) · Accruals – Other · Review AWS Partner Portal · Record Headcount Statistical Entry. Need dashboards from A.</p>`},
+  bd2:{tag:'Milestone',title:'Jun 3 — BD2 · Partnership',body:`<p>Accruals – Partnership & MDF · FA Close · CIP accrual. CIP pending A and I.</p>`},
+  bd3:{tag:'Milestone',title:'Jun 4 — BD3 · FA + Legal',body:`<p>Fixed Assets depreciation · Legal accruals · Contractors · CTA reclass · MTM fluctuation · FS Tie-out · Finance adjustments review.</p>`},
+  bd4:{tag:'Milestone',title:'Jun 5 — BD4 · Cap software',body:`<p>Cap Software Additions (A final review — incorporate security info) · OpEx Allocations · Gel Data JE with D. Twin gets most complete internal data set.</p>`},
+  bd5:{tag:'Milestone',title:'Jun 8 — Preliminary to Finance',body:`<p>Preliminary numbers sent to Finance team. Draft P&L and Balance Sheet. Flux commentary prep begins.</p>`},
+  cc:{tag:'Milestone',title:'Jun 9 — Close call · twin goes live',body:`<p>Tiffany K leads close call. NetSuite Claude Connector check. Final adjustments from Finance incorporated.</p>`},
+  lock:{tag:'Hard deadline',title:'Jun 11 — NetSuite period lock',body:`<p>Hard lock. No JEs can be posted after this point.</p>`},
+  finpkg:{tag:'Output',title:'Financial package',body:`<p>P&L, Balance Sheet, Cash Flow. Flux commentary. Werner Schwock (CAO) review. Sent to Marten after close call.</p>`},
+  scenout:{tag:'Output',title:'Scenario model',body:`<p>What-if scenarios: hiring plans, spend changes, growth levers. IPO readiness score. 30–100% growth increment modeling.</p>`},
+  varout:{tag:'Output',title:'Variance / flux',body:`<p>Auto-generated month-over-month commentary. Flags material variances for Finance review.</p>`},
+  kpiout:{tag:'Output',title:'C-suite KPI alerts',body:`<p>Real-time threshold alerts when KPIs deviate from IPO-readiness targets. Rule of 40, NTM, gross margin, burn rate.</p>`},
+  ipoout:{tag:'Output',title:'IPO readiness score',body:`<p>Composite score: Rule of 40, NTM revenue multiple, gross margin %, burn multiple vs public SaaS benchmarks.</p>`},
+  awsout:{tag:'Output',title:'AWS spend report',body:`<p>Partner v0 dashboard showing AWS compute cost by service. Used for hosting accrual validation. Due Jun 16 post-close.</p>`},
+  pkgout:{tag:'Output',title:'BOD package',body:`<p>Werner → Marten → Board. Board-ready narrative plus financials. Includes exec summary, P&L, BS, key metrics.</p>`},
+  cloud:{tag:'External signal',title:'Cloud spend',body:`<p>AWS and GCP invoice feeds. Datadog spend reviewed monthly. Claude Code reclassed Hosting → Dues & Subs. Bedrock rebate tracked. AWS invoices for prior month must be paid before EOM.</p>`},
+  sfdc:{tag:'External signal',title:'SFDC pipeline',body:`<p>ENT deal completeness check SFDC vs Stripe at month-end. Marketplace partner invoices prepared monthly.</p>`},
+  talent:{tag:'External signal',title:'Talent market',body:`<p>Comp benchmarks from Levels.fyi and Radford indices. Used in twin's headcount-driven scenario model.</p>`},
+  cpi:{tag:'External signal',title:'Inflation / CPI',body:`<p>Macro inflation indices and FX rates (GBP, EUR, CAD). Affects subsidiary Cost Plus pricing and GmbH/UK entity costs.</p>`},
+  growth:{tag:'External signal',title:'Growth signals',body:`<p>ABC ARR trends (+82% YoY TTM). AI SDK 3M+ weekly downloads. v0 6M+ users. Used in scenario model growth rate assumptions.</p>`},
+  ipo:{tag:'External signal',title:'IPO benchmarks',body:`<p>Public SaaS comparables for NTM revenue multiples, gross margin, and Rule of 40. IPO expected ~2027. Series F post-money $9.3B.</p>`},
+  security:{tag:'External signal',title:'Security incident',body:`<p>April 2026 incident — non-sensitive customer env variables compromised. Working with Google Mandiant. Accrual amount TBD — blocks twin's complete OpEx input.</p>`},
+  glmod:{tag:'Twin module',title:'GL consolidation',body:`<p>Consolidates all entity trial balances: US, GmbH, UK, Canada, NuxtLabs, Gel. Runs intercompany eliminations after Cost Plus entries.</p>`},
+  scenmod:{tag:'Twin module',title:'What-if scenarios',body:`<p>Models different business scenarios using external signals alongside internal GL data.</p>`},
+  varmod:{tag:'Twin module',title:'Variance / flux engine',body:`<p>Compares current month actuals to prior month and budget. Auto-generates flux commentary.</p>`},
+  kpimod:{tag:'Twin module',title:'KPI alerting',body:`<p>Tracks Rule of 40. Monitors NTM revenue multiples against public comp benchmarks. Fires alerts to C-suite.</p>`},
+  drvmod:{tag:'Twin module',title:'P&L driver tree',body:`<p>Decomposes P&L from revenue through gross margin to operating profit. Cap software capitalization directly affects R&D OpEx %.</p>`},
+  ipomod:{tag:'Twin module',title:'IPO readiness score',body:`<p>Composite IPO readiness tracking Rule of 40, NTM revenue multiple, gross margin, burn multiple vs public SaaS benchmarks.</p>`},
+  b1:{tag:'Blocker',title:'FP&A vendor budget access',body:`<p>FP&A needs to give download access to all vendor budgets for the PO List accrual. Without this, accrual estimates are incomplete. Raised to Shubs. Unresolved as of Jun 1.</p>`},
+  b2:{tag:'Blocker',title:'AI Desk accrual calc explanation',body:`<p>A flagged that the AI Desk accrual must include documentation of how the amount was calculated.</p>`},
+  b3:{tag:'Blocker',title:'ROUA lease variance $168K',body:`<p>Per GL: $137,858. Per Excel: $306,446. Difference: $168K. Material — must be explained before FS sign-off. Assigned to B and A.</p>`},
+  b4:{tag:'Blocker',title:'Security incident accrual TBD',body:`<p>April 2026 security incident. Additional accrual amount unknown — twin's total OpEx incomplete until resolved.</p>`},
+  f_rule40:{tag:'SaaS Formula',title:'Rule of 40',body:`
+    <p><strong>Formula:</strong> Revenue Growth % + Profit Margin %</p>
+    <p>The single most-cited SaaS health metric. A score ≥ 40 means the company is balancing growth and profitability well enough to justify premium multiples. Above 60 is considered exceptional.</p>
+    <p><strong>ABC context:</strong> Revenue growth ~82% YoY (TTM Sep 2025). Even with negative profit margin, the Rule of 40 score is very high — which is why the Series F commanded a $9.3B valuation. As growth naturally decelerates approaching IPO, margin improvement must compensate to maintain the score.</p>
+    <p><strong>Accounting inputs required:</strong> Revenue (from close), OpEx total (accruals, payroll, cap soft amortization), COGS (hosting accrual).</p>`},
+  f_arr:{tag:'SaaS Formula',title:'ARR / MRR',body:`
+    <p><strong>Formula:</strong> MRR × 12 = ARR &nbsp;|&nbsp; ΔARR = New ARR + Expansion ARR − Churned ARR − Contracted ARR</p>
+    <p>Annual Recurring Revenue is the heartbeat metric for any subscription SaaS business. The delta decomposition (new / expansion / churn / contraction) is the key management tool — it tells you whether growth is coming from new customers or expanding existing ones, and where you're losing it.</p>
+    <p><strong>ABC context:</strong> +82% YoY ARR growth TTM Sep 2025. v0 platform now 6M+ users. Marketplace and AI SDK distribution are the primary new-ARR drivers.</p>
+    <p><strong>Accounting inputs required:</strong> Revenue JEs (Stripe subscriptions, marketplace, Prof. Services), billings close (BD1), deferred revenue movements.</p>`},
+  f_nrr:{tag:'SaaS Formula',title:'Net Revenue Retention (NRR)',body:`
+    <p><strong>Formula:</strong> (Beginning-of-Month ARR + Expansion − Churn − Contraction) ÷ Beginning-of-Month ARR</p>
+    <p>NRR above 100% means existing customers are spending more than they were a year ago — the business grows even without adding a single new customer. Above 120% is best-in-class and is a major IPO signal for institutional investors.</p>
+    <p><strong>Why it matters for ABC:</strong> The usage-based pricing model (compute, bandwidth, AI tokens) means expansion is organic — customers grow into higher tiers as their apps scale. Monitoring NRR by cohort separates structural growth from one-time spikes.</p>
+    <p><strong>Accounting inputs required:</strong> Monthly Net Usage Revenue Final (BD2, G), subscription revenue JEs, SFDC pipeline data for contraction/churn flags.</p>`},
+  f_gm:{tag:'SaaS Formula',title:'Gross Margin',body:`
+    <p><strong>Formula:</strong> (Revenue − Cost of Goods Sold) ÷ Revenue</p>
+    <p>For SaaS, COGS is primarily hosting/cloud infrastructure, support, and professional services delivery costs. The gross margin percentage directly drives valuation multiples — each 10pp improvement in GM at scale can add 1–2× to the NTM revenue multiple.</p>
+    <p><strong>SaaS benchmarks:</strong> 70–80% for typical SaaS; hyperscalers and PLG companies often 75–85%. Below 65% raises questions about unit economics sustainability.</p>
+    <p><strong>ABC accounting sensitivity:</strong> The hosting accrual (AWS, GCP, Datadog — C's BD1 task) is the single biggest lever on COGS and therefore GM. A 1% error in the hosting accrual flows directly into reported gross margin. COGS allocations (G, BD4) finalize the number.</p>`},
+  f_cac:{tag:'SaaS Formula',title:'CAC & Payback Period',body:`
+    <p><strong>CAC:</strong> Total Sales &amp; Marketing Spend ÷ Number of New Customers Acquired</p>
+    <p><strong>Payback Period:</strong> CAC ÷ (ACV × Gross Margin %)</p>
+    <p>Payback period tells you how long it takes to recoup customer acquisition costs through gross profit from that customer. Under 12 months is exceptional; under 18 months is good; over 24 months raises capital efficiency questions.</p>
+    <p><strong>ABC context:</strong> PLG (product-led growth) model means a large portion of acquisition is organic (Next.js ecosystem, v0 virality) — this structurally lowers blended CAC vs pure sales-led peers. MDF accruals (C's partnership accruals) are part of the S&amp;M cost base.</p>`},
+  f_ltv:{tag:'SaaS Formula',title:'LTV : CAC Ratio',body:`
+    <p><strong>LTV:</strong> ARPU × Gross Margin % ÷ Monthly Churn Rate</p>
+    <p><strong>LTV:CAC:</strong> LTV ÷ CAC</p>
+    <p>LTV:CAC ≥ 3× is the standard threshold for a healthy SaaS unit economics profile. Above 5× suggests strong pricing power and/or very low churn. Below 3× means the business is acquiring customers it can't profitably retain.</p>
+    <p><strong>Accounting inputs required:</strong> S&amp;M spend (commission accruals, MDF, contractor costs), revenue cohort data (G), gross margin (COGS close). The twin computes this monthly once the close is clean.</p>`},
+  f_burn:{tag:'SaaS Formula',title:'Burn Multiple',body:`
+    <p><strong>Formula:</strong> Net Cash Burn ÷ Net New ARR</p>
+    <p>Burn multiple measures how many dollars you burn to generate one dollar of new ARR. It's the capital-efficiency equivalent of CAC but at the company level. Under 1× is considered great; 1–1.5× is good; above 2× is a yellow flag; above 3× is unsustainable at scale.</p>
+    <p><strong>Why it matters pre-IPO:</strong> Institutional investors (BlackRock, GIC — ABC's Series F backers) use burn multiple as a key screen. As the company approaches IPO, demonstrating a declining burn multiple — even if still negative FCF — signals improving capital efficiency.</p>
+    <p><strong>Accounting inputs required:</strong> Cash balance (GL close, all cash JEs), net new ARR (revenue close), and complete OpEx accruals.</p>`},
+  f_magic:{tag:'SaaS Formula',title:'Magic Number',body:`
+    <p><strong>Formula:</strong> Quarterly Net New ARR × 4 ÷ Prior Quarter S&amp;M Spend</p>
+    <p>The Magic Number measures S&amp;M efficiency: how much ARR do you generate for every dollar spent on sales and marketing the prior quarter? Above 0.75 is considered efficient; above 1.0 means you should be spending more aggressively on S&amp;M.</p>
+    <p><strong>ABC context:</strong> The PLG + enterprise hybrid model means the magic number should be higher than pure enterprise-sales peers, because word-of-mouth and ecosystem distribution amplify paid S&amp;M dollars. Partnership MDF accruals and referral fees are key inputs.</p>`},
+  f_ntm:{tag:'SaaS Formula',title:'NTM Revenue Multiple',body:`
+    <p><strong>Formula:</strong> Enterprise Value ÷ Next-Twelve-Months (NTM) Revenue</p>
+    <p>The primary SaaS valuation multiple used by investors and bankers. It normalizes valuation across companies of different sizes and growth stages. Higher growth + higher margins = higher multiple justified.</p>
+    <p><strong>ABC context:</strong> Post-money valuation $9.3B (Series F, Sep 2025). At 82% growth, if NTM revenue is ~$700–900M, the implied multiple is ~10–13×. Public SaaS comps at similar growth trade 12–18× NTM. The IPO pricing will anchor to this range.</p>
+    <p><strong>Accounting inputs required:</strong> Accurate MRR/ARR (revenue close), clean COGS (hosting accrual), deferred revenue schedule.</p>`},
+  f_opex:{tag:'SaaS Formula',title:'OpEx Efficiency Ratios',body:`
+    <p><strong>Formula:</strong> Each opex line as % of Revenue</p>
+    <p>Key ratios for IPO readiness:</p>
+    <p><strong>R&amp;D %:</strong> Target &lt;25% of revenue at scale (cap software capitalization lowers this — key reason cap soft accounting matters for valuation)</p>
+    <p><strong>S&amp;M %:</strong> Target &lt;30% for efficient GTM; &lt;20% for PLG-dominant companies</p>
+    <p><strong>G&amp;A %:</strong> Target &lt;10% at scale; IPO S-1 scrutiny focuses here for leverage</p>
+    <p><strong>Accounting sensitivity:</strong> Cap software capitalization rate directly reduces R&amp;D OpEx. A 10% increase in cap soft rate on a $50M engineering base reduces R&amp;D by $5M annually — meaningful at these revenue levels.</p>`},
+  f_runway:{tag:'SaaS Formula',title:'Cash Runway',body:`
+    <p><strong>Formula:</strong> Cash &amp; Equivalents Balance ÷ Average Monthly Net Burn</p>
+    <p>Runway tells you how many months the company can operate at its current burn rate without raising new capital. For IPO-stage companies, &gt;24 months of runway is the standard comfort threshold — both for operations and to avoid a distressed raise.</p>
+    <p><strong>ABC context:</strong> $300M raised Sep 2025 + $300M secondary Nov 2025 ($600M Series F total). At typical infrastructure-heavy SaaS burn rates, this provides substantial runway through a 2026–2027 IPO window.</p>
+    <p><strong>Accounting inputs required:</strong> All cash JEs posted (BD1, B), complete payroll cash (BD1), AWS invoices paid, accurate burn rate from full OpEx close.</p>`},
+  f_fcf:{tag:'SaaS Formula',title:'Free Cash Flow Margin',body:`
+    <p><strong>Formula:</strong> (Operating Cash Flow − CapEx) ÷ Revenue</p>
+    <p>FCF margin is the ultimate profitability signal for pre-IPO SaaS. It measures how much cash the business generates (or consumes) relative to revenue, stripping out non-cash items like SBC and depreciation.</p>
+    <p><strong>Why positive FCF matters for IPO:</strong> Most successful SaaS IPOs in 2024–2026 required demonstrable path to FCF positivity, if not already positive. Investors price the S-1 on NTM revenue multiple but risk-adjust it heavily based on FCF trajectory.</p>
+    <p><strong>Accounting inputs required:</strong> Complete close (all accruals, payroll, cap soft, COGS). Cap software capitalization reduces the CapEx-equivalent outflow on the cash flow statement. ROUA lease entry affects operating cash flow. All of these connect directly to C's close tasks.</p>`},
+};
+
+function openDetail(k){const d=DET[k];if(!d)return;document.getElementById('d-tag').textContent=d.tag;document.getElementById('d-title').textContent=d.title;document.getElementById('d-body').innerHTML=d.body;document.getElementById('overlay').classList.add('open');}
+function closeDetail(e){if(!e||e.target===document.getElementById('overlay'))document.getElementById('overlay').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('overlay').classList.remove('open');});
+window.addEventListener('resize',()=>setTimeout(drawFlows,30));
+
+/* ── Init ─────────────────────────────────────────────────────────────────── */
+buildSources();
+buildOutputs();
+buildExternals();
+buildSpines();
+recalc();
+setTimeout(drawFlows,100);
+</script>
+</body>
+</html>

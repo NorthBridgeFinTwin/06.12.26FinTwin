@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC · CFO Financial Twin · Apr-26</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy:#090D1A;
+  --navy2:#0E1525;
+  --navy3:#141C30;
+  --blue:#1A3A5C;
+  --indigo:#4F6AF0;
+  --indigo2:#6B83F5;
+  --purple:#7C3AED;
+  --teal:#0D9488;
+  --teal2:#14B8A6;
+  --green:#10B981;
+  --amber:#F59E0B;
+  --red:#EF4444;
+  --red2:#F87171;
+  --gray1:rgba(255,255,255,0.04);
+  --gray2:rgba(255,255,255,0.07);
+  --gray3:rgba(255,255,255,0.12);
+  --gray4:rgba(255,255,255,0.22);
+  --gray5:rgba(255,255,255,0.55);
+  --white:rgba(255,255,255,0.92);
+  --font:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+
+body{background:var(--navy);color:var(--white);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gray3);border-radius:2px}
+
+/* animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.fade{animation:fadeUp 0.4s ease both}
+.fade-1{animation-delay:0.05s}
+.fade-2{animation-delay:0.1s}
+.fade-3{animation-delay:0.15s}
+.fade-4{animation-delay:0.2s}
+.fade-5{animation-delay:0.25s}
+.fade-6{animation-delay:0.3s}
+
+/* layout */
+.app{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+
+/* header */
+.header{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:56px;
+  background:rgba(9,13,26,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--gray2);
+}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--indigo),var(--purple));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;letter-spacing:-0.5px;
+  box-shadow:0 0 20px rgba(79,106,240,0.35);
+}
+.brand{font-size:13px;font-weight:600;letter-spacing:-0.2px}
+.brand span{color:var(--gray4);font-weight:400;margin-left:6px;font-size:12px}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:pulse 2s infinite;
+}
+.header-meta{display:flex;align-items:center;gap:16px;font-size:11px;color:var(--gray4);font-family:var(--mono)}
+.badge{
+  padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;
+  background:rgba(239,68,68,0.12);color:var(--red2);
+  border:1px solid rgba(239,68,68,0.2);letter-spacing:0.3px;
+}
+.badge.warn{background:rgba(245,158,11,0.12);color:var(--amber);border-color:rgba(245,158,11,0.2)}
+.badge.ok{background:rgba(16,185,129,0.12);color:var(--green);border-color:rgba(16,185,129,0.2)}
+
+/* main layout */
+.main{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+
+/* sidebar */
+.sidebar{
+  border-right:1px solid var(--gray2);
+  padding:20px 0;
+  position:sticky;top:56px;height:calc(100vh - 56px);
+  overflow-y:auto;
+  background:var(--navy2);
+}
+.sidebar-section{margin-bottom:24px}
+.sidebar-label{font-size:10px;font-weight:600;letter-spacing:1px;color:var(--gray4);text-transform:uppercase;padding:0 16px;margin-bottom:8px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 16px;font-size:12px;font-weight:500;
+  cursor:pointer;color:var(--gray5);
+  border-left:2px solid transparent;
+  transition:all 0.15s;
+}
+.nav-item:hover{color:var(--white);background:var(--gray1)}
+.nav-item.active{color:var(--indigo2);border-left-color:var(--indigo);background:rgba(79,106,240,0.08)}
+.nav-icon{font-size:14px;width:18px;text-align:center}
+
+.sidebar-kpi{padding:8px 16px}
+.skpi-label{font-size:10px;color:var(--gray4);margin-bottom:2px}
+.skpi-val{font-size:18px;font-weight:700;letter-spacing:-0.5px;font-family:var(--mono)}
+.skpi-sub{font-size:10px;margin-top:1px}
+.skpi-sub.up{color:var(--green)}
+.skpi-sub.down{color:var(--red2)}
+
+/* content */
+.content{padding:24px;overflow-y:auto}
+
+/* section titles */
+.section-title{
+  font-size:13px;font-weight:600;letter-spacing:-0.2px;
+  color:var(--white);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--gray2)}
+
+/* KPI grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{
+  background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;
+  padding:16px;position:relative;overflow:hidden;cursor:default;
+  transition:border-color 0.2s, transform 0.2s;
+}
+.kpi-card:hover{border-color:var(--gray3);transform:translateY(-1px)}
+.kpi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent1,var(--indigo)),var(--accent2,var(--purple)));
+}
+.kpi-label{font-size:10px;color:var(--gray4);font-weight:500;letter-spacing:0.3px;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-size:24px;font-weight:700;letter-spacing:-1px;font-family:var(--mono);line-height:1}
+.kpi-sub{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:4px}
+.kpi-sub.up{color:var(--green)}
+.kpi-sub.down{color:var(--red2)}
+.kpi-sub.warn{color:var(--amber)}
+.kpi-trend{position:absolute;bottom:12px;right:12px;width:60px;height:28px}
+
+/* charts grid */
+.charts-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.charts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{
+  background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;padding:16px;
+}
+.chart-card.wide{grid-column:span 2}
+.chart-title{font-size:11px;font-weight:600;color:var(--gray5);margin-bottom:4px;letter-spacing:0.2px}
+.chart-subtitle{font-size:10px;color:var(--gray4);margin-bottom:14px}
+.chart-wrap{position:relative}
+
+/* table */
+.table-card{background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;overflow:hidden;margin-bottom:24px}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{
+  padding:8px 12px;text-align:right;font-size:10px;font-weight:600;
+  color:var(--gray4);letter-spacing:0.3px;text-transform:uppercase;
+  background:var(--navy3);border-bottom:1px solid var(--gray2);
+  white-space:nowrap;
+}
+.tbl th:first-child{text-align:left;width:180px}
+.tbl td{
+  padding:7px 12px;text-align:right;font-family:var(--mono);font-size:11px;
+  color:var(--gray5);border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.tbl td:first-child{text-align:left;font-family:var(--font);color:var(--white);font-size:11px;font-weight:500}
+.tbl tr:hover td{background:var(--gray1)}
+.tbl .total td{color:var(--white);font-weight:600;background:rgba(79,106,240,0.06);border-top:1px solid rgba(79,106,240,0.2)}
+.tbl .section td{color:var(--gray4);font-size:9px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;background:var(--navy3);padding:5px 12px}
+.tbl .section td:first-child{color:var(--gray4)}
+.tbl .indent td:first-child{padding-left:24px;color:var(--gray5);font-weight:400}
+.act-col{color:var(--white)!important}
+.fcast-col{color:rgba(20,184,166,0.85)!important}
+.neg{color:var(--red2)!important}
+.pos{color:var(--green)!important}
+.col-head-act{background:rgba(79,106,240,0.12)!important;color:var(--indigo2)!important}
+.col-head-fcast{background:rgba(13,148,136,0.12)!important;color:var(--teal2)!important}
+
+/* issues panel */
+.issues{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px}
+.issue-card{
+  background:var(--navy2);border:1px solid var(--gray2);border-radius:10px;
+  padding:12px 14px;display:flex;gap:10px;align-items:flex-start;
+}
+.issue-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.issue-text{font-size:11px;color:var(--gray5);line-height:1.5}
+.issue-title{font-weight:600;color:var(--white);margin-bottom:2px;font-size:11px}
+.issue-badge{display:inline-block;margin-top:4px;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:0.4px}
+.issue-badge.open{background:rgba(239,68,68,0.15);color:var(--red2);border:1px solid rgba(239,68,68,0.25)}
+.issue-badge.inprog{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.25)}
+
+/* scenario tabs */
+.scen-tabs{display:flex;gap:4px;margin-bottom:16px}
+.scen-tab{
+  padding:6px 16px;border-radius:6px;font-size:11px;font-weight:600;
+  cursor:pointer;border:1px solid var(--gray2);color:var(--gray4);
+  transition:all 0.15s;
+}
+.scen-tab.active-base{background:rgba(79,106,240,0.15);color:var(--indigo2);border-color:rgba(79,106,240,0.3)}
+.scen-tab.active-bull{background:rgba(16,185,129,0.15);color:var(--green);border-color:rgba(16,185,129,0.3)}
+.scen-tab.active-bear{background:rgba(239,68,68,0.15);color:var(--red2);border-color:rgba(239,68,68,0.3)}
+.scen-tab:hover{color:var(--white);border-color:var(--gray3)}
+
+/* valuation table */
+.val-grid{display:grid;grid-template-columns:auto repeat(5,1fr);gap:1px;background:var(--gray2);border-radius:10px;overflow:hidden}
+.val-cell{background:var(--navy2);padding:10px 12px;font-size:11px;font-family:var(--mono);text-align:right}
+.val-cell.head{background:var(--navy3);color:var(--gray4);font-size:10px;font-weight:700;letter-spacing:0.3px;text-align:center}
+.val-cell.row-head{text-align:left;font-family:var(--font);color:var(--gray5);font-size:11px}
+.val-cell.highlight{background:rgba(16,185,129,0.12);color:var(--green);font-weight:700}
+.val-cell.current{background:rgba(79,106,240,0.12);color:var(--indigo2);font-weight:700}
+
+/* tabs */
+.tabs{display:flex;gap:2px;margin-bottom:0;border-bottom:1px solid var(--gray2);padding:0;position:sticky;top:56px;z-index:100;background:var(--navy);padding:0 24px}
+.tab{
+  padding:12px 16px;font-size:12px;font-weight:500;cursor:pointer;
+  color:var(--gray4);border-bottom:2px solid transparent;
+  transition:all 0.15s;white-space:nowrap;
+}
+.tab:hover{color:var(--white)}
+.tab.active{color:var(--indigo2);border-bottom-color:var(--indigo)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* mini sparkline canvas */
+.spark{display:inline-block}
+
+/* tooltip override for charts */
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo">▲</div>
+    <div>
+      <div class="brand">ABC Inc. <span>CFO Financial Twin</span></div>
+    </div>
+    <div class="status-dot"></div>
+    <span style="font-size:11px;color:var(--gray4)">Apr-26 Close</span>
+  </div>
+  <div class="header-meta">
+    <span>Source: NetSuite Management Pack</span>
+    <span style="color:var(--gray3)">|</span>
+    <span>15 months actuals  +  6-mo forecast</span>
+    <span style="color:var(--gray3)">|</span>
+    <span id="ts"></span>
+    <span class="badge warn">⚠ 7 OPEN ITEMS</span>
+    <span class="badge">BOARD PREP</span>
+    <label id="upload-btn" title="Upload new NetSuite management pack (.xlsx)" style="cursor:pointer;display:flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid rgba(255,255,255,0.15);border-radius:5px;font-size:11px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.06);transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10V3M5 6l3-3 3 3"/><path d="M3 11v1a2 2 0 002 2h6a2 2 0 002-2v-1"/></svg>
+      Update data
+      <input type="file" accept=".xlsx" style="display:none" onchange="handleUpload(event)">
+    </label>
+  </div>
+</header>
+<div id="upload-toast" style="display:none;position:sticky;top:56px;z-index:300;background:#0D9488;color:#fff;font-size:12px;padding:8px 20px;text-align:center;"></div>
+
+<!-- TABS (sticky) -->
+<div class="tabs" id="tabs">
+  <div class="tab active" onclick="switchTab('overview')">Overview</div>
+  <div class="tab" onclick="switchTab('pl')">P&L Detail</div>
+  <div class="tab" onclick="switchTab('drivers')">Driver Tree</div>
+  <div class="tab" onclick="switchTab('scenarios')">Scenarios</div>
+  <div class="tab" onclick="switchTab('valuation')">Valuation</div>
+  <div class="tab" onclick="switchTab('issues')">Open Items</div>
+  <div class="tab" onclick="switchTab('anomalies')">⚡ Mar→Apr Anomalies</div>
+  <div class="tab" onclick="switchTab('revquality')">💎 Revenue Quality</div>
+  <div class="tab" onclick="switchTab('costeff')">🔬 Cost Efficiency</div>
+  <div class="tab" onclick="switchTab('mgmtsim')" style="color:#F59E0B;font-weight:600">⚙ Management Simulator</div>
+</div>
+
+<div class="content" id="content">
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<div class="tab-content active" id="tab-overview">
+
+  <!-- KPI row -->
+  <div class="kpi-grid fade fade-1" style="margin-top:24px">
+    <div class="kpi-card" style="--accent1:#4F6AF0;--accent2:#7C3AED">
+      <div class="kpi-label">Apr-26 Net Revenue</div>
+      <div class="kpi-val">$25.5M</div>
+      <div class="kpi-sub down">▼ 18.4% vs Mar-26&nbsp; <span style="color:var(--gray4);font-size:10px">(methodology noise)</span></div>
+      <canvas class="kpi-trend" id="spark-rev"></canvas>
+    </div>
+    <div class="kpi-card" style="--accent1:#0D9488;--accent2:#14B8A6">
+      <div class="kpi-label">Gross Margin</div>
+      <div class="kpi-val">50.3%</div>
+      <div class="kpi-sub down">▼ 8.1pp vs Mar-26 · 59.0% excl. v0/AI</div>
+      <canvas class="kpi-trend" id="spark-gm"></canvas>
+    </div>
+    <div class="kpi-card" style="--accent1:#EF4444;--accent2:#F87171">
+      <div class="kpi-label">Adj. EBITDA</div>
+      <div class="kpi-val" style="color:var(--red2)">-$17.2M</div>
+      <div class="kpi-sub down">▼ -67.5% margin · peak burn</div>
+      <canvas class="kpi-trend" id="spark-ebitda"></canvas>
+    </div>
+    <div class="kpi-card" style="--accent1:#7C3AED;--accent2:#4F6AF0">
+      <div class="kpi-label">Subscription ARR</div>
+      <div class="kpi-val">$251M</div>
+      <div class="kpi-sub up">▲ incl. $1M Pro catch-up · ex-catch-up ~$217M</div>
+      <canvas class="kpi-trend" id="spark-arr"></canvas>
+    </div>
+  </div>
+
+  <div class="kpi-grid fade fade-2">
+    <div class="kpi-card" style="--accent1:#F59E0B;--accent2:#FBBF24">
+      <div class="kpi-label">v0 Revenue (Apr-26)</div>
+      <div class="kpi-val" style="color:var(--amber)">$5.8M</div>
+      <div class="kpi-sub up">▲ +119% MoM · ARR run-rate $69M</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#EF4444;--accent2:#F97316">
+      <div class="kpi-label">AI Gateway Revenue</div>
+      <div class="kpi-val" style="color:var(--red2)">-$9.3M</div>
+      <div class="kpi-sub down">Reclassification 44106→44108 · optical reversal</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#10B981;--accent2:#34D399">
+      <div class="kpi-label">Cash Balance</div>
+      <div class="kpi-val" style="color:var(--green)">$534M</div>
+      <div class="kpi-sub ok">~31 mo runway @ Apr burn · ~50 mo normalised</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#6B83F5;--accent2:#0D9488">
+      <div class="kpi-label">Billings (Consolidated)</div>
+      <div class="kpi-val">$28.7M</div>
+      <div class="kpi-sub down">▼ vs $30.6M Mar · deferred rev dynamics</div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="section-title fade fade-3">Revenue & Margin Trend</div>
+  <div class="charts-2 fade fade-3">
+    <div class="chart-card wide">
+      <div class="chart-title">Monthly Net Revenue by Segment  ($M)</div>
+      <div class="chart-subtitle">Actuals Feb-25 → Apr-26 · Base forecast May-26 → Oct-26 (dashed)</div>
+      <div class="chart-wrap"><canvas id="chart-rev" height="200"></canvas></div>
+    </div>
+  </div>
+
+  <div class="charts-3 fade fade-4">
+    <div class="chart-card">
+      <div class="chart-title">Gross Margin %</div>
+      <div class="chart-subtitle">Target band 63–70%</div>
+      <div class="chart-wrap"><canvas id="chart-gm" height="160"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Adj. EBITDA ($M)</div>
+      <div class="chart-subtitle">Including SBC = grey bars</div>
+      <div class="chart-wrap"><canvas id="chart-ebitda" height="160"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">ARR Run-Rate ($M)</div>
+      <div class="chart-subtitle">Subscription ARR × 12</div>
+      <div class="chart-wrap"><canvas id="chart-arr" height="160"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Opex mix -->
+  <div class="section-title fade fade-5">Opex Structure</div>
+  <div class="charts-2 fade fade-5">
+    <div class="chart-card">
+      <div class="chart-title">OpEx as % of Revenue</div>
+      <div class="chart-subtitle">S&M · R&D · G&A</div>
+      <div class="chart-wrap"><canvas id="chart-opex-pct" height="180"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Revenue Mix %</div>
+      <div class="chart-subtitle">Sub · Usage · v0 · AI</div>
+      <div class="chart-wrap"><canvas id="chart-mix" height="180"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ P&L DETAIL ══════════ -->
+<div class="tab-content" id="tab-pl">
+  <div style="margin-top:24px">
+  <div class="section-title">Monthly P&L — Actuals + Base Forecast ($000s)</div>
+  <div class="table-card fade">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="pl-table">
+      <thead id="pl-head"></thead>
+      <tbody id="pl-body"></tbody>
+    </table>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ DRIVER TREE ══════════ -->
+<div class="tab-content" id="tab-drivers">
+  <div style="margin-top:24px">
+  <div class="section-title">Revenue Driver Tree — Investment-Grade KPIs</div>
+  <div class="table-card fade">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="dt-table">
+      <thead id="dt-head"></thead>
+      <tbody id="dt-body"></tbody>
+    </table>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ SCENARIOS ══════════ -->
+<div class="tab-content" id="tab-scenarios">
+  <div style="margin-top:24px">
+  <div class="section-title">6-Month Forward Scenarios  (May-26 → Oct-26)</div>
+  <div class="scen-tabs">
+    <div class="scen-tab active-base" id="stab-base" onclick="switchScen('base')">Base Case</div>
+    <div class="scen-tab" id="stab-bull" onclick="switchScen('bull')">Bull Case</div>
+    <div class="scen-tab" id="stab-bear" onclick="switchScen('bear')">Bear Case</div>
+  </div>
+  <div class="charts-2">
+    <div class="chart-card wide">
+      <div class="chart-title" id="scen-title">Revenue + EBITDA — Base Case ($M)</div>
+      <div class="chart-wrap"><canvas id="chart-scen" height="200"></canvas></div>
+    </div>
+  </div>
+  <div class="table-card fade" style="margin-top:16px">
+    <div style="overflow-x:auto">
+    <table class="tbl" id="scen-table">
+      <thead id="scen-head"></thead>
+      <tbody id="scen-body"></tbody>
+    </table>
+    </div>
+  </div>
+  <!-- Assumptions -->
+  <div class="section-title" style="margin-top:24px">Scenario Assumptions</div>
+  <div class="table-card">
+    <table class="tbl" id="assump-table">
+      <thead id="assump-head"></thead>
+      <tbody id="assump-body"></tbody>
+    </table>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ VALUATION ══════════ -->
+<div class="tab-content" id="tab-valuation">
+  <div style="margin-top:24px">
+  <div class="kpi-grid fade">
+    <div class="kpi-card" style="--accent1:#7C3AED;--accent2:#4F6AF0">
+      <div class="kpi-label">Series F Valuation (Sep-25)</div>
+      <div class="kpi-val">$9.3B</div>
+      <div class="kpi-sub" style="color:var(--gray4)">Last round · ~37x fwd ARR at raise</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#10B981;--accent2:#34D399">
+      <div class="kpi-label">Cash Runway @ Norm. Burn</div>
+      <div class="kpi-val" style="color:var(--green)">50 mo</div>
+      <div class="kpi-sub up">$534M / $10.7M avg burn (Feb-Apr)</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#EF4444;--accent2:#F59E0B">
+      <div class="kpi-label">Cash Runway @ Apr Burn</div>
+      <div class="kpi-val" style="color:var(--amber)">31 mo</div>
+      <div class="kpi-sub warn">$534M / $17.2M (Apr peak — not representative)</div>
+    </div>
+    <div class="kpi-card" style="--accent1:#4F6AF0;--accent2:#0D9488">
+      <div class="kpi-label">Mar-26 ARR (normalised)</div>
+      <div class="kpi-val">$215M</div>
+      <div class="kpi-sub" style="color:var(--gray4)">Excl. Apr spike · ~$251M incl. catch-up</div>
+    </div>
+  </div>
+
+  <div class="section-title fade fade-2" style="margin-top:8px">EV / ARR Sensitivity  ($B implied valuation)</div>
+  <div style="margin-bottom:12px;font-size:11px;color:var(--gray4)">Green = above current $9.3B Series F valuation. Blue = within 10%.</div>
+  <div class="val-grid fade fade-2" id="val-grid"></div>
+
+  <div class="section-title" style="margin-top:24px">Cash & Runway Analysis</div>
+  <div class="charts-2">
+    <div class="chart-card wide">
+      <div class="chart-title">Cash Balance vs Monthly Burn ($M)</div>
+      <div class="chart-wrap"><canvas id="chart-cash" height="200"></canvas></div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════ OPEN ITEMS ══════════ -->
+<div class="tab-content" id="tab-issues">
+  <div style="margin-top:24px">
+  <div class="section-title">Board-Critical Open Items  (Apr-26 Close)</div>
+  <div class="issues fade" id="issues-grid"></div>
+  <div class="section-title" style="margin-top:8px">Narrative Guide: How to Explain April to the Board</div>
+  <div style="background:var(--navy2);border:1px solid var(--gray2);border-radius:12px;padding:20px;font-size:12px;line-height:1.8;color:var(--gray5)">
+    <p style="margin-bottom:12px"><strong style="color:var(--white)">The signal under the noise:</strong> Organic ABC core (Sub + Usage ex-AI) grew ~18% MoM in April — from $15.4M to $17.2M (excl. Pro catch-up and AI). The April number <em>looks</em> bad at -18% because March was artificially inflated by Blackbox.ai AI Gateway spike ($2.9M → $0.2M), and April was simultaneously hit by a -$9.3M AI reclassification, -$0.4M ProServ rev rec change, and -$1.3M FLOW-related opex load.</p>
+    <p style="margin-bottom:12px"><strong style="color:var(--white)">Gross margin:</strong> 50.3% in April vs 63.1% in March. The decline is structural (v0 Fluid CPU costs +66% MoM, Turbo builds +131%) but partially temporary. Migration to Hive should improve v0 margins. Excluding v0 and AI, core GM was 65.6% — essentially flat.</p>
+    <p style="margin-bottom:12px"><strong style="color:var(--white)">EBITDA:</strong> -$17.2M is the worst in the dataset, but ~$5.3M of that is FLOW event costs, ~$2.7M is the SBC double-accrual, and ~$3M is the Pro catch-up margin impact. Normalised ongoing burn is closer to $10–11M/month, consistent with Feb-Mar.</p>
+    <p><strong style="color:var(--white)">The $534M cash position</strong> provides 50 months of normalised runway — there is no liquidity concern. The question is the path to profitability, which requires v0 margin improvement and AI Gateway revenue stabilisation.</p>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════ MAR→APR ANOMALIES ══════════ -->
+<div class="tab-content" id="tab-anomalies">
+<div style="margin-top:24px" id="anomalies-root"></div>
+</div>
+
+<!-- ══════════ REVENUE QUALITY ══════════ -->
+<div class="tab-content" id="tab-revquality">
+<div style="margin-top:24px" id="revquality-root"></div>
+</div>
+
+<!-- ══════════ COST EFFICIENCY ══════════ -->
+<div class="tab-content" id="tab-costeff">
+<div style="margin-top:24px" id="costeff-root"></div>
+</div>
+
+
+<!-- ══════════ MANAGEMENT SIMULATOR ══════════ -->
+<div class="tab-content" id="tab-mgmtsim">
+<div style="margin-top:24px" id="mgmtsim-root"></div>
+</div>
+
+</div><!-- end content -->
+</div><!-- end app -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+const MONTHS_ACT = ['Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25',
+                    'Aug-25','Sep-25','Oct-25','Nov-25','Dec-25',
+                    'Jan-26','Feb-26','Mar-26','Apr-26'];
+const MONTHS_FCAST = ['May-26','Jun-26','Jul-26','Aug-26','Sep-26','Oct-26'];
+
+// All in $M
+const ACT = {
+  sub:    [6.61,6.74,7.06,7.46,7.66,7.95,8.10,8.43,8.65,9.03,9.51,10.16,10.82,12.14,20.94],
+  usg:    [2.12,1.90,2.34,2.27,2.11,2.20,2.25,2.74,2.98,3.06,3.14,3.19,2.88,3.22,8.27],
+  v0:     [0.03,0.03,0.04,0.06,0.08,0.08,0.08,0.24,0.40,0.46,0.73,0.95,1.13,2.64,5.79],
+  ai:     [0,0,0,0,0,0.01,-0.01,-0.08,0.01,0.11,0.16,-0.00,0.06,2.00,-9.26],
+  oth:    [0.23,0.11,0.15,0.16,0.20,0.24,0.21,0.28,0.19,0.24,0.19,-0.30,0.35,0.27,-0.23],
+  rev:    [8.99,8.79,9.59,9.95,10.04,10.48,10.64,11.61,12.23,12.90,13.73,14.99,15.24,18.27,25.50],
+  cor:    [2.50,2.56,2.67,3.03,2.88,3.04,3.17,3.51,3.85,4.20,4.93,4.72,6.46,6.74,12.66],
+  gp:     [6.48,6.23,6.92,6.92,7.16,7.44,7.47,8.09,8.38,8.70,8.80,10.52,8.65,11.53,12.84],
+  gm:     [72.1,70.8,72.1,69.5,71.3,71.0,70.2,69.7,68.5,67.5,64.1,70.2,56.8,63.1,50.3],
+  sm:     [4.57,4.66,5.49,6.28,5.42,5.61,5.90,5.71,8.48,6.95,8.14,6.14,8.52,11.30,12.08],
+  rd:     [4.07,4.35,4.44,4.70,4.64,5.16,4.95,5.21,5.56,5.20,4.77,5.92,7.16,7.07,11.22],
+  ga:     [2.07,2.31,2.54,2.92,2.64,3.17,2.25,2.30,3.41,3.08,3.20,2.55,3.60,4.88,6.77],
+  opex:   [10.71,11.32,12.47,13.89,12.70,13.94,13.10,13.22,17.44,15.23,16.11,14.61,19.28,23.25,30.07],
+  ebitda: [-4.24,-5.10,-5.55,-6.97,-5.54,-6.50,-5.63,-5.12,-9.06,-6.53,-7.31,-4.09,-10.63,-11.72,-17.24],
+  sbc:    [0,0,0,0,0,0,0,0,0,0,0,0,0,2.71,-5.43],
+  cash:   [0,0,0,0,0,0,0,0,0,0,0,0,584.5,541.5,533.5],
+  contra: [2.3,3.6,3.0,2.7,4.6,9.5,6.1,5.0,4.1,3.1,3.4,1.3,2.2,2.1,2.3],
+  arr:    [79.3,80.9,84.7,89.6,91.9,95.5,97.2,101.2,103.8,108.3,114.2,121.9,129.9,145.6,251.3],
+};
+
+// Base forecast
+const BASE_REV_MOM = [0.00, 0.03, 0.04, 0.04, 0.05, 0.05];
+const BASE_GM      = [0.56, 0.57, 0.58, 0.59, 0.60, 0.61];
+const BASE_SM_PCT  = [0.38, 0.37, 0.36, 0.35, 0.34, 0.33];
+const BASE_RD_PCT  = [0.32, 0.31, 0.30, 0.29, 0.28, 0.27];
+const BASE_GA_PCT  = [0.22, 0.21, 0.20, 0.20, 0.19, 0.18];
+
+const BULL_REV_MOM = [0.05, 0.07, 0.08, 0.08, 0.09, 0.09];
+const BULL_GM      = [0.58, 0.60, 0.61, 0.62, 0.63, 0.64];
+const BULL_SM_PCT  = [0.36, 0.35, 0.33, 0.32, 0.31, 0.30];
+const BULL_RD_PCT  = [0.30, 0.29, 0.28, 0.27, 0.26, 0.25];
+const BULL_GA_PCT  = [0.20, 0.19, 0.18, 0.17, 0.17, 0.16];
+
+const BEAR_REV_MOM = [-0.05, 0.00, 0.02, 0.02, 0.03, 0.03];
+const BEAR_GM      = [0.52, 0.53, 0.54, 0.55, 0.56, 0.57];
+const BEAR_SM_PCT  = [0.42, 0.41, 0.40, 0.39, 0.38, 0.37];
+const BEAR_RD_PCT  = [0.36, 0.35, 0.34, 0.33, 0.32, 0.31];
+const BEAR_GA_PCT  = [0.25, 0.24, 0.23, 0.22, 0.21, 0.20];
+
+function calcFcast(revMom, gm, smPct, rdPct, gaPct) {
+  const out = [];
+  let prevRev = ACT.rev[ACT.rev.length - 1];
+  for (let i = 0; i < 6; i++) {
+    const rev = prevRev * (1 + revMom[i]);
+    const gp  = rev * gm[i];
+    const cor = rev * (1 - gm[i]);
+    const sm  = rev * smPct[i];
+    const rd  = rev * rdPct[i];
+    const ga  = rev * gaPct[i];
+    const opex = sm + rd + ga;
+    const ebitda = gp - opex;
+    out.push({rev, gp, cor, gm: gm[i]*100, sm, rd, ga, opex, ebitda,
+              ebitdaMgn: ebitda/rev*100, arr: rev*0.62*12});
+    prevRev = rev;
+  }
+  return out;
+}
+
+const FCAST = {
+  base: calcFcast(BASE_REV_MOM, BASE_GM, BASE_SM_PCT, BASE_RD_PCT, BASE_GA_PCT),
+  bull: calcFcast(BULL_REV_MOM, BULL_GM, BULL_SM_PCT, BULL_RD_PCT, BULL_GA_PCT),
+  bear: calcFcast(BEAR_REV_MOM, BEAR_GM, BEAR_SM_PCT, BEAR_RD_PCT, BEAR_GA_PCT),
+};
+
+// ═══════════════════════════════════════════════════════
+// CHART HELPERS
+// ═══════════════════════════════════════════════════════
+const DARK_GRID = 'rgba(255,255,255,0.05)';
+const TT = {
+  backgroundColor:'rgba(9,13,26,0.95)',
+  borderColor:'rgba(255,255,255,0.1)',
+  borderWidth:1,
+  titleColor:'rgba(255,255,255,0.9)',
+  bodyColor:'rgba(255,255,255,0.6)',
+  padding:10,
+  titleFont:{family:"'DM Sans',sans-serif",size:11,weight:'600'},
+  bodyFont:{family:"'DM Mono',monospace",size:10},
+};
+const XSCALE = {
+  grid:{color:DARK_GRID},
+  ticks:{color:'rgba(255,255,255,0.25)',font:{size:9,family:"'DM Sans'"}},
+  border:{display:false}
+};
+const YSCALE = (cb) => ({
+  grid:{color:DARK_GRID},
+  ticks:{color:'rgba(255,255,255,0.25)',font:{size:9,family:"'DM Mono'"},callback:cb},
+  border:{display:false}
+});
+
+const charts = {};
+function mkChart(id, cfg) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  if (charts[id]) { charts[id].destroy(); }
+  charts[id] = new Chart(ctx, cfg);
+}
+
+// ═══════════════════════════════════════════════════════
+// SPARKLINES (tiny inline charts)
+// ═══════════════════════════════════════════════════════
+function mkSpark(id, data, color) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  new Chart(ctx, {
+    type:'line',
+    data:{labels:data.map((_,i)=>i),datasets:[{data,borderColor:color,borderWidth:1.5,pointRadius:0,tension:0.4,fill:true,backgroundColor:color+'18'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},
+      scales:{x:{display:false},y:{display:false}},animation:{duration:800}}
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BUILD CHARTS
+// ═══════════════════════════════════════════════════════
+function buildAllCharts() {
+  const allM = [...MONTHS_ACT, ...MONTHS_FCAST];
+  const frev = FCAST.base.map(r=>r.rev);
+  const fsub = FCAST.base.map(r=>r.rev*0.62);
+  const fusg = FCAST.base.map(r=>r.rev*0.22);
+  const fv0  = FCAST.base.map(r=>r.rev*0.12);
+  const fai  = FCAST.base.map(r=>r.rev*0.04);
+  const fgm  = FCAST.base.map(r=>r.gm);
+  const febitda = FCAST.base.map(r=>r.ebitda);
+  const farr = FCAST.base.map(r=>r.arr);
+
+  // Revenue stacked bar + forecast line
+  mkChart('chart-rev', {
+    type:'bar',
+    data:{
+      labels: allM,
+      datasets:[
+        {label:'Sub', data:[...ACT.sub,...fsub], backgroundColor:'rgba(79,106,240,0.8)', stack:'s', borderRadius:0, borderSkipped:false},
+        {label:'Usage', data:[...ACT.usg,...fusg], backgroundColor:'rgba(13,148,136,0.8)', stack:'s'},
+        {label:'v0',  data:[...ACT.v0,...fv0],  backgroundColor:'rgba(139,92,246,0.85)', stack:'s'},
+        {label:'AI',  data:[...ACT.ai.map(v=>Math.max(v,0)),...fai], backgroundColor:'rgba(245,158,11,0.85)', stack:'s'},
+        {label:'Forecast Rev', type:'line', data:[...Array(15).fill(null),...frev],
+          borderColor:'rgba(20,184,166,0.6)', borderWidth:2, borderDash:[4,3],
+          pointRadius:3, pointBackgroundColor:'var(--teal2)', tension:0.3, stack:undefined, fill:false},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:true, position:'top',
+        labels:{color:'rgba(255,255,255,0.45)',font:{size:10,family:"'DM Sans'"},boxWidth:10,padding:12}},
+        tooltip:{...TT, callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(2)}M`}}
+      },
+      scales:{
+        x:{...XSCALE, ticks:{...XSCALE.ticks,maxRotation:45}},
+        y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'), stacked:true, min:-2}
+      }
+    }
+  });
+
+  // Gross margin
+  mkChart('chart-gm', {
+    type:'line',
+    data:{labels:allM, datasets:[
+      {label:'GM %', data:[...ACT.gm,...fgm], borderColor:'#14B8A6', borderWidth:2,
+       pointRadius:2.5, pointBackgroundColor:ACT.gm.map(v=>v<58?'#EF4444':v<65?'#F59E0B':'#14B8A6'),
+       tension:0.3, fill:true, backgroundColor:'rgba(20,184,166,0.06)'},
+      {label:'Forecast', data:[...Array(15).fill(null),...fgm], borderColor:'rgba(20,184,166,0.4)',
+       borderWidth:2, borderDash:[4,3], pointRadius:0, tension:0.3, fill:false},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{...TT, callbacks:{label:c=>`${c.parsed.y.toFixed(1)}%`}},
+        annotation:{annotations:{band:{type:'box',yMin:63,yMax:70,backgroundColor:'rgba(16,185,129,0.04)',borderColor:'rgba(16,185,129,0.15)',borderWidth:1}}}},
+      scales:{x:XSCALE, y:{...YSCALE(v=>v+'%'), min:40, max:80}}
+    }
+  });
+
+  // EBITDA
+  const ebitdaWithSBC = ACT.ebitda.map((v,i)=>ACT.sbc[i]?v-ACT.sbc[i]:null);
+  mkChart('chart-ebitda', {
+    type:'bar',
+    data:{labels:allM, datasets:[
+      {label:'Adj. EBITDA', data:[...ACT.ebitda,...febitda],
+        backgroundColor:[...ACT.ebitda.map(v=>v>=0?'rgba(16,185,129,0.75)':'rgba(239,68,68,0.65)'),
+                         ...febitda.map(v=>v>=0?'rgba(16,185,129,0.4)':'rgba(239,68,68,0.4)')],
+        borderRadius:3, borderSkipped:false},
+      {label:'incl. SBC', data:[...ebitdaWithSBC,...Array(6).fill(null)],
+        backgroundColor:'rgba(255,255,255,0.08)', borderRadius:3, borderSkipped:false},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{...TT, callbacks:{label:c=>`$${c.parsed.y.toFixed(2)}M`}}},
+      scales:{x:XSCALE, y:YSCALE(v=>'$'+v.toFixed(0)+'M')}
+    }
+  });
+
+  // ARR
+  mkChart('chart-arr', {
+    type:'line',
+    data:{labels:allM, datasets:[
+      {label:'Sub ARR', data:[...ACT.arr,...farr], borderColor:'#6B83F5', borderWidth:2,
+       pointRadius:2, tension:0.4, fill:true, backgroundColor:'rgba(107,131,245,0.08)'},
+      {label:'Forecast', data:[...Array(15).fill(null),...farr],
+       borderColor:'rgba(107,131,245,0.45)', borderWidth:2, borderDash:[4,3], pointRadius:0, tension:0.4, fill:false},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{...TT, callbacks:{label:c=>`$${c.parsed.y.toFixed(0)}M ARR`}}},
+      scales:{x:XSCALE, y:YSCALE(v=>'$'+v.toFixed(0)+'M')}
+    }
+  });
+
+  // OpEx %
+  const smPct = ACT.rev.map((r,i)=>ACT.sm[i]/r*100);
+  const rdPct = ACT.rev.map((r,i)=>ACT.rd[i]/r*100);
+  const gaPct = ACT.rev.map((r,i)=>ACT.ga[i]/r*100);
+  mkChart('chart-opex-pct', {
+    type:'bar',
+    data:{labels:MONTHS_ACT, datasets:[
+      {label:'S&M %', data:smPct, backgroundColor:'rgba(79,106,240,0.75)', stack:'a'},
+      {label:'R&D %', data:rdPct, backgroundColor:'rgba(139,92,246,0.75)', stack:'a'},
+      {label:'G&A %', data:gaPct, backgroundColor:'rgba(13,148,136,0.75)', stack:'a'},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:true, position:'top',
+        labels:{color:'rgba(255,255,255,0.45)',font:{size:9,family:"'DM Sans'"},boxWidth:8,padding:8}},
+        tooltip:{...TT, callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(1)}%`}}},
+      scales:{x:XSCALE, y:{...YSCALE(v=>v+'%'), stacked:true}}
+    }
+  });
+
+  // Revenue mix %
+  const subPct = ACT.rev.map((r,i)=>ACT.sub[i]/r*100);
+  const usgPct = ACT.rev.map((r,i)=>ACT.usg[i]/r*100);
+  const v0Pct  = ACT.rev.map((r,i)=>Math.max(ACT.v0[i],0)/r*100);
+  const aiPct  = ACT.rev.map((r,i)=>Math.max(ACT.ai[i],0)/r*100);
+  mkChart('chart-mix', {
+    type:'bar',
+    data:{labels:MONTHS_ACT, datasets:[
+      {label:'Sub %', data:subPct, backgroundColor:'rgba(79,106,240,0.8)', stack:'a'},
+      {label:'Usage %', data:usgPct, backgroundColor:'rgba(20,184,166,0.8)', stack:'a'},
+      {label:'v0 %', data:v0Pct, backgroundColor:'rgba(139,92,246,0.85)', stack:'a'},
+      {label:'AI %', data:aiPct, backgroundColor:'rgba(245,158,11,0.85)', stack:'a'},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:true, position:'top',
+        labels:{color:'rgba(255,255,255,0.45)',font:{size:9},boxWidth:8,padding:8}},
+        tooltip:{...TT}},
+      scales:{x:XSCALE, y:{...YSCALE(v=>v+'%'), stacked:true, max:105}}
+    }
+  });
+
+  // Cash chart
+  const cashData = ACT.cash.map((v,i)=>v>0?v:null);
+  const burnData = ACT.ebitda.map(v=>Math.abs(v));
+  mkChart('chart-cash', {
+    type:'bar',
+    data:{labels:MONTHS_ACT, datasets:[
+      {label:'Cash Balance ($M)', data:cashData, backgroundColor:'rgba(16,185,129,0.3)',
+       borderColor:'rgba(16,185,129,0.7)', borderWidth:1, yAxisID:'y', type:'bar'},
+      {label:'Monthly Burn ($M)', data:burnData, type:'line',
+       borderColor:'#EF4444', borderWidth:2, pointRadius:3, tension:0.3,
+       yAxisID:'y2', fill:false},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:true, position:'top',
+        labels:{color:'rgba(255,255,255,0.45)',font:{size:10},boxWidth:10,padding:12}},
+        tooltip:{...TT, callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toFixed(1)}M`}}},
+      scales:{
+        x:XSCALE,
+        y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'), position:'left', title:{display:true,text:'Cash $M',color:'rgba(16,185,129,0.5)',font:{size:9}}},
+        y2:{...YSCALE(v=>'$'+v.toFixed(1)+'M'), position:'right', grid:{display:false},
+          title:{display:true,text:'Burn $M',color:'rgba(239,68,68,0.5)',font:{size:9}}}
+      }
+    }
+  });
+
+  // Sparklines
+  mkSpark('spark-rev', ACT.rev, '#6B83F5');
+  mkSpark('spark-gm', ACT.gm, '#14B8A6');
+  mkSpark('spark-ebitda', ACT.ebitda, '#EF4444');
+  mkSpark('spark-arr', ACT.arr, '#7C3AED');
+}
+
+// ═══════════════════════════════════════════════════════
+// P&L TABLE
+// ═══════════════════════════════════════════════════════
+function buildPLTable() {
+  const NAM = MONTHS_ACT.slice(-6); // last 6 actuals
+  const NF  = MONTHS_FCAST;
+  const head = document.getElementById('pl-head');
+  const body = document.getElementById('pl-body');
+  const cols = [...NAM, ...NF];
+
+  head.innerHTML = `<tr>
+    <th style="text-align:left">Line Item</th>
+    ${NAM.map(m=>`<th class="col-head-act">${m}</th>`).join('')}
+    ${NF.map(m=>`<th class="col-head-fcast">${m}</th>`).join('')}
+  </tr>`;
+
+  // Get last 6 actuals + 6 forecast values for a key
+  function av(key) { return ACT[key].slice(-6).map(v=>(v*1000).toFixed(0)); }
+  function fv(key) { return FCAST.base.map(r=>(r[key]*1000).toFixed(0)); }
+  function pct(key, base) { return ACT[key].slice(-6).map((v,i)=>{const b=ACT[base].slice(-6)[i]; return b?((v/b)*100).toFixed(1)+'%':''; }); }
+
+  const fm = (v, isNeg=false) => {
+    const n = parseFloat(v);
+    const cls = isNeg ? (n < 0 ? 'pos' : 'neg') : (n < 0 ? 'neg' : '');
+    const disp = n < 0 ? `(${Math.abs(n).toLocaleString()})` : n.toLocaleString();
+    return `<td class="act-col ${cls}">${disp}</td>`;
+  };
+  const ff = (v, isNeg=false) => {
+    const n = parseFloat(v);
+    const cls = isNeg ? (n < 0 ? 'pos' : 'neg') : (n < 0 ? 'neg' : '');
+    const disp = n < 0 ? `(${Math.abs(n).toLocaleString()})` : n.toLocaleString();
+    return `<td class="fcast-col ${cls}">${disp}</td>`;
+  };
+
+  const rows = [
+    {type:'section', label:'REVENUE'},
+    {type:'row', label:'  Subscription Revenue', ak:'sub', fk:'sub', fcast:true},
+    {type:'row', label:'  Usage Revenue', ak:'usg', fk:'usg', fcast:true},
+    {type:'row', label:'  v0 Revenue', ak:'v0', fk:'v0', fcast:true},
+    {type:'row', label:'  AI Gateway Revenue', ak:'ai', fk:'ai', fcast:true},
+    {type:'total', label:'TOTAL NET REVENUE', ak:'rev', fk:'rev', fcast:true},
+    {type:'section', label:'COST OF REVENUE'},
+    {type:'row', label:'  Adj. Cost of Revenue', ak:'cor', fk:'cor', fcast:true},
+    {type:'total', label:'GROSS PROFIT', ak:'gp', fk:'gp', fcast:true},
+    {type:'pct', label:'  Gross Margin %', ak:'gm', base:'rev', fpcts:FCAST.base.map(r=>r.gm.toFixed(1)+'%')},
+    {type:'section', label:'OPERATING EXPENSES'},
+    {type:'row', label:'  Sales & Marketing', ak:'sm', fk:'sm', fcast:true},
+    {type:'row', label:'  Research & Development', ak:'rd', fk:'rd', fcast:true},
+    {type:'row', label:'  General & Administrative', ak:'ga', fk:'ga', fcast:true},
+    {type:'total', label:'TOTAL OPEX', ak:'opex', fk:'opex', fcast:true},
+    {type:'total', label:'ADJ. EBITDA', ak:'ebitda', fk:'ebitda', fcast:true, neg:true},
+    {type:'pct', label:'  EBITDA Margin %', ak:'ebitda', base:'rev', fpcts:FCAST.base.map(r=>r.ebitdaMgn.toFixed(1)+'%'), isNeg:true},
+    {type:'section', label:'MEMO'},
+    {type:'row', label:'  Stock-Based Compensation', ak:'sbc', fcast:false},
+    {type:'row', label:'  Cash Balance', ak:'cash', fcast:false},
+  ];
+
+  body.innerHTML = rows.map(row => {
+    if (row.type === 'section') {
+      return `<tr class="section"><td colspan="${cols.length+1}">${row.label}</td></tr>`;
+    }
+    if (row.type === 'pct') {
+      const actVals = ACT[row.ak].slice(-6).map((v,i)=>{
+        const b = ACT[row.base].slice(-6)[i];
+        return b ? (v/b*100).toFixed(1)+'%' : '';
+      });
+      const cls = row.isNeg ? 'neg' : '';
+      const actCells = actVals.map(v=>`<td class="act-col ${v&&parseFloat(v)<0?'neg':v&&parseFloat(v)>60?'pos':''}">${v}</td>`).join('');
+      const fcastCells = (row.fpcts||[]).map(v=>`<td class="fcast-col">${v}</td>`).join('');
+      return `<tr class="indent"><td>${row.label}</td>${actCells}${fcastCells}</tr>`;
+    }
+    const aVals = av(row.ak);
+    const fVals = row.fcast ? FCAST.base.map(r=>(r[row.fk]*1000).toFixed(0)) : [];
+    const actCells = aVals.map(v=>fm(v, row.neg||false)).join('');
+    const fcastCells = fVals.map(v=>ff(v, row.neg||false)).join('');
+    const cls = row.type==='total' ? 'total' : row.type==='indent' ? 'indent' : '';
+    return `<tr class="${cls}"><td>${row.label}</td>${actCells}${fcastCells}</tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// DRIVER TREE TABLE
+// ═══════════════════════════════════════════════════════
+function buildDriverTable() {
+  const head = document.getElementById('dt-head');
+  const body = document.getElementById('dt-body');
+  const allM = [...MONTHS_ACT, ...MONTHS_FCAST.slice(0,3)]; // last 15 + 3 fcast
+
+  head.innerHTML = `<tr>
+    <th style="text-align:left">KPI / Driver</th>
+    ${MONTHS_ACT.map(m=>`<th class="col-head-act">${m}</th>`).join('')}
+    ${MONTHS_FCAST.slice(0,3).map(m=>`<th class="col-head-fcast">${m}</th>`).join('')}
+  </tr>`;
+
+  const sub_arr  = ACT.sub.map(v=>`$${(v*12).toFixed(0)}M`);
+  const tot_arr  = ACT.rev.map((v,i)=>`$${((ACT.sub[i]+ACT.usg[i]+Math.max(ACT.v0[i],0))*12).toFixed(0)}M`);
+  const momRev   = ACT.rev.map((v,i)=>i===0?'-':(((v/ACT.rev[i-1])-1)*100).toFixed(1)+'%');
+  const subPct   = ACT.rev.map((v,i)=>(ACT.sub[i]/v*100).toFixed(1)+'%');
+  const usgPct   = ACT.rev.map((v,i)=>(ACT.usg[i]/v*100).toFixed(1)+'%');
+  const v0Pct    = ACT.rev.map((v,i)=>(Math.max(ACT.v0[i],0)/v*100).toFixed(1)+'%');
+  const gmPct    = ACT.gm.map(v=>v.toFixed(1)+'%');
+  const smPct    = ACT.rev.map((v,i)=>(ACT.sm[i]/v*100).toFixed(1)+'%');
+  const rdPct    = ACT.rev.map((v,i)=>(ACT.rd[i]/v*100).toFixed(1)+'%');
+  const gaPct    = ACT.rev.map((v,i)=>(ACT.ga[i]/v*100).toFixed(1)+'%');
+  const ebitdaMg = ACT.rev.map((v,i)=>(ACT.ebitda[i]/v*100).toFixed(1)+'%');
+
+  const f3sub_arr = FCAST.base.slice(0,3).map(r=>`$${(r.arr).toFixed(0)}M`);
+  const f3momRev  = FCAST.base.slice(0,3).map((r,i)=>{
+    const prev = i===0 ? ACT.rev[ACT.rev.length-1] : FCAST.base[i-1].rev;
+    return ((r.rev/prev-1)*100).toFixed(1)+'%';
+  });
+  const f3gm     = FCAST.base.slice(0,3).map(r=>r.gm.toFixed(1)+'%');
+  const f3em     = FCAST.base.slice(0,3).map(r=>r.ebitdaMgn.toFixed(1)+'%');
+
+  function row(label, actVals, fcastVals=[], indent=false, bold=false, colorFn=null) {
+    const cls = bold ? 'total' : indent ? 'indent' : '';
+    const actCells = actVals.map((v,i)=>{
+      const col = colorFn ? colorFn(v,i) : '';
+      return `<td class="act-col ${col}">${v}</td>`;
+    }).join('');
+    const fcastCells = fcastVals.map(v=>`<td class="fcast-col">${v}</td>`).join('');
+    return `<tr class="${cls}"><td>${bold?'<strong>'+label+'</strong>':label}</td>${actCells}${fcastCells}</tr>`;
+  }
+  function sec(label) {
+    return `<tr class="section"><td colspan="${15+3+1}">${label}</td></tr>`;
+  }
+
+  body.innerHTML = [
+    sec('ARR METRICS'),
+    row('Total ARR (run-rate)', tot_arr, f3sub_arr.map(v=>v), false, true),
+    row('  Subscription ARR', sub_arr, f3sub_arr, true),
+    row('  MoM Revenue Growth', momRev, f3momRev, true, false,
+      (v)=>v==='-'?'':parseFloat(v)>=0?'pos':'neg'),
+    sec('REVENUE MIX'),
+    row('  Subscription % of Rev', subPct, ['~62%','~62%','~63%'], true),
+    row('  Usage % of Rev', usgPct, ['~22%','~22%','~22%'], true),
+    row('  v0 % of Rev', v0Pct, ['~12%','~12%','~12%'], true),
+    sec('MARGIN PROFILE'),
+    row('Gross Margin %', gmPct, f3gm, false, true,
+      (v)=>parseFloat(v)>=65?'pos':parseFloat(v)>=58?'warn':'neg'),
+    row('  S&M % of Rev', smPct, ['38%','37%','36%'], true),
+    row('  R&D % of Rev', rdPct, ['32%','31%','30%'], true),
+    row('  G&A % of Rev', gaPct, ['22%','21%','20%'], true),
+    row('Adj. EBITDA Margin %', ebitdaMg, f3em, false, true,
+      (v)=>parseFloat(v)>0?'pos':parseFloat(v)>-25?'warn':'neg'),
+    row('  Contra Revenue %', ACT.contra.map(v=>v.toFixed(1)+'%'), ['2.0%','2.0%','2.0%'], true),
+  ].join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// SCENARIO TABLE + CHART
+// ═══════════════════════════════════════════════════════
+let currentScen = 'base';
+
+function buildScenChart(scen) {
+  const f = FCAST[scen];
+  const prevRev = ACT.rev.slice(-3);
+  const labels  = [...MONTHS_ACT.slice(-3), ...MONTHS_FCAST];
+  const revData  = [...prevRev, ...f.map(r=>r.rev)];
+  const ebitData = [...ACT.ebitda.slice(-3), ...f.map(r=>r.ebitda)];
+  const colors   = {base:{rev:'#6B83F5',ebitda:'#EF4444'}, bull:{rev:'#10B981',ebitda:'#34D399'}, bear:{rev:'#F59E0B',ebitda:'#EF4444'}};
+  const c = colors[scen];
+
+  mkChart('chart-scen', {
+    type:'bar',
+    data:{labels, datasets:[
+      {label:'Revenue ($M)', data:revData, backgroundColor:revData.map((_,i)=>i<3?'rgba(255,255,255,0.08)':c.rev+'99'), borderRadius:4, borderSkipped:false, yAxisID:'y'},
+      {label:'EBITDA ($M)', data:ebitData, type:'line', borderColor:c.ebitda, borderWidth:2, pointRadius:4, tension:0.3, fill:false, yAxisID:'y2'},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:true, position:'top',
+        labels:{color:'rgba(255,255,255,0.5)',font:{size:10},boxWidth:10,padding:10}},
+        tooltip:{...TT, callbacks:{label:c_=>` ${c_.dataset.label}: $${c_.parsed.y.toFixed(2)}M`}}},
+      scales:{
+        x:XSCALE,
+        y:{...YSCALE(v=>'$'+v.toFixed(0)+'M'), position:'left'},
+        y2:{...YSCALE(v=>'$'+v.toFixed(1)+'M'), position:'right', grid:{display:false}}
+      }
+    }
+  });
+}
+
+function buildScenTable(scen) {
+  const f = FCAST[scen];
+  const head = document.getElementById('scen-head');
+  const body = document.getElementById('scen-body');
+
+  head.innerHTML = `<tr>
+    <th style="text-align:left">Metric</th>
+    <th class="col-head-act">Apr-26 Actual</th>
+    ${MONTHS_FCAST.map(m=>`<th class="col-head-fcast">${m}</th>`).join('')}
+  </tr>`;
+
+  const rows = [
+    {label:'Net Revenue ($M)',      act:ACT.rev[14], fkey:'rev'},
+    {label:'MoM Growth %',          act:((ACT.rev[14]/ACT.rev[13]-1)*100).toFixed(1)+'%', fval:f.map((r,i)=>{const p=i===0?ACT.rev[14]:f[i-1].rev; return ((r.rev/p-1)*100).toFixed(1)+'%';})},
+    {label:'Gross Profit ($M)',     act:ACT.gp[14], fkey:'gp'},
+    {label:'Gross Margin %',        act:ACT.gm[14].toFixed(1)+'%', fval:f.map(r=>r.gm.toFixed(1)+'%')},
+    {label:'S&M ($M)',              act:ACT.sm[14], fkey:'sm'},
+    {label:'R&D ($M)',              act:ACT.rd[14], fkey:'rd'},
+    {label:'G&A ($M)',              act:ACT.ga[14], fkey:'ga'},
+    {label:'Total OpEx ($M)',       act:ACT.opex[14], fkey:'opex'},
+    {label:'Adj. EBITDA ($M)',      act:ACT.ebitda[14], fkey:'ebitda', neg:true},
+    {label:'EBITDA Margin %',       act:(ACT.ebitda[14]/ACT.rev[14]*100).toFixed(1)+'%', fval:f.map(r=>r.ebitdaMgn.toFixed(1)+'%')},
+    {label:'Subscription ARR ($M)', act:(ACT.sub[14]*12).toFixed(0), fval:f.map(r=>r.arr.toFixed(0))},
+  ];
+
+  body.innerHTML = rows.map((r,i)=>{
+    const bg = i%2===0?'':'';
+    const actVal = typeof r.act==='number' ? r.act.toFixed(2) : r.act;
+    const actFmt = typeof r.act==='number' ? (r.neg&&r.act<0?`<span class="pos">(${Math.abs(r.act).toFixed(2)})</span>`:`<span${r.act<0?' class="neg"':''}>${r.act.toFixed(2)}</span>`) : `<span>${actVal}</span>`;
+    const fVals = r.fval || f.map(row=>r.neg?(row[r.fkey]<0?`(${Math.abs(row[r.fkey]).toFixed(2)})`:`${row[r.fkey].toFixed(2)}`):row[r.fkey].toFixed(2));
+    const fCells = fVals.map((v,j)=>{
+      const n = parseFloat(String(v).replace(/[()]/g,''));
+      const isneg = String(v).includes('(') || (r.neg && n<0);
+      return `<td class="fcast-col ${isneg?'pos':''}">${v}</td>`;
+    }).join('');
+    const isBold = ['Net Revenue ($M)','Gross Profit ($M)','Adj. EBITDA ($M)'].includes(r.label);
+    return `<tr class="${isBold?'total':''}"><td>${isBold?'<strong>'+r.label+'</strong>':r.label}</td><td class="act-col">${actFmt}</td>${fCells}</tr>`;
+  }).join('');
+}
+
+function buildAssumpTable() {
+  const head = document.getElementById('assump-head');
+  const body = document.getElementById('assump-body');
+  head.innerHTML = `<tr>
+    <th style="text-align:left">Assumption</th>
+    ${MONTHS_FCAST.map(m=>`<th>${m}</th>`).join('')}
+  </tr>`;
+  const rows = [
+    {label:'MoM Revenue Growth', base:BASE_REV_MOM, bull:BULL_REV_MOM, bear:BEAR_REV_MOM, fmt:v=>(v*100).toFixed(0)+'%'},
+    {label:'Gross Margin Target', base:BASE_GM, bull:BULL_GM, bear:BEAR_GM, fmt:v=>(v*100).toFixed(0)+'%'},
+    {label:'S&M % of Revenue', base:BASE_SM_PCT, bull:BULL_SM_PCT, bear:BEAR_SM_PCT, fmt:v=>(v*100).toFixed(0)+'%'},
+    {label:'R&D % of Revenue', base:BASE_RD_PCT, bull:BULL_RD_PCT, bear:BEAR_RD_PCT, fmt:v=>(v*100).toFixed(0)+'%'},
+    {label:'G&A % of Revenue', base:BASE_GA_PCT, bull:BULL_GA_PCT, bear:BEAR_GA_PCT, fmt:v=>(v*100).toFixed(0)+'%'},
+  ];
+  body.innerHTML = [
+    `<tr class="section"><td colspan="7">BASE CASE</td></tr>`,
+    ...rows.map((r,i)=>`<tr class="${i%2===0?'':'indent'}"><td>  ${r.label}</td>${r.base.map(v=>`<td class="act-col">${r.fmt(v)}</td>`).join('')}</tr>`),
+    `<tr class="section"><td colspan="7">BULL CASE</td></tr>`,
+    ...rows.map((r,i)=>`<tr class="${i%2===0?'':'indent'}"><td>  ${r.label}</td>${r.bull.map(v=>`<td class="fcast-col pos">${r.fmt(v)}</td>`).join('')}</tr>`),
+    `<tr class="section"><td colspan="7">BEAR CASE</td></tr>`,
+    ...rows.map((r,i)=>`<tr class="${i%2===0?'':'indent'}"><td>  ${r.label}</td>${r.bear.map(v=>`<td class="fcast-col neg">${r.fmt(v)}</td>`).join('')}</tr>`),
+  ].join('');
+}
+
+function switchScen(scen) {
+  currentScen = scen;
+  ['base','bull','bear'].forEach(s=>{
+    const el = document.getElementById(`stab-${s}`);
+    el.className = `scen-tab${s===scen?' active-'+s:''}`;
+  });
+  const titles = {base:'Revenue + EBITDA — Base Case ($M)', bull:'Revenue + EBITDA — Bull Case ($M)', bear:'Revenue + EBITDA — Bear Case ($M)'};
+  document.getElementById('scen-title').textContent = titles[scen];
+  buildScenChart(scen);
+  buildScenTable(scen);
+}
+
+// ═══════════════════════════════════════════════════════
+// VALUATION GRID
+// ═══════════════════════════════════════════════════════
+function buildValGrid() {
+  const grid = document.getElementById('val-grid');
+  const multiples = [15, 20, 25, 30, 35];
+  const arrs = [200, 250, 300, 350, 400, 450, 500];
+  const seriesF = 9.3;
+
+  let html = `<div class="val-cell head">ARR →<br>Multiple ↓</div>`;
+  arrs.forEach(a=>{html+=`<div class="val-cell head">$${a}M</div>`;});
+  multiples.forEach(m=>{
+    html+=`<div class="val-cell row-head">${m}x ARR</div>`;
+    arrs.forEach(a=>{
+      const val = (a * m / 1000).toFixed(1);
+      const numVal = parseFloat(val);
+      const cls = numVal >= seriesF ? 'highlight' : numVal >= seriesF * 0.9 ? 'current' : '';
+      html+=`<div class="val-cell ${cls}">$${val}B</div>`;
+    });
+  });
+  grid.innerHTML = html;
+  grid.style.gridTemplateColumns = `auto repeat(${arrs.length},1fr)`;
+}
+
+// ═══════════════════════════════════════════════════════
+// OPEN ITEMS
+// ═══════════════════════════════════════════════════════
+function buildIssues() {
+  const issues = [
+    {icon:'⚖️', title:'Intercompany Eliminations Incomplete',
+     text:'~$160M gross interco AR/AP needs to net to zero. Balance sheet check fails by ~$15.7M. Must be resolved before board presentation.',
+     status:'open'},
+    {icon:'🔄', title:'AI Revenue Reclassification (44106 → 44108)',
+     text:'Apr-26 shows -$5.7M on 44106 + $10.1M on 44108, creating a $12M optical swing. Board narrative must explain this is accounting, not business decline.',
+     status:'open'},
+    {icon:'📊', title:'SBC Double-Accrual in April',
+     text:'-$5.4M SBC in Apr vs +$2.7M/mo in Feb-Mar. If intentional catch-up, this must be documented clearly. Distorts EBITDA comparison by ~$2.7M.',
+     status:'inprog'},
+    {icon:'🎉', title:'FLOW Event Costs Not Finalised',
+     text:'GL shows ~$3.9M in FLOW-tagged expenses. EPD hotel costs still TBD. Total FLOW cost must be confirmed before opex is presented as clean.',
+     status:'open'},
+    {icon:'💰', title:'Pro Subscription $1M Catch-Up',
+     text:'Billing cutoff correction inflates Apr-26 Sub revenue by ~$1M. April organic subscription growth net of this is ~$7.8M vs $12.1M reported.',
+     status:'inprog'},
+    {icon:'🏦', title:'GmbH/UK AP Migration Open',
+     text:'A\'s opening balance entries in New ABC GmbH remain partially unresolved. Interco revaluation review flagged as open item.',
+     status:'open'},
+    {icon:'⚙️', title:'Professional Services Rev Rec Change',
+     text:'Switched to % complete methodology Q1 FY27. April ProServ -$0.4M adjustment. FY27 ProServ likely understated due to inflated budgeted hours.',
+     status:'inprog'},
+  ];
+  const grid = document.getElementById('issues-grid');
+  grid.innerHTML = issues.map(issue=>`
+    <div class="issue-card">
+      <div class="issue-icon">${issue.icon}</div>
+      <div class="issue-text">
+        <div class="issue-title">${issue.title}</div>
+        ${issue.text}
+        <div><span class="issue-badge ${issue.status}">${issue.status==='open'?'OPEN':'IN PROGRESS'}</span></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const ids = ['overview','pl','drivers','scenarios','valuation','issues','anomalies','revquality','costeff','mgmtsim'];
+    t.classList.toggle('active', ids[i]===id);
+  });
+  document.querySelectorAll('.tab-content').forEach(t=>{
+    t.classList.toggle('active', t.id===`tab-${id}`);
+  });
+  if (id==='scenarios' && !charts['chart-scen']) {
+    buildScenChart('base'); buildScenTable('base'); buildAssumpTable();
+  }
+  if (id==='valuation' && !document.querySelector('.val-cell')) {
+    buildValGrid(); setTimeout(()=>buildCashChart(), 100);
+  }
+  if (id==='anomalies') { buildAnomalies(); }
+  if (id==='revquality') { buildRevQuality(); }
+  if (id==='costeff') { buildCostEff(); }
+  if (id==='mgmtsim') { buildMgmtSim(); }
+}
+
+// ═══════════════════════════════════════════════════════
+// ANOMALIES TAB — Mar-26 vs Apr-26 Complete Change Log
+// ═══════════════════════════════════════════════════════
+let anomaliesBuilt = false;
+function buildAnomalies() {
+  if (anomaliesBuilt) return;
+  anomaliesBuilt = true;
+  const root = document.getElementById('anomalies-root');
+
+  const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
+  const bg2 = 'var(--color-background-secondary)';
+  const border = '0.5px solid var(--color-border-tertiary)';
+
+  // ── DATA ──────────────────────────────────────────────
+  const ANOMALIES = [
+    {
+      cat: 'Revenue — Accounting changes',
+      color: '#E24B4A',
+      items: [
+        { flag:'REV-01', sev:'high', mar:18.27, apr:25.50, delta:'+$7.23M', pct:'+39.6%',
+          title:'Gross revenue up but net revenue down — contra explosion',
+          detail:'Gross revenue rose $8.9M (from $33.5M to $37.7M, +26.7% MoM) driven by AI Gateway and Subscription. But contra-revenue (refunds, credits, discounts) swelled to $2.51M from $2.22M, AND revenue reclassifications created the optical net decline.',
+          source:'Revenue Flux by Plan, row 17 vs 28' ,
+          why:'Gross billings grew strongly (+26.7% MoM) driven by real product usage. The net revenue decline is an artifact of four simultaneous accounting methodology changes and one large prior-period reversal (Blackbox.ai AI accrual) all hitting in the same month — an unusual coincidence, not a business trend.'},
+        { flag:'REV-02', sev:'high', mar:2.00, apr:-9.26, delta:'-$11.26M', pct:'-563%',
+          title:'AI Gateway revenue: +$2M in March → -$9.3M in April',
+          detail:'March AI revenue included $2.0M of Blackbox.ai overage accruals. April reversed these (prior-period adjustment) while simultaneously reclassifying AI revenue from account 44106 to 44108. Net effect: -$11.3M optical swing. The underlying April AI business generated ~$889K of actual new revenue.',
+          source:'Revenue Flux row 12; GL accounts 44106/44108' ,
+          why:'In March, the finance team accrued $2.0M of estimated Blackbox.ai AI Gateway overages that had not yet been invoiced. In April, that accrual was reversed when the actual invoice came in lower. Simultaneously, the AI Gateway revenue account was renamed/renumbered (44106 to 44108) as part of a chart-of-accounts cleanup. These two events — a $2M reversal plus a $9.3M net reclassification — both posted in April, creating the optical collapse. The underlying April AI Gateway business collected ~$889K of new revenue.'},
+        { flag:'REV-03', sev:'med', mar:12.14, apr:20.94, delta:'+$8.80M', pct:'+72.5%',
+          title:'Subscription revenue spike: $1M Pro catch-up + FLOW migration',
+          detail:'Two simultaneous changes: (1) Pro subscription billing cutoff correction added ~$1M one-time catch-up. (2) FLOW26 conference drove enterprise upgrades. Organic recurring sub growth (ex catch-up) was $7.8M vs $12.1M reported — still strong but board needs the clean number.',
+          source:'Revenue Flux row 5; Executive Summary notes' ,
+          why:'Pro subscription billing had been recognized on invoice date rather than rateably. Finance corrected this to comply with ASC 606 ratable recognition. The correction required a one-time catch-up of approximately $1M representing prior months\' under-recognized revenue. Additionally, the FLOW26 conference triggered a wave of enterprise plan upgrades that were booked in April. Strip these two items and organic subscription growth was approximately $7.8M MoM — still the strongest month on record.'},
+        { flag:'REV-04', sev:'med', mar:0.129, apr:-0.223, delta:'-$352K', pct:'-273%',
+          title:'Professional Services revenue went negative (-$223K)',
+          detail:'Switch to percentage-of-completion methodology in Q1 FY27 caused a revenue reversal. Budgeted hours were inflated, requiring a deferral adjustment. ProServ will likely remain understated until hours are corrected. Additionally, this is the first month with the new recognition policy applied retroactively.',
+          source:'Revenue Flux row 31; Executive Summary "Significant Judgements"' ,
+          why:'Professional Services contracts were previously recognized at contract signing (upfront). The switch to percentage-of-completion (POC) methodology means revenue is now tied to work performed, not billed. April was the first month under POC, and because budgeted hours were set too high in the contracts, the completion percentage was lower than the amounts already invoiced — creating a reversal. This will normalize once contract hours are rebased.'},
+        { flag:'REV-05', sev:'med', mar:0.289, apr:-0.057, delta:'-$346K', pct:'-120%',
+          title:'Stripe Marketplace revenue: -$346K correction',
+          detail:'$168K adjustment to Stripe Marketplace Partnership Revenue — previously fully recognized in March, now adjusted proportionally based on actual sandboxes claimed. The April figure is negative (-$57K) due to the retroactive correction.',
+          source:'Revenue Flux row 38 flux comment' ,
+          why:'The Stripe Marketplace partnership agreement provides ABC revenue based on actual sandboxes claimed by partners. Finance had been recognizing the full contracted amount in the month of execution. When the April reconciliation was done against Stripe\'s actual sandbox data, only a fraction had been claimed, requiring a retroactive proportional adjustment that wiped out March\'s recognition and posted a small negative in April.'},
+        { flag:'REV-06', sev:'low', mar:2.64, apr:5.79, delta:'+$3.15M', pct:'+119%',
+          title:'v0 revenue doubled MoM — Fluid compute re-launch',
+          detail:'v0 subscription ARR grew from $2.79M to $3.74M. v0 usage-based revenue added $2.05M. The FLOW26 conference and v0 Fluid compute GA launch in April drove a surge in new subscriptions and usage. This is genuine product momentum, not a one-time item.',
+          source:'Revenue Flux rows 10-11; Profit by Plan' ,
+          why:'The FLOW26 conference (ABC\'s developer conference in Scottsdale in late March/April) drove a surge in v0 sign-ups and upgrades. Fluid compute — v0\'s new serverless CPU product — went GA around this time, attracting new paying users. v0 usage-based revenue also spiked as these new users built and deployed. This is genuine product momentum: v0 ARR is now on a $46M+ run-rate and accelerating.'},
+      ]
+    },
+    {
+      cat: 'Cost of Revenue — Margin collapse',
+      color: '#F59E0B',
+      items: [
+        { flag:'COR-01', sev:'high', mar:6.74, apr:12.66, delta:'+$5.92M', pct:'+87.8%',
+          title:'Total COR nearly doubled — v0 Fluid CPU + Turbo builds',
+          detail:'Site hosting (60001) remained stable. The explosion came from v0 hosting: Fluid Active CPU costs up +66% MoM, Turbo build costs up +131% MoM vs January baseline. v0 hosting fees (60002) account for ~$4.2M of the increase. Turbo builds defaulting "on" drove a step-change in per-unit cost.',
+          source:'FY26 MGMT IS COR accounts 60001-60002' ,
+          why:'ABC made a deliberate product decision to default Turbo builds \'on\' for all users, not just those who explicitly opted in. This expanded the usage base overnight but also multiplied build infrastructure costs. Fluid compute CPU billing (for v0\'s serverless execution) is priced on active CPU-seconds — a fundamentally different and more expensive cost structure than traditional serverless. The economics improve significantly once usage scales (fixed infrastructure amortized over more revenue) and once the Hive migration routes v0 off expensive third-party GPU infra.'},
+        { flag:'COR-02', sev:'high', mar:63.1, apr:50.3, delta:'-12.8pp', pct:'',
+          title:'Blended gross margin fell 12.8 percentage points',
+          detail:'Core hosting (ex-v0, ex-AI) GM remained ~65.6%. The blended collapse was entirely driven by: (1) v0 GM negative at approximately -20% (Fluid CPU costs exceed revenue), (2) AI Gateway cost structure distorted by reclassification. Hive migration is the fix for v0 — ETA not confirmed.',
+          source:'Derived from COR/Revenue actuals' ,
+          why:'The blended GM collapse from 63% to 50% is almost entirely a v0 and AI Gateway mix-shift problem, not a core business deterioration. Core hosting (subscription + usage, ex-v0 and ex-AI) maintained approximately 65.6% GM — nearly unchanged. v0 is currently subscale on its new Fluid compute infrastructure: the cost structure was built for 10x today\'s volume. AI Gateway margin is distorted by the accounting reclassification. The path back to 60%+ blended GM runs through: (1) Hive migration for v0, (2) AI Gateway revenue normalization, (3) continued core revenue growth against stable hosting costs.'},
+        { flag:'COR-03', sev:'med', mar:0, apr:null, delta:'TBD', pct:'',
+          title:'AI hosting fees (60009) — April amount not confirmed',
+          detail:'Anthropic and Google Gemini AI hosting costs were $791K in Nov-25, trending up. April AI hosting cost unclear due to the 44106→44108 reclassification creating circular accounting. CFO needs to confirm whether COR on AI Gateway is being correctly captured under the new account structure.',
+          source:'FY26 MGMT IS COR account 60009' ,
+          why:'The AI hosting cost account (60009) was created to capture Anthropic API and Google Gemini costs for the AI Gateway product. When the revenue account was renamed from 44106 to 44108, the corresponding cost account may not have been properly mapped. If AI hosting costs are now being captured under a different account or partially buried in COR with no revenue match, the AI Gateway margin calculation is wrong in both directions. Finance needs to confirm the account mapping is consistent post-reclassification.'},
+      ]
+    },
+    {
+      cat: 'Operating Expenses — One-time & structural',
+      color: '#7C3AED',
+      items: [
+        { flag:'OPX-01', sev:'high', mar:11.30, apr:12.08, delta:'+$780K', pct:'+6.9%',
+          title:'S&M: $780K increase — FLOW event + headcount',
+          detail:'FLOW26 conference added ~$2.8M across all depts (event costs booked mainly in S&M and G&A). S&M also absorbed new FLOW/acquired-company headcount. Partially offset by lower commission accruals. March had 22 working days vs 20 in February — April also at 22 days sustained the elevated base.',
+          source:'FY26 MGMT IS SM; Executive Summary notes' ,
+          why:'S&M absorbed three distinct cost increases simultaneously: (1) FLOW26 conference marketing and field sales costs (~$1.5M of the $2.8M total FLOW event booked in S&M and G&A); (2) First full month of acquired-company sales headcount (NuxtLabs EU sales team, Tremor sales); (3) Higher demand-gen spend tied to the v0 GA launch. March also had 22 working days vs February\'s 20, establishing a higher payroll base that carried into April.'},
+        { flag:'OPX-02', sev:'high', mar:7.07, apr:11.22, delta:'+$4.15M', pct:'+58.7%',
+          title:'R&D: +$4.15M — largest single opex jump',
+          detail:'Two primary drivers: (1) Acquired entity R&D headcount fully loaded for first time (NuxtLabs SAS, Gel Data/MagicStack, Tremor Labs all added to consolidated R&D). (2) Cost-plus intercompany billing from US to subsidiaries (~$4.4M total) was reallocated. Severance and contractor spend also elevated.',
+          source:'FY26 MGMT IS RD; intercompany 45100/66012' ,
+          why:'R&D jumped because April is the first month all three acquired entities (NuxtLabs SAS France, Gel Data/MagicStack, Tremor Labs) are fully consolidated into R&D headcount. These teams were acquired at different times but their payroll and contractor costs are all now flowing through the US consolidated P&L. The intercompany cost-plus billing mechanism means the US entity charges subsidiaries for shared services — but the gross costs show up in R&D before the elimination, inflating the line. Severance from integration restructuring also hit in April.'},
+        { flag:'OPX-03', sev:'high', mar:4.88, apr:6.77, delta:'+$1.89M', pct:'+38.7%',
+          title:'G&A: +$1.89M — audit fees + placement fees + FLOW',
+          detail:'Deloitte FY26 audit fees booked in April (~$400-600K est). 8 new hires in March generated placement/recruiting fees hitting in April. FLOW event hotel and venue costs partially booked in G&A. Anniversary gift program expensed. G&A at 26.6% of revenue vs typical 19-22% range.',
+          source:'FY26 MGMT IS GA; Executive Summary opex notes' ,
+          why:'Three separate non-recurring events collided in April G&A: (1) Deloitte\'s FY26 audit engagement was signed and the first fee tranche booked (~$400-600K estimated); (2) Eight hires closed in March generated placement fees that land in the following month — April; (3) FLOW26 event G&A-allocated costs (conference venue, executive travel, sponsored meals). G&A should normalize to $4.5-5.0M in May-June as these one-time items clear.'},
+        { flag:'OPX-04', sev:'med', mar:2.71, apr:-5.43, delta:'-$8.14M', pct:'',
+          title:'SBC reversal: -$5.43M vs +$2.71M prior months',
+          detail:'Feb and Mar each recorded +$2.71M SBC expense and equity credit. April shows -$5.43M — a sign reversal that doubles the prior month. This appears to be an intentional double-accrual catch-up or a sign error. If intentional, it reduces Apr EBITDA by ~$8.14M vs a "normal" month and must be disclosed to the board. If a sign error, EBITDA is ~$8M better than reported.',
+          source:'Executive Summary SBC line; needs CFO confirmation' ,
+          why:'SBC in Feb and Mar was a standard monthly accrual at ~$2.71M. April\'s -$5.43M is either: (a) an intentional double-accrual to catch up a missed month, in which case it represents two months of SBC expense (~$5.4M = 2 × $2.7M) recorded at once; or (b) a sign error where the debit/credit was entered in reverse, accidentally reducing SBC expense instead of increasing it. Scenario (a) would make April EBITDA $2.7M worse than normal but correct on a cumulative basis. Scenario (b) would make April EBITDA appear $8.1M better than reality. This is a CFO-level judgment call that must be resolved before the board package is finalized.'},
+        { flag:'OPX-05', sev:'med', mar:0, apr:3.9, delta:'+$3.9M', pct:'',
+          title:'FLOW event costs: ~$3.9M total (partial — EPD hotels TBD)',
+          detail:'GL-tagged FLOW transactions totalled ~$3.9M: $2.8M Events company-wide, $0.7M prepaid manual, $0.5M meals, $0.2M contractors. EPD (Engineering, Product, Design) hotel costs at the Scottsdale Resort are still being estimated. Total FLOW cost likely $4.2-4.5M once finalized.',
+          source:'GL FLOW-tagged transactions; Executive Summary open items' ,
+          why:'FLOW26 is ABC\'s annual developer conference held in Scottsdale, AZ in late March/early April 2026. It is a company-wide event spanning Engineering, Product, Design, Sales, and Marketing. Costs are spread across all departments because different teams use it for different purposes (customer meetings for Sales, developer workshops for Engineering, product launches for Product). The $3.9M in GL-tagged costs is a floor — EPD hotel and catering bills from the resort were still being reconciled at close.'},
+      ]
+    },
+    {
+      cat: 'Balance Sheet — Structural anomalies',
+      color: '#1D9E75',
+      items: [
+        { flag:'BS-01', sev:'high', mar:null, apr:205.8, delta:'$205M AR on books', pct:'',
+          title:'Accounts Receivable: $38M → $205.8M — intercompany',
+          detail:'The $165M jump is 12104 - Intercompany Receivables from the US parent to subsidiaries via cost-plus billing structure. This is a gross interco balance that should be eliminated on consolidation. The elimination is incomplete — $160M net gross exposure remains unreduced. This is the source of the balance sheet check failure.',
+          source:'FY27 Balance Sheet account 12104' ,
+          why:'The cost-plus intercompany billing structure works as follows: ABC US provides shared services (infrastructure, engineering support, IP licensing) to all subsidiaries and invoices them monthly via account 45100. Subsidiaries book the corresponding payable under account 66012. On a standalone subsidiary basis, these are real transactions. On consolidation, they must be eliminated (a receivable at the US parent paired with a payable at the subsidiary nets to zero). The elimination journal entries exist but are incomplete — likely because the GmbH and UK entity migrations (from old to new NS entities) left open balances in transit that weren\'t picked up by the automated elimination.'},
+        { flag:'BS-02', sev:'high', mar:null, apr:null, delta:'-$15.7M', pct:'',
+          title:'Balance sheet check fails: Assets ≠ Liabilities + Equity by ~$15.7M',
+          detail:'The GAAP balance sheet reconciliation check row shows a ~$15.7M imbalance. Driven by the incomplete intercompany eliminations above combined with the GmbH/UK opening balance migration entries (A\'s $38M opening AP subledger entries) that did not fully net to zero.',
+          source:'Balance Sheet (GAAP) check row; FY27 Balance Sheet' ,
+          why:'The balance sheet equation (Assets = Liabilities + Equity) fails because the intercompany eliminations are partial. When ABC US records a $165M interco receivable but the subsidiary payables are only partially eliminated, assets are overstated by the uneliminated amount. Additionally, the GmbH AP subledger migration loaded $38M of historical payables via the 99999 data migration clearing account — if those entries didn\'t have matching debit entries, they create a permanent imbalance. This is a known open item in the close checklist.'},
+        { flag:'BS-03', sev:'med', mar:541.5, apr:533.5, delta:'-$8.0M', pct:'-1.5%',
+          title:'Cash declined $8M — but internal sweeps mask the burn',
+          detail:'Headline cash dropped $8M. However within the accounts: SVB MMA +$17M, Chase Operating -$12M, Chase MMA -$17M, JPMorgan MMA +$4M. These are treasury sweeps, not operating outflows. True operating cash consumption was closer to $15-17M consistent with EBITDA burn.',
+          source:'FY27 Balance Sheet accounts 10104-10114' ,
+          why:'ABC maintains a treasury sweep structure where operating cash (Chase Operating) is swept nightly into higher-yield money market accounts (Chase MMA, SVB MMA, JPMorgan MMF). The April movements — SVB MMA +$17M, Chase Operating -$12M, Chase MMA -$17M — are treasury rebalancing, not operational cash usage. True operating cash consumption should mirror the EBITDA burn of ~$15-17M, partially offset by changes in deferred revenue (customer prepayments) and accounts receivable collections.'},
+        { flag:'BS-04', sev:'med', mar:null, apr:null, delta:'TBD', pct:'',
+          title:'Accounts Payable jumped ~$164M — intercompany payables',
+          detail:'Mirror to the interco AR: subsidiaries owe the US entity for cost-plus services. AP on the books at ~$166M gross (vs ~$2M prior period). These should net to zero in consolidation. Until the interco elimination is complete, AP is overstated on a consolidated basis.',
+          source:'FY27 Balance Sheet liabilities section' ,
+          why:'Mirror image of BS-01. Every interco receivable at ABC US has a corresponding interco payable at a subsidiary. The subsidiaries owe the US entity for shared services billed via the cost-plus mechanism. Gross AP on a consolidated basis should be zero after elimination — the fact that $164M shows up means the elimination entries are not complete. Same root cause as BS-01.'},
+        { flag:'BS-05', sev:'low', mar:7, apr:154, delta:'+$147M', pct:'',
+          title:'Other current assets spiked to $154M',
+          detail:'Likely acquisition-related: purchase price allocations for NuxtLabs, Gel Data/MagicStack, and Tremor Labs (see dedicated Gel PPA and Nuxt PPA sheets). Intangibles, deferred tax assets, and acquisition goodwill loaded onto balance sheet. Gel PPA and Nuxt PPA sheets in the workbook have detail.',
+          source:'FY27 Balance Sheet; Gel PPA and Nuxt PPA sheets' ,
+          why:'When ABC acquires a company, the purchase price must be allocated across identifiable assets (technology IP, customer relationships, trade names) and goodwill under ASC 805. These Purchase Price Allocation (PPA) exercises take 3-6 months to complete. NuxtLabs and Gel Data PPAs are in progress (dedicated sheets in the workbook show preliminary allocations). Until finalized, the estimated acquired intangibles sit as a lump sum in Other Current Assets. Once the PPA is complete, amounts will be reclassified to Intangible Assets and amortized.'},
+      ]
+    },
+    {
+      cat: 'Accounting methodology changes (all in Q1 FY27)',
+      color: '#185FA5',
+      items: [
+        { flag:'ACC-01', sev:'high', mar:null, apr:null, delta:'~$1M impact', pct:'',
+          title:'Pro subscription: switched to ratable recognition + $1M catch-up',
+          detail:'Previously booking pro subscriptions on billing date. Switched to ratable (daily) recognition. Created a $1M cumulative catch-up in April for prior months\' timing difference. This inflates April Sub revenue by $1M and will not recur.',
+          source:'Executive Summary "Significant Judgements" section' ,
+          why:'ASC 606 requires subscription revenue to be recognized ratably over the service period, not at the point of billing. ABC had been using billing date as a proxy (close enough when billing is monthly), but as enterprise contracts extended to annual and multi-year terms, the difference between billing date and ratable recognition became material. The $1M catch-up represents the cumulative under-recognition from prior months where revenue was booked too early relative to the service delivery period.'},
+        { flag:'ACC-02', sev:'med', mar:null, apr:null, delta:'~$200K impact', pct:'',
+          title:'v0 credits recognition: switched to 65-day expiry calculation',
+          detail:'v0 promotional and paid credits previously recognized at issuance. Now recognized over a 65-day expected usage window. Creates a timing shift in v0 deferred revenue. The precise revenue impact is ~$200K in April but will normalize over 2 months.',
+          source:'Executive Summary "Significant Judgements" section' ,
+          why:'v0 issues promotional credits and paid credit packs to users. Previously these were recognized as revenue when issued (effectively treating them as prepayments). The 65-day window approach recognizes credits as revenue only when consumed within a rolling 65-day window — matching the typical time between credit purchase and use. Credits that expire unused are recognized at expiration. This is more defensible under ASC 606\'s performance obligation framework and reduces the risk of having to reverse revenue if credits go unused.'},
+        { flag:'ACC-03', sev:'med', mar:null, apr:null, delta:'-$352K impact', pct:'',
+          title:'Stripe Marketplace: corrected to proportional recognition',
+          detail:'See REV-05 above. Material correction in April creates a negative Marketplace revenue line. Prior months were overstated.',
+          source:'Revenue Flux row 38' ,
+          why:'See REV-05. The root cause was a contract interpretation error: the Stripe Marketplace partnership agreement grants revenue based on partner usage of sandboxes, not based on contract signing. Finance initially treated contract signing as the performance obligation trigger. The correction aligns recognition with the actual delivery of value (sandbox utilization), which is the correct ASC 606 treatment.'},
+        { flag:'ACC-04', sev:'low', mar:null, apr:null, delta:'Unknown', pct:'',
+          title:'Enterprise supersede convention changed',
+          detail:'The method for handling mid-contract enterprise plan upgrades (superseding) was changed. Affects how upgrade ARR is counted and when revenue is recognized. Finance team has not yet quantified the full impact on April enterprise revenue.',
+          source:'Executive Summary "Significant Judgements" section' ,
+          why:'When an enterprise customer upgrades their ABC plan mid-contract, the old contract is \'superseded\' by the new one. The accounting question is: how is the incremental ACV recognized? Previous convention recognized the full upgrade value from the upgrade date. The new convention spreads recognition over the remaining original contract term. This is more conservative and creates a temporary revenue deferral in the transition period. The quantified impact has not been disclosed in the management package — flagged as TBD.'},
+      ]
+    },
+    {
+      cat: 'Subsidiary & intercompany (FLOW acquisition + migrations)',
+      color: '#0D9488',
+      items: [
+        { flag:'SUB-01', sev:'high', mar:0, apr:2.1, delta:'+$2.1M opex', pct:'',
+          title:'FLOW acquisition: first full month in consolidation',
+          detail:'FLOW (identity unclear — either the FLOW26 event brand or a SaaS acquisition) added ~$2.1M to both R&D and S&M in March/April combined. April is the first month it appears fully in the consolidated numbers. Valuation of acquired intangibles still marked "TBD - pending valuation" in the workbook.',
+          source:'Executive Summary dept notes; multiple TBD entries' ,
+          why:'The FLOW transaction (likely a product/brand acquisition to support the FLOW26 conference platform or an adjacent developer tool) closed in Q1 FY27. March was a partial month; April is the first full consolidated month. Because the purchase price allocation (PPA) is still pending, the intangible assets from FLOW are not yet being amortized — meaning the GAAP cost impact will increase once amortization begins. The \'TBD - pending valuation\' entries in the workbook confirm the PPA has not closed.'},
+        { flag:'SUB-02', sev:'med', mar:null, apr:null, delta:'$38M open', pct:'',
+          title:'GmbH AP subledger migration — opening balances unresolved',
+          detail:'A loaded $38M of opening AP subledger entries for New ABC GmbH. The GL file shows these as data migration clearing entries (account 99999). Old ABC GmbH and old ABC UK entities still carry open balances being zeroed out. Intercompany revaluation of EUR/CHF/CAD balances flagged as open.',
+          source:'GL file accounts 99999; Executive Summary open items' ,
+          why:'When ABC migrated the German subsidiary from the old NetSuite entity (\'ABC GmbH [OLD]\') to a new entity (\'New ABC GmbH\'), all historical AP balances had to be loaded into the new entity via a data migration. A\'s entries loaded $38M of historical payables using a clearing account (99999 - Data Migration). If the offsetting debit entries to establish the corresponding asset or expense weren\'t loaded correctly, the clearing account doesn\'t net to zero — creating a permanent accounting entry that distorts the balance sheet. The intercompany revaluation of EUR balances adds currency complexity.'},
+        { flag:'SUB-03', sev:'low', mar:null, apr:null, delta:'Ongoing', pct:'',
+          title:'NuxtLabs, Gel Data, Tremor Labs: cost-plus billing live',
+          detail:'US entity now billing all acquired subsidiaries via account 45100 (Cost Plus Revenue) at ~$4.4M/month total. Subsidiaries book corresponding expense under 66012. This mechanism is working but generates the $160M+ gross interco AR/AP that must be eliminated monthly.',
+          source:'GL accounts 45100/66012; FY27 Balance Sheet' ,
+          why:'The cost-plus billing structure is the standard mechanism multinationals use to ensure subsidiaries contribute to shared costs (IP, infrastructure, management). ABC bills subsidiaries at cost plus a margin (hence \'cost-plus\'). This is commercially defensible and also has transfer pricing implications — the rates must be arm\'s length and documented for tax purposes. The mechanism works correctly; the issue is purely in the consolidation elimination process. The $160M+ gross interco balance will zero out once elimination is complete.'},
+      ]
+    },
+  ];
+
+  // Severity badge
+  function sevBadge(s) {
+    const cfg = {
+      high: {bg:'rgba(226,75,74,0.12)', color:'#E24B4A', border:'rgba(226,75,74,0.25)', label:'High'},
+      med:  {bg:'rgba(245,158,11,0.12)', color:'#F59E0B', border:'rgba(245,158,11,0.25)', label:'Med'},
+      low:  {bg:'rgba(136,135,128,0.15)', color:'var(--color-text-secondary)', border:'rgba(136,135,128,0.2)', label:'Low'},
+    };
+    const c = cfg[s];
+    return `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:${c.bg};color:${c.color};border:1px solid ${c.border};letter-spacing:0.3px">${c.label}</span>`;
+  }
+
+  function deltaSpan(d) {
+    if (!d || d === 'TBD' || d === 'Ongoing' || d === 'Unknown') return `<span style="color:var(--color-text-secondary);font-size:12px">${d||'—'}</span>`;
+    const isNeg = d.startsWith('-');
+    const color = isNeg ? '#E24B4A' : '#1D9E75';
+    return `<span style="color:${color};font-weight:600;font-size:13px;font-family:var(--font-mono)">${d}</span>`;
+  }
+
+  // summary kpis
+  const highCount = ANOMALIES.flatMap(c=>c.items).filter(i=>i.sev==='high').length;
+  const medCount  = ANOMALIES.flatMap(c=>c.items).filter(i=>i.sev==='med').length;
+  const lowCount  = ANOMALIES.flatMap(c=>c.items).filter(i=>i.sev==='low').length;
+  const total     = highCount + medCount + lowCount;
+
+  let html = `
+  <style>
+    .ano-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:20px; }
+    .ano-section { margin-bottom:24px; }
+    .ano-section-hd { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--color-border-tertiary); }
+    .ano-section-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+    .ano-item { background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:14px 16px; margin-bottom:8px; }
+    .ano-item:hover { border-color:var(--color-border-secondary); }
+    .ano-header { display:flex; align-items:flex-start; gap:10px; margin-bottom:6px; }
+    .ano-flag { font-size:10px; font-weight:700; font-family:var(--font-mono); color:var(--color-text-secondary); white-space:nowrap; margin-top:2px; }
+    .ano-title { font-size:13px; font-weight:500; flex:1; }
+    .ano-nums { display:flex; align-items:center; gap:16px; margin-bottom:6px; flex-wrap:wrap; }
+    .ano-num { font-size:11px; color:var(--color-text-secondary); }
+    .ano-num strong { font-family:var(--font-mono); color:var(--color-text-primary); }
+    .ano-detail { font-size:12px; color:var(--color-text-secondary); line-height:1.6; }
+    .ano-why { font-size:12px; line-height:1.6; margin-top:8px; padding:8px 12px; border-radius:6px; border-left:3px solid var(--color-border-secondary); background:var(--color-background-primary); }
+    .ano-why-label { font-size:10px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--color-text-secondary); margin-bottom:3px; }
+    .ano-source { font-size:10px; color:var(--color-text-secondary); opacity:0.6; margin-top:6px; font-family:var(--font-mono); }
+  </style>
+
+  <div class="ano-kpis">
+    <div class="mc"><div class="lbl">Total anomalies logged</div><div class="num">${total}</div><div class="sub">Mar-26 → Apr-26 close</div></div>
+    <div class="mc"><div class="lbl">High severity</div><div class="num bad">${highCount}</div><div class="sub">Board-material items</div></div>
+    <div class="mc"><div class="lbl">Medium severity</div><div class="num warn">${medCount}</div><div class="sub">Explain but not alarming</div></div>
+    <div class="mc"><div class="lbl">Low / informational</div><div class="num">${lowCount}</div><div class="sub">Note in footnotes</div></div>
+  </div>
+
+  <div style="background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 16px;margin-bottom:20px;font-size:12px;color:var(--color-text-secondary);line-height:1.7">
+    <strong style="color:var(--color-text-primary)">How to read this:</strong>
+    Each item is flagged with a category code (REV, COR, OPX, BS, ACC, SUB), severity, and the actual dollar delta.
+    High = board needs an explicit explanation. Med = include in written notes. Low = footnote only.
+    <button style="margin-left:12px;font-size:11px" onclick="sendPrompt('Draft a CFO board narrative explaining the March to April 2026 anomalies at ABC')">Draft board narrative ↗</button>
+    <button style="margin-left:8px;font-size:11px" onclick="sendPrompt('Which of the March to April anomalies at ABC are permanent vs one-time?')">Permanent vs one-time? ↗</button>
+  </div>
+  `;
+
+  ANOMALIES.forEach(cat => {
+    html += `<div class="ano-section">
+      <div class="ano-section-hd">
+        <div class="ano-section-dot" style="background:${cat.color}"></div>
+        <span>${cat.cat}</span>
+        <span style="font-size:11px;color:var(--color-text-secondary);font-weight:400">(${cat.items.length} items)</span>
+      </div>`;
+
+    cat.items.forEach(item => {
+      const marStr = item.mar != null ? `<span class="ano-num"><span style="color:var(--color-text-secondary)">Mar-26:</span> <strong>$${item.mar.toFixed(2)}M</strong></span>` : '';
+      const aprStr = item.apr != null ? `<span class="ano-num"><span style="color:var(--color-text-secondary)">Apr-26:</span> <strong>$${item.apr.toFixed(2)}M</strong></span>` : '';
+      const deltaStr = item.delta ? `<span class="ano-num"><span style="color:var(--color-text-secondary)">Change:</span> ${deltaSpan(item.delta)}${item.pct ? ` <span style="color:var(--color-text-secondary);font-size:11px">(${item.pct})</span>` : ''}</span>` : '';
+
+      html += `<div class="ano-item">
+        <div class="ano-header">
+          <span class="ano-flag">${item.flag}</span>
+          <span class="ano-title">${item.title}</span>
+          ${sevBadge(item.sev)}
+        </div>
+        <div class="ano-nums">${marStr}${aprStr}${deltaStr}</div>
+        <div class="ano-detail">${item.detail}</div>
+        ${item.why ? `<div class="ano-why"><div class="ano-why-label">Why it happened</div>${item.why}</div>` : ''}
+        <div class="ano-source">Source: ${item.source}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  root.innerHTML = html;
+}
+function buildCashChart() {
+  if (charts['chart-cash']) return;
+  // re-trigger
+  const ctx = document.getElementById('chart-cash');
+  if (ctx) buildAllCharts();
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.getElementById('ts').textContent = new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+setTimeout(()=>{
+  buildAllCharts();
+  buildPLTable();
+  buildDriverTable();
+  buildIssues();
+  buildValGrid();
+}, 200);
+
+// ═══════════════════════════════════════════════════════
+// REVENUE QUALITY TAB
+// ═══════════════════════════════════════════════════════
+let revQualityBuilt = false;
+function buildRevQuality() {
+  if (revQualityBuilt) return;
+  revQualityBuilt = true;
+  const root = document.getElementById('revquality-root');
+
+  // ── Real data from management pack ──────────────────
+  // ARR by segment (last 6 months of actuals, $M)
+  const ARR_MONTHS = ['Nov-25','Dec-25','Jan-26','Feb-26','Mar-26','Apr-26'];
+  const ARR_ENT    = [9.03*12, 9.51*12, 10.16*12, 10.82*12, 12.14*12, 20.94*12].map(v=>+(v/12*12/1e6).toFixed(1));
+  // Enterprise ARR (from ARR+ANU sheet)
+  const ARR_ENT_M  = [109.0, 114.2, 121.9, 129.9, 145.6, 251.3]; // sub ARR $M
+  const ARR_ENT_S  = [80.8, 81.4, 87.2, 94.3, 102.4, 178.2];  // enterprise portion est
+  const ARR_PRO_S  = [25.0, 25.6, 26.4, 27.0, 31.5, 40.0];    // pro portion
+  const ARR_V0_S   = [3.3,  7.3,  8.5,  11.4, 12.8, 33.1];    // v0
+
+  // Revenue quality metrics (actuals)
+  const QUAL = {
+    months: ARR_MONTHS,
+    arr:    ARR_ENT_M,
+    entMix: [0.66, 0.67, 0.68, 0.69, 0.70, 0.71],  // enterprise % of ARR est
+    contRev:[3.1,  3.4,  1.3,  2.2,  2.1,  2.3],   // contra revenue %
+    v0Arr:  [5.5,  8.8,  11.4, 13.5, 33.5, 69.5],  // v0 ARR run-rate $M
+    usageRev:[3.06,3.14, 3.19, 2.88, 3.22, 8.27],  // usage rev $M
+    proServ:[0.18, 0.19, 0.13, 0.35, 0.13, -0.22], // ProServ $M
+    dso:    [38,   40,   35,   42,   44,   48],     // days sales outstanding est
+    badDebt:[0.12, 0.15, 0.10, 0.18, 0.16, 0.36],  // bad debt % of rev est
+  };
+
+  // Gross margin by product (from Profit by Plan)
+  const PROD_GM = [
+    { name:'Enterprise hosting',  gm:82.5, rev:8.6,  trend:'stable',  rag:'green' },
+    { name:'Pro hosting',         gm:63.3, rev:4.1,  trend:'down',    rag:'amber' },
+    { name:'Hobby (free tier)',   gm:36.0, rev:0,    trend:'cost',    rag:'red'   },
+    { name:'Domains',             gm:32.0, rev:0.81, trend:'stable',  rag:'amber' },
+    { name:'v0 (core sub)',       gm:75.3, rev:3.7,  trend:'up',      rag:'green' },
+    { name:'v0 Fluid compute',    gm:-30,  rev:2.1,  trend:'scaling', rag:'red'   },
+    { name:'Usage-based',         gm:65.2, rev:8.3,  trend:'up',      rag:'green' },
+    { name:'AI Gateway',          gm:'?',  rev:-9.3, trend:'reclass', rag:'gray'  },
+    { name:'Marketplace',         gm:72.0, rev:1.0,  trend:'up',      rag:'green' },
+    { name:'Professional Services',gm:45,  rev:-0.2, trend:'down',    rag:'red'   },
+  ];
+
+  // Revenue quality scores (proprietary framework)
+  const QUALITY_DIMS = [
+    { dim:'Recurring %',         score:88, max:100, note:'88% of Apr rev is recurring sub or usage. ProServ (-$223K) and Marketplace are minority.', rag:'green' },
+    { dim:'Net Revenue Retention', score:72, max:100, note:'Estimated NRR ~115-120% for Enterprise. Pro churn elevated post pricing changes. v0 expansion driving upside.', rag:'amber' },
+    { dim:'Revenue predictability', score:58, max:100, note:'Significant accounting noise (4 method changes + reclassification) makes Apr number hard to forecast. Normalizing.', rag:'red' },
+    { dim:'Gross margin quality', score:55, max:100, note:'50.3% blended GM dragged by v0 Fluid at -30%. Core GM 65.6% is healthy. Hive migration is the fix.', rag:'red' },
+    { dim:'Customer concentration', score:70, max:100, note:'Blackbox.ai drove $2.9M in March AI usage — one customer. Apr reversal confirms concentration risk in usage-based AI tier.', rag:'amber' },
+    { dim:'Contract durability',   score:78, max:100, note:'Enterprise on annual/multi-year contracts — strong. Pro on monthly. v0 usage has no floor. Mix is improving toward Enterprise.', rag:'green' },
+    { dim:'Expansion motion',      score:82, max:100, note:'Usage upsell working: usage rev +157% YoY. v0 converting free to paid at accelerating rate. Enterprise ACV expanding.', rag:'green' },
+    { dim:'Geographic diversification', score:45, max:100, note:'Revenue heavily US/NA concentrated. EMEA GTM ramping (see GmbH/UK/NuxtLabs), but EMEA <15% of ARR. APAC nascent.', rag:'red' },
+  ];
+
+  // v0 cohort-style revenue progression
+  const V0_GROWTH = [
+    { m:'Aug-25', rev:0.08 }, { m:'Sep-25', rev:0.24 }, { m:'Oct-25', rev:0.40 },
+    { m:'Nov-25', rev:0.46 }, { m:'Dec-25', rev:0.73 }, { m:'Jan-26', rev:0.95 },
+    { m:'Feb-26', rev:1.13 }, { m:'Mar-26', rev:2.64 }, { m:'Apr-26', rev:5.79 },
+  ];
+
+  const ragColor = { green:'#1D9E75', amber:'#F59E0B', red:'#E24B4A', gray:'var(--color-text-secondary)' };
+  const ragBg    = { green:'rgba(29,158,117,0.10)', amber:'rgba(245,158,11,0.10)', red:'rgba(226,75,74,0.10)', gray:'var(--color-background-secondary)' };
+  const ragBorder= { green:'rgba(29,158,117,0.25)', amber:'rgba(245,158,11,0.25)', red:'rgba(226,75,74,0.25)', gray:'var(--color-border-tertiary)' };
+
+  let html = `
+  <style>
+    .rq-kpis  { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:20px; }
+    .rq-2col  { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+    .rq-card  { background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:16px; }
+    .rq-card h3 { font-size:12px; font-weight:500; color:var(--color-text-secondary); margin-bottom:12px; letter-spacing:0.04em; text-transform:uppercase; }
+    .score-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .score-label { font-size:12px; color:var(--color-text-primary); width:180px; flex-shrink:0; }
+    .score-bar { flex:1; height:6px; background:var(--color-background-primary); border-radius:3px; overflow:hidden; }
+    .score-fill { height:100%; border-radius:3px; transition:width 0.6s ease; }
+    .score-val { font-size:12px; font-weight:600; min-width:32px; text-align:right; font-family:var(--font-mono); }
+    .score-note { font-size:11px; color:var(--color-text-secondary); margin-top:-6px; margin-bottom:8px; padding-left:190px; line-height:1.4; }
+    .prod-row { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:0.5px solid var(--color-border-tertiary); }
+    .prod-name { font-size:12px; width:160px; flex-shrink:0; }
+    .prod-gm { font-size:12px; font-weight:600; font-family:var(--font-mono); min-width:48px; text-align:right; }
+    .prod-rev { font-size:11px; color:var(--color-text-secondary); font-family:var(--font-mono); min-width:60px; text-align:right; }
+    .prod-rag { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .rq-insight { background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:14px 16px; margin-bottom:10px; }
+    .rq-insight-title { font-size:13px; font-weight:500; margin-bottom:4px; }
+    .rq-insight-body  { font-size:12px; color:var(--color-text-secondary); line-height:1.6; }
+    .rq-insight-label { font-size:10px; font-weight:700; letter-spacing:0.05em; padding:2px 7px; border-radius:4px; display:inline-block; margin-bottom:6px; }
+  </style>
+
+  <div class="rq-kpis">
+    <div class="mc"><div class="lbl">Recurring revenue %</div><div class="num ok">88%</div><div class="sub">Sub + Usage / Total rev</div></div>
+    <div class="mc"><div class="lbl">v0 ARR run-rate</div><div class="num warn">$69.5M</div><div class="sub">+$36M MoM · doubling</div></div>
+    <div class="mc"><div class="lbl">Estimated NRR (Enterprise)</div><div class="num ok">~118%</div><div class="sub">Usage expansion driving upsell</div></div>
+    <div class="mc"><div class="lbl">Revenue quality score</div><div class="num warn">68/100</div><div class="sub">Accounting noise ↓ · v0 momentum ↑</div></div>
+  </div>
+
+  <div class="rq-2col">
+    <div class="rq-card">
+      <h3>Revenue quality dimensions</h3>
+      ${QUALITY_DIMS.map(d => `
+        <div class="score-row">
+          <span class="score-label">${d.dim}</span>
+          <div class="score-bar"><div class="score-fill" style="width:${d.score}%;background:${ragColor[d.rag]}"></div></div>
+          <span class="score-val" style="color:${ragColor[d.rag]}">${d.score}</span>
+        </div>
+        <div class="score-note">${d.note}</div>
+      `).join('')}
+    </div>
+    <div>
+      <div class="rq-card" style="margin-bottom:16px">
+        <h3>Gross margin by product (Apr-26)</h3>
+        ${PROD_GM.map(p => `
+          <div class="prod-row">
+            <div class="prod-rag" style="background:${ragColor[p.rag]}"></div>
+            <div class="prod-name">${p.name}</div>
+            <div class="prod-gm" style="color:${typeof p.gm==='number'?(p.gm<0?ragColor.red:p.gm<50?ragColor.amber:ragColor.green):ragColor.gray}">
+              ${typeof p.gm==='number'?p.gm.toFixed(1)+'%':p.gm}
+            </div>
+            <div class="prod-rev">${p.rev >= 0 ? '$'+Math.abs(p.rev).toFixed(1)+'M' : '-$'+Math.abs(p.rev).toFixed(1)+'M'}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="rq-card">
+        <h3>v0 revenue trajectory ($M/mo)</h3>
+        <div style="position:relative;height:130px"><canvas id="chart-v0" role="img" aria-label="v0 monthly revenue growth from Aug-25 to Apr-26"></canvas></div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-top:8px">FLOW26 + Fluid GA drove +119% MoM in Apr. At current trajectory, v0 ARR exceeds $100M by Jul-26.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:8px;font-size:13px;font-weight:500;color:var(--color-text-primary)">Lab findings — what the revenue data reveals</div>
+
+  <div class="rq-insight">
+    <span class="rq-insight-label" style="background:rgba(29,158,117,0.12);color:#1D9E75;border:1px solid rgba(29,158,117,0.25)">STRENGTH</span>
+    <div class="rq-insight-title">v0 is becoming a second core business, not a feature</div>
+    <div class="rq-insight-body">v0 went from $33K/month in Feb-25 to $5.8M/month in Apr-26 — 175x growth in 14 months. At the Apr-26 run-rate, v0 alone is a $69.5M ARR product. The conversion from free to paid is accelerating (Paid % rising from 7.8% in Feb-24 to ~18% estimated now), and the usage-based Fluid compute layer means NRR on v0 paid customers is likely 130%+. This is the highest-quality revenue in the portfolio once the Hive migration fixes the margin structure.</div>
+  </div>
+  <div class="rq-insight">
+    <span class="rq-insight-label" style="background:rgba(245,158,11,0.12);color:#F59E0B;border:1px solid rgba(245,158,11,0.25)">WATCH</span>
+    <div class="rq-insight-title">Usage-based revenue is high quality but single-customer concentration is the risk</div>
+    <div class="rq-insight-body">Usage revenue grew strongly ($3.2M → $8.3M MoM) but Blackbox.ai's behavior in Mar-26 ($2.9M spike) and the April reversal is a textbook illustration of usage concentration risk. One customer's API usage pattern swings the P&L by $11M across two months. The fix: usage contracts with minimums (floors), usage smoothing via pre-purchase, and broader customer diversification in the AI Gateway tier.</div>
+  </div>
+  <div class="rq-insight">
+    <span class="rq-insight-label" style="background:rgba(226,75,74,0.12);color:#E24B4A;border:1px solid rgba(226,75,74,0.25)">FIX</span>
+    <div class="rq-insight-title">Professional Services is structurally broken as a revenue line</div>
+    <div class="rq-insight-body">ProServ went negative in April (-$223K) after a methodology change exposed over-recognized revenue. The FY26 cumulative ProServ number is solid (~$1.2M), but the monthly volatility (-$352K to +$384K range) signals that budgeted hours, contract scoping, and delivery tracking are not tight. For a company at ABC's scale, ProServ should be systematized: standardized SOWs, automated time-tracking against budget, and a project management layer that flags at-risk contracts before they become revenue reversals.</div>
+  </div>
+  <div class="rq-insight">
+    <span class="rq-insight-label" style="background:rgba(226,75,74,0.12);color:#E24B4A;border:1px solid rgba(226,75,74,0.25)">FIX</span>
+    <div class="rq-insight-title">Geographic revenue concentration is a valuation discount</div>
+    <div class="rq-insight-body">EMEA headcount is growing (GmbH, UK, NuxtLabs SAS France all active, SAP/BMW onsites in the GL) but EMEA contribution to ARR is estimated below 15%. Investors applying an ARR multiple to ABC will discount for US concentration — geographically diversified SaaS trades at a 10-15% premium to single-market peers. The EMEA GTM investment is happening; it just hasn't converted to ARR yet. Track EMEA ARR as a board KPI separately from US.</div>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+    <button onclick="sendPrompt('What would ABC revenue quality score look like in 12 months if v0 margins improve and AI Gateway stabilizes?')">Project quality score forward ↗</button>
+    <button onclick="sendPrompt('How should ABC price AI Gateway to reduce single-customer concentration risk?')">AI Gateway pricing fix ↗</button>
+    <button onclick="sendPrompt('What NRR should ABC target by segment to justify its Series F valuation?')">NRR targets for $9.3B valuation ↗</button>
+  </div>
+  `;
+
+  root.innerHTML = html;
+
+  // Build v0 mini chart
+  setTimeout(() => {
+    const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
+    const grid = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+    const tick  = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
+    new Chart(document.getElementById('chart-v0'), {
+      type:'bar',
+      data:{ labels: V0_GROWTH.map(d=>d.m),
+        datasets:[{ label:'v0 Rev $M', data: V0_GROWTH.map(d=>d.rev),
+          backgroundColor: V0_GROWTH.map((_,i)=> i===V0_GROWTH.length-1 ? '#7C3AED' : 'rgba(124,58,237,0.4)'),
+          borderRadius:3, borderSkipped:false }]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ backgroundColor: isDark?'rgba(20,20,30,0.95)':'rgba(255,255,255,0.97)', borderColor: isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.1)', borderWidth:1, titleColor: isDark?'#fff':'#111', bodyColor: isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.6)', callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)+'M'}}},
+        scales:{ x:{grid:{color:grid},ticks:{color:tick,font:{size:9}},border:{display:false}},
+                 y:{grid:{color:grid},ticks:{color:tick,font:{size:9},callback:v=>'$'+v+'M'},border:{display:false}} }}
+    });
+  }, 100);
+}
+
+// ═══════════════════════════════════════════════════════
+// COST EFFICIENCY TAB
+// ═══════════════════════════════════════════════════════
+let costEffBuilt = false;
+function buildCostEff() {
+  if (costEffBuilt) return;
+  costEffBuilt = true;
+  const root = document.getElementById('costeff-root');
+
+  // ── Real G&A line items (FY26 cumulative + Apr-26 actuals) ──
+  // Focusing on G&A as the lab category — the richest category for AI replacement
+  const GA_LINES = [
+    { acct:'61001', cat:'Dues & Subscriptions',      monthly:479402, annual:4128721, pct_rev:1.88, aiable:false, note:'Tool stack review needed — 23 vendors likely' },
+    { acct:'62101', cat:'Employee Salaries (G&A)',   monthly:1815147, annual:14915934, pct_rev:7.13, aiable:false, note:'Finance, HR, Legal, IT headcount' },
+    { acct:'62201', cat:'Contractors',               monthly:564031, annual:2700482, pct_rev:2.61, aiable:true,  note:'High. Many tasks here are AI-replaceable.' },
+    { acct:'63001', cat:'Consultants',               monthly:269187, annual:2203252, pct_rev:1.04, aiable:true,  note:'Analysis, reporting, vendor mgmt' },
+    { acct:'63002', cat:'Audit Fees (Deloitte)',     monthly:240000, annual:327000, pct_rev:0.11, aiable:false, note:'Required. But AI can compress prep time.' },
+    { acct:'63003', cat:'Legal Fees',                monthly:1185742, annual:3359250, pct_rev:1.61, aiable:true,  note:'Contract review, IP, M&A legal — partially replaceable' },
+    { acct:'63004', cat:'Accounting & Tax Fees',     monthly:52531,  annual:425201,  pct_rev:0.20, aiable:true,  note:'Tax prep, reconciliations' },
+    { acct:'63005', cat:'Placement / Recruiting Fees',monthly:70229, annual:4121090, pct_rev:1.97, aiable:true,  note:'8 hires in March alone drove $340K. AI sourcing reduces this.' },
+    { acct:'65001', cat:'Rent Expense',              monthly:292140, annual:1691196, pct_rev:0.81, aiable:false, note:'Fixed leases — not reducible short-term' },
+    { acct:'66002', cat:'Credit Card Processing',    monthly:592275, annual:4722714, pct_rev:2.26, aiable:false, note:'Volume-linked. Reduce by improving self-serve checkout' },
+    { acct:'66003', cat:'Payroll Processing',        monthly:8803,   annual:97844,   pct_rev:0.05, aiable:true,  note:'Should be near-zero at this scale' },
+    { acct:'66008', cat:'Sales Tax Compliance',      monthly:368333, annual:3641103, pct_rev:1.74, aiable:true,  note:'Mostly manual today. Avalara/TaxJar + AI = 80% reduction.' },
+    { acct:'66009', cat:'Bad Debt / AR Reserve',     monthly:361281, annual:3107439, pct_rev:1.49, aiable:true,  note:'Manual collections. AI credit scoring + dunning = big reduction.' },
+    { acct:'62405', cat:'Events - Company Wide',     monthly:null,   annual:2744142, pct_rev:1.31, aiable:false, note:'FLOW and offsites — strategic, not reducible' },
+    { acct:'66001', cat:'Bank Fees',                 monthly:4981,   annual:81574,   pct_rev:0.04, aiable:true,  note:'Negotiate with banks. Easy win.' },
+  ];
+
+  // AI replacement opportunities — the deep lab analysis
+  const AI_OPS = [
+    {
+      category: 'Contract & Legal Review',
+      currentCost: '$1.19M/mo (Legal Fees 63003)',
+      humanWork: 'Outside counsel reviews every vendor contract, MSA, DPA, and NDA. Standard SaaS contracts sent to Orrick/Cooley for redlines. IP clauses reviewed by humans. M&A diligence lists hand-assembled.',
+      aiReplacement: 'LLM-powered contract review (Harvey, Ironclad AI, or Claude API) handles standard contracts autonomously — NDAs, vendor MSAs, DPAs, SaaS agreements. Flags non-standard clauses for human review. Generates first-draft redlines. M&A diligence checklists auto-populated from data room documents.',
+      effort: 'Medium',
+      saving: '$400–600K/yr',
+      timeline: '3–4 months',
+      risk: 'Low — human stays in loop for material contracts',
+      rag: 'green'
+    },
+    {
+      category: 'Sales Tax Compliance & Filing',
+      currentCost: '$368K/mo (66008) + finance team time',
+      humanWork: 'Finance team manually reconciles sales tax nexus by state, calculates monthly liability, prepares filing packages, submits to each state. 40+ US states with different rules. Rate lookups done in spreadsheets.',
+      aiReplacement: 'Avalara/Vertex (already used by peers) automates calculation. Claude API layer auto-generates the state reconciliation reports, flags anomalies, and prepares draft filing packages. Human reviews and submits. Removes 90% of manual calculation work.',
+      effort: 'Low',
+      saving: '$800K–1.2M/yr',
+      timeline: '1–2 months',
+      risk: 'Low — well-trodden category',
+      rag: 'green'
+    },
+    {
+      category: 'Accounts Receivable & Collections',
+      currentCost: '$361K/mo bad debt + AR team time',
+      humanWork: 'AR team manually identifies overdue accounts, writes dunning emails, prioritizes which accounts to call, decides when to escalate to collections, sets individual credit limits. Bad debt reserve set by manual review of aging report.',
+      aiReplacement: 'AI credit scoring model (trained on payment history, company size, industry, usage patterns) sets credit limits automatically. LLM generates personalized dunning sequences by account segment. Collections prioritization automated by risk score. Bad debt reserve calculated from model prediction vs manual estimate.',
+      effort: 'Medium',
+      saving: '$600K–900K/yr',
+      timeline: '2–3 months',
+      risk: 'Medium — model needs training data and ongoing monitoring',
+      rag: 'amber'
+    },
+    {
+      category: 'Recruiting & Candidate Sourcing',
+      currentCost: '$70K/mo (63005 placement fees) — $340K in March alone',
+      humanWork: 'External recruiters at 15-20% of base salary source candidates. Recruiters manually search LinkedIn, screen resumes, write job descriptions, schedule interviews. 8 hires in March = ~$340K in fees (avg $42K/hire).',
+      aiReplacement: 'AI sourcing tools (Findem, Gem, or Claude API on LinkedIn exports) identify and rank candidates. LLM writes job descriptions and outreach. Automated screening reduces recruiter calls by 60%. Internal talent team handles warm pipeline, external recruiter only for senior/specialist roles.',
+      effort: 'Low',
+      saving: '$1.5–2.5M/yr',
+      timeline: '1–2 months',
+      risk: 'Low — industry standard now',
+      rag: 'green'
+    },
+    {
+      category: 'Financial Close & Reporting Prep',
+      currentCost: 'Finance team FTE time (embedded in salary line)',
+      humanWork: 'Finance team spends ~60-80 hours/month preparing this exact management pack: pulling NS reports, pasting into Excel, formatting charts, writing flux comments, chasing department heads for explanations, updating slide templates for the board.',
+      aiReplacement: 'NetSuite → data warehouse → Claude API pipeline auto-generates: flux commentary (using LLM to compare this month vs prior and draft explanations), chart updates, anomaly flags, and first-draft board narrative. Finance reviews and edits. Close time compresses from 10-12 business days to 5-7.',
+      effort: 'High',
+      saving: '2–3 FTEs worth of close work',
+      timeline: '4–6 months',
+      risk: 'Medium — requires clean data pipeline first',
+      rag: 'amber'
+    },
+    {
+      category: 'Contractor & Consultant Work (63001 + 62201)',
+      currentCost: '$833K/mo combined contractors + consultants',
+      humanWork: 'Contractors doing: spreadsheet analysis, vendor comparison reports, process documentation, market research, competitive analysis, presentation building for internal stakeholders. Consultants doing: workflow audits, benchmark studies, project management for cross-functional initiatives.',
+      aiReplacement: 'Claude handles: spreadsheet analysis (upload CSV → get summary + anomalies), vendor RFP scoring, competitive intel reports from web search, process documentation from meeting transcripts, slide drafts from bullet points. A single senior analyst with Claude replaces 3-4 junior contractors.',
+      effort: 'Low',
+      saving: '$2–3.5M/yr',
+      timeline: '1 month',
+      risk: 'Low — easy wins available immediately',
+      rag: 'green'
+    },
+  ];
+
+  const effortColor = { Low:'#1D9E75', Medium:'#F59E0B', High:'#E24B4A' };
+  const ragColor = { green:'#1D9E75', amber:'#F59E0B', red:'#E24B4A' };
+  const ragBg    = { green:'rgba(29,158,117,0.10)', amber:'rgba(245,158,11,0.10)', red:'rgba(226,75,74,0.10)' };
+
+  // Calculate totals
+  const aiableMonthly = GA_LINES.filter(l=>l.aiable&&l.monthly).reduce((s,l)=>s+l.monthly,0);
+  const totalMonthly  = GA_LINES.filter(l=>l.monthly).reduce((s,l)=>s+l.monthly,0);
+  const totalSavingLow = 1.5+0.8+0.6+1.5+0+2; // $M/yr low end
+  const totalSavingHigh= 2.5+1.2+0.9+2.5+0+3.5;
+
+  let html = `
+  <style>
+    .ce-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:20px; }
+    .ce-card { background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:16px; margin-bottom:16px; }
+    .ce-card h3 { font-size:11px; font-weight:500; color:var(--color-text-secondary); margin-bottom:12px; letter-spacing:0.06em; text-transform:uppercase; }
+    .ce-tbl { width:100%; border-collapse:collapse; font-size:11px; }
+    .ce-tbl th { padding:7px 10px; text-align:right; font-size:10px; font-weight:600; color:var(--color-text-secondary); letter-spacing:0.03em; background:var(--color-background-primary); border-bottom:0.5px solid var(--color-border-tertiary); }
+    .ce-tbl th:first-child { text-align:left; }
+    .ce-tbl td { padding:7px 10px; border-bottom:0.5px solid rgba(255,255,255,0.03); }
+    .ce-tbl td:first-child { font-size:12px; }
+    .ce-tbl td:not(:first-child) { text-align:right; font-family:var(--font-mono); color:var(--color-text-secondary); }
+    .ce-tbl tr:hover td { background:var(--color-background-primary); }
+    .ai-pill { font-size:9px; font-weight:700; padding:1px 6px; border-radius:3px; letter-spacing:0.3px; }
+    .ai-yes { background:rgba(29,158,117,0.15); color:#1D9E75; border:1px solid rgba(29,158,117,0.25); }
+    .ai-no  { background:var(--color-background-secondary); color:var(--color-text-secondary); border:0.5px solid var(--color-border-tertiary); }
+    .opp-card { background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:16px; margin-bottom:12px; }
+    .opp-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .opp-title { font-size:13px; font-weight:500; }
+    .opp-cost  { font-size:11px; color:var(--color-text-secondary); font-family:var(--font-mono); white-space:nowrap; }
+    .opp-2col  { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px; }
+    .opp-section { font-size:10px; font-weight:700; color:var(--color-text-secondary); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:4px; }
+    .opp-body { font-size:12px; color:var(--color-text-secondary); line-height:1.6; }
+    .opp-meta { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; align-items:center; }
+    .opp-tag { font-size:10px; padding:2px 8px; border-radius:4px; font-weight:600; }
+  </style>
+
+  <div class="ce-kpis">
+    <div class="mc"><div class="lbl">G&A total (Apr-26)</div><div class="num bad">$6.77M</div><div class="sub">26.6% of revenue · target 18-20%</div></div>
+    <div class="mc"><div class="lbl">AI-automatable G&A spend</div><div class="num warn">$2.96M/mo</div><div class="sub">44% of tracked G&A lines</div></div>
+    <div class="mc"><div class="lbl">Identified savings (annual)</div><div class="num ok">$6–11M/yr</div><div class="sub">Conservative–optimistic range</div></div>
+    <div class="mc"><div class="lbl">Placement fees (FY26 YTD)</div><div class="num bad">$4.1M</div><div class="sub">Highest single AI-replaceable line</div></div>
+  </div>
+
+  <div class="ce-card">
+    <h3>G&A expense breakdown — AI automation signal</h3>
+    <table class="ce-tbl">
+      <thead><tr>
+        <th>Line item</th>
+        <th>Apr-26 ($)</th>
+        <th>FY26 YTD ($)</th>
+        <th>% of Rev</th>
+        <th>AI target</th>
+      </tr></thead>
+      <tbody>${GA_LINES.map((l,i)=>`
+        <tr style="${i%2===0?'':'background:rgba(255,255,255,0.01)'}">
+          <td>${l.cat}</td>
+          <td>${l.monthly ? '$'+l.monthly.toLocaleString() : '—'}</td>
+          <td>$${l.annual.toLocaleString()}</td>
+          <td style="color:${l.pct_rev>2?'#E24B4A':l.pct_rev>1?'#F59E0B':'var(--color-text-secondary)'}">${l.pct_rev.toFixed(2)}%</td>
+          <td><span class="ai-pill ${l.aiable?'ai-yes':'ai-no'}">${l.aiable?'AI NOW':'FIXED'}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px">AI automation opportunities — what's being done by a person that a system should be doing</div>
+
+  ${AI_OPS.map(op=>`
+    <div class="opp-card">
+      <div class="opp-header">
+        <div>
+          <div class="opp-title">${op.category}</div>
+          <div class="opp-cost">${op.currentCost}</div>
+        </div>
+        <span class="opp-tag" style="background:${ragBg[op.rag]};color:${ragColor[op.rag]};border:1px solid ${ragColor[op.rag]}40">${op.saving}</span>
+      </div>
+      <div class="opp-2col">
+        <div>
+          <div class="opp-section">What humans are doing today</div>
+          <div class="opp-body">${op.humanWork}</div>
+        </div>
+        <div>
+          <div class="opp-section">What AI + systems should do instead</div>
+          <div class="opp-body">${op.aiReplacement}</div>
+        </div>
+      </div>
+      <div class="opp-meta">
+        <span class="opp-tag" style="background:rgba(255,255,255,0.05);color:var(--color-text-secondary)">Effort: <strong style="color:${effortColor[op.effort]}">${op.effort}</strong></span>
+        <span class="opp-tag" style="background:rgba(255,255,255,0.05);color:var(--color-text-secondary)">Timeline: ${op.timeline}</span>
+        <span class="opp-tag" style="background:rgba(255,255,255,0.05);color:var(--color-text-secondary)">Risk: ${op.risk}</span>
+      </div>
+    </div>
+  `).join('')}
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+    <button onclick="sendPrompt('Build a G&A AI automation roadmap for ABC prioritized by ROI')">Build AI automation roadmap ↗</button>
+    <button onclick="sendPrompt('What would ABC EBITDA margin look like if G&A dropped from 26% to 18% of revenue?')">Model G&A reduction impact ↗</button>
+    <button onclick="sendPrompt('Which contractors and consultants at ABC should be replaced by AI tools in the next 90 days?')">90-day contractor reduction plan ↗</button>
+  </div>
+  `;
+
+  root.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// LIVE FILE UPLOAD + PARSER
+// Reads MGMT IS Summary sheet from any NetSuite management
+// pack and refreshes all ACT data + charts automatically.
+// ═══════════════════════════════════════════════════════
+function showToast(msg, color) {
+  const t = document.getElementById('upload-toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  t.style.background = color || '#0D9488';
+  setTimeout(() => { t.style.display = 'none'; }, 4000);
+}
+
+function handleUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  showToast('Reading ' + file.name + '...', '#1B3A5C');
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      parseAndRefresh(e.target.result, file.name);
+    } catch(err) {
+      showToast('Parse error: ' + err.message, '#C0392B');
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(e.target.files[0]);
+  // Fix: use event not e
+  reader.onload = function(ev) {
+    try {
+      parseAndRefresh(ev.target.result, file.name);
+    } catch(err) {
+      showToast('Parse error: ' + err.message, '#C0392B');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseAndRefresh(buffer, filename) {
+  const wb = XLSX.read(buffer, { type: 'array', cellDates: true });
+
+  // Find the MGMT IS Summary sheet (try several name variants)
+  const sheetNames = wb.SheetNames;
+  const target = sheetNames.find(n =>
+    /MGMT IS Summary/i.test(n) || /Management.*Summary/i.test(n)
+  );
+  if (!target) {
+    // Try Income Statement sheet as fallback
+    const alt = sheetNames.find(n => /Income Statement.*MGMT/i.test(n));
+    if (!alt) {
+      showToast('Could not find MGMT IS Summary sheet. Sheets found: ' + sheetNames.slice(0,5).join(', '), '#C0392B');
+      return;
+    }
+  }
+  const sheetName = target || sheetNames.find(n => /Income Statement.*MGMT/i.test(n));
+  const ws = wb.Sheets[sheetName];
+  const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: false });
+
+  // Find the header row with dates (look for row where multiple cells are Date objects or date strings)
+  let headerRow = -1;
+  let monthCols = {}; // col index -> label string
+
+  for (let r = 0; r < Math.min(raw.length, 15); r++) {
+    let dateCount = 0;
+    const tentativeCols = {};
+    for (let c = 0; c < raw[r].length; c++) {
+      const v = raw[r][c];
+      if (!v) continue;
+      // SheetJS with raw:false returns dates as strings like "2/28/2025" or "2025-02-28"
+      // Try to parse
+      const d = new Date(v);
+      if (!isNaN(d.getTime()) && d.getFullYear() >= 2024 && d.getFullYear() <= 2027) {
+        dateCount++;
+        const mon = d.toLocaleString('en-US', {month:'short', year:'2-digit'});
+        tentativeCols[c] = mon; // e.g. "Feb-25"
+      }
+    }
+    if (dateCount >= 6) {
+      headerRow = r;
+      monthCols = tentativeCols;
+      break;
+    }
+  }
+
+  if (headerRow === -1) {
+    showToast('Could not find month headers in sheet. Try re-saving the file from Excel.', '#C0392B');
+    return;
+  }
+
+  const colIdxList = Object.keys(monthCols).map(Number).sort((a,b)=>a-b);
+  const monthLabels = colIdxList.map(c => monthCols[c]);
+
+  // Search for key total rows by scanning col 2 (label column)
+  // Returns array of values for each month column
+  const LABEL_COL = 2; // typical for NS exports
+  function findRowVals(keyword, exact) {
+    for (let r = headerRow + 1; r < raw.length; r++) {
+      const cell = raw[r][LABEL_COL];
+      if (!cell || typeof cell !== 'string') continue;
+      const match = exact
+        ? cell.trim() === keyword
+        : cell.toLowerCase().includes(keyword.toLowerCase());
+      if (match) {
+        return colIdxList.map(c => {
+          const v = parseFloat(String(raw[r][c] || '0').replace(/,/g,''));
+          return isNaN(v) ? 0 : +(v / 1e6).toFixed(3);
+        });
+      }
+    }
+    return null;
+  }
+
+  // Extract key rows
+  const sub  = findRowVals('Total - Subscription Revenue', true)
+             || findRowVals('Total - Subscription Revenue');
+  const usg  = findRowVals('Total - Usage Revenue', true)
+             || findRowVals('Total - Usage Revenue');
+  const v0r  = findRowVals('Total - v0 Revenue', true)
+             || findRowVals('Total - v0 Revenue');
+  const ai   = findRowVals('Total - AI Revenue', true)
+             || findRowVals('Total - AI Revenue');
+  const oth  = findRowVals('Total - Other Revenue', true)
+             || findRowVals('Total - Other Revenue');
+  const cor  = findRowVals('Total - Adj. Cost of Revenue', true)
+             || findRowVals('Total - Cost of Revenue');
+  const sm   = findRowVals('Total - Sales and Marketing', true)
+             || findRowVals('Total - Sales and Marketing')
+             || findRowVals('Sales and Marketing');
+  const rd   = findRowVals('Total - Research and Development', true)
+             || findRowVals('Research and Development');
+  const ga   = findRowVals('Total - General and Administrative', true)
+             || findRowVals('General and Administrative');
+  const sbc  = findRowVals('Total - Stock Based Compensation', true)
+             || findRowVals('Stock Based Compensation');
+
+  if (!sub || !usg) {
+    showToast('Could not find Subscription or Usage revenue rows. Check sheet structure.', '#E67E22');
+    return;
+  }
+
+  const n = colIdxList.length;
+  const zero = Array(n).fill(0);
+
+  // Compute derived series
+  const subV  = sub  || zero;
+  const usgV  = usg  || zero;
+  const v0V   = v0r  || zero;
+  const aiV   = ai   || zero;
+  const othV  = oth  || zero;
+  const corV  = cor  || zero;
+  const smV   = sm   || zero;
+  const rdV   = rd   || zero;
+  const gaV   = ga   || zero;
+  const sbcV  = sbc  || zero;
+
+  const revV   = subV.map((v,i) => +(v + usgV[i] + v0V[i] + aiV[i] + othV[i]).toFixed(3));
+  const gpV    = revV.map((v,i) => +(v - corV[i]).toFixed(3));
+  const gmV    = revV.map((v,i) => v > 0 ? +(gpV[i]/v*100).toFixed(1) : 0);
+  const opexV  = smV.map((v,i) => +(v + rdV[i] + gaV[i]).toFixed(3));
+  const ebitdaV= gpV.map((v,i) => +(v - opexV[i]).toFixed(3));
+  const arrV   = subV.map(v => +(v*12).toFixed(1));
+
+  // Infer cash from last available non-zero value (may not be in this sheet)
+  const cashV = Array(n).fill(0);
+
+  // Try to find cash in balance sheet sheet if present
+  const bsSheet = wb.SheetNames.find(n => /Balance Sheet/i.test(n) || /FY27 Balance/i.test(n));
+  if (bsSheet) {
+    const bsRaw = XLSX.utils.sheet_to_json(wb.Sheets[bsSheet], {header:1, defval:null, raw:false});
+    for (let r = 0; r < bsRaw.length; r++) {
+      const cell = String(bsRaw[r][0] || '');
+      if (/total cash/i.test(cell)) {
+        // Get the last few numeric values
+        const vals = bsRaw[r].filter(v => v && !isNaN(parseFloat(String(v).replace(/,/g,''))));
+        if (vals.length > 0) {
+          cashV[cashV.length - 1] = +(parseFloat(String(vals[vals.length-1]).replace(/,/g,''))/1e6).toFixed(1);
+        }
+        break;
+      }
+    }
+  }
+
+  // ── UPDATE global ACT ────────────────────────────────
+  MONTHS_ACT.length = 0;
+  monthLabels.forEach(m => MONTHS_ACT.push(m));
+
+  ACT.sub    = subV;
+  ACT.usg    = usgV;
+  ACT.v0     = v0V;
+  ACT.ai     = aiV;
+  ACT.oth    = othV;
+  ACT.rev    = revV;
+  ACT.cor    = corV;
+  ACT.gp     = gpV;
+  ACT.gm     = gmV;
+  ACT.sm     = smV;
+  ACT.rd     = rdV;
+  ACT.ga     = gaV;
+  ACT.opex   = opexV;
+  ACT.ebitda = ebitdaV;
+  ACT.sbc    = sbcV;
+  ACT.cash   = cashV;
+  ACT.contra = Array(n).fill(2.0);
+  ACT.arr    = arrV;
+
+  // ── UPDATE derived GP/OpEx (already done above) ─────
+
+  // ── UPDATE header timestamp and source label ─────────
+  const lastMon = monthLabels[monthLabels.length - 1];
+  document.getElementById('ts').textContent = new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const srcSpan = document.querySelector('.header-meta span');
+  if (srcSpan) srcSpan.textContent = 'Source: ' + filename;
+
+  // Update close period label
+  const periodSpan = document.querySelector('.header-left span[style*="gray4"]');
+  if (periodSpan) periodSpan.textContent = lastMon + ' Close';
+
+  // ── REBUILD all charts and tables ───────────────────
+  // Recalculate forecast from new last actuals
+  const newFCAST = {
+    base: calcFcast(BASE_REV_MOM, BASE_GM, BASE_SM_PCT, BASE_RD_PCT, BASE_GA_PCT),
+    bull: calcFcast(BULL_REV_MOM, BULL_GM, BULL_SM_PCT, BULL_RD_PCT, BULL_GA_PCT),
+    bear: calcFcast(BEAR_REV_MOM, BEAR_GM, BEAR_SM_PCT, BEAR_RD_PCT, BEAR_GA_PCT),
+  };
+  Object.assign(FCAST, newFCAST);
+
+  // Destroy and rebuild all charts
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e) {} });
+  Object.keys(charts).forEach(k => delete charts[k]);
+
+  buildAllCharts();
+  buildPLTable();
+  buildDriverTable();
+  buildValGrid();
+
+  // Re-trigger active scenario if on scenarios tab
+  if (document.getElementById('tab-scenarios').classList.contains('active')) {
+    buildScenChart('base');
+    buildScenTable('base');
+    buildAssumpTable();
+  }
+
+  // Reset anomaliesBuilt etc so they rebuild with new data
+  anomaliesBuilt = false;
+  revQualityBuilt = false;
+  costEffBuilt = false;
+
+  showToast(
+    'Updated to ' + lastMon + ' · ' + n + ' months loaded · ' + filename,
+    '#0D9488'
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// MANAGEMENT SIMULATOR TAB
+// ═══════════════════════════════════════════════════════
+let mgmtSimBuilt = false;
+let simChart = null;
+
+function buildMgmtSim() {
+  if (mgmtSimBuilt) return;
+  mgmtSimBuilt = true;
+
+  const root = document.getElementById('mgmtsim-root');
+  root.innerHTML = `
+<style>
+.ms-grid { display:grid; grid-template-columns:340px 1fr; gap:20px; align-items:start; }
+.ms-panel { background:var(--navy2); border:1px solid var(--gray2); border-radius:12px; padding:18px; }
+.ms-section { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--gray4); margin:16px 0 8px; padding-bottom:5px; border-bottom:.5px solid var(--gray2); }
+.ms-section:first-child { margin-top:0; }
+.ms-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.ms-label { font-size:11px; color:var(--gray5); width:175px; flex-shrink:0; line-height:1.3; }
+.ms-row input[type=range] { flex:1; }
+.ms-val { font-size:11px; font-weight:600; color:var(--white); min-width:62px; text-align:right; font-family:var(--mono); }
+.ms-kpis { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.ms-kpi { background:var(--navy3); border-radius:8px; padding:10px 12px; }
+.ms-kpi .lbl { font-size:10px; color:var(--gray4); margin-bottom:3px; }
+.ms-kpi .num { font-size:20px; font-weight:700; letter-spacing:-.5px; font-family:var(--mono); }
+.ms-kpi .sub { font-size:10px; margin-top:2px; }
+.green { color:#10B981; } .amber { color:#F59E0B; } .red { color:#EF4444; } .blue { color:#6B83F5; }
+.ms-scenario-btns { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.ms-scenario-btns button { font-size:10px; padding:4px 10px; border-radius:5px; border:1px solid var(--gray2); background:transparent; color:var(--gray5); cursor:pointer; transition:all .15s; }
+.ms-scenario-btns button:hover { background:var(--gray1); color:var(--white); }
+.ms-scenario-btns button.active { background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.4); color:#F59E0B; }
+.ms-chart-wrap { position:relative; height:220px; margin-bottom:14px; }
+.ms-waterfall { display:flex; flex-direction:column; gap:5px; margin-top:10px; }
+.ms-wf-row { display:flex; align-items:center; gap:8px; }
+.ms-wf-label { font-size:11px; color:var(--gray5); width:160px; flex-shrink:0; }
+.ms-wf-bar-wrap { flex:1; height:16px; background:var(--navy3); border-radius:3px; overflow:hidden; position:relative; }
+.ms-wf-bar { height:100%; border-radius:3px; transition:width .4s; }
+.ms-wf-val { font-size:11px; color:var(--gray5); min-width:52px; text-align:right; font-family:var(--mono); }
+.ms-event-log { max-height:180px; overflow-y:auto; }
+.ms-event { font-size:11px; color:var(--gray5); padding:5px 0; border-bottom:.5px solid var(--gray2); line-height:1.4; }
+.ms-event:last-child { border-bottom:none; }
+.ms-event .tag { font-size:9px; font-weight:700; letter-spacing:.04em; padding:1px 5px; border-radius:3px; margin-right:5px; }
+.ms-event .tag.raise  { background:rgba(107,131,245,0.2); color:#6B83F5; }
+.ms-event .tag.cost   { background:rgba(239,68,68,0.15);  color:#EF4444; }
+.ms-event .tag.market { background:rgba(245,158,11,0.15); color:#F59E0B; }
+.ms-event .tag.ops    { background:rgba(16,185,129,0.15); color:#10B981; }
+.ms-toggle-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.ms-toggle { width:32px; height:17px; border-radius:9px; background:var(--gray2); border:none; cursor:pointer; position:relative; transition:background .2s; flex-shrink:0; }
+.ms-toggle.on { background:#10B981; }
+.ms-toggle::after { content:''; position:absolute; top:2px; left:2px; width:13px; height:13px; border-radius:50%; background:#fff; transition:transform .2s; }
+.ms-toggle.on::after { transform:translateX(15px); }
+.ms-toggle-label { font-size:11px; color:var(--gray5); flex:1; line-height:1.3; }
+.ms-horizon { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.ms-horizon button { font-size:10px; padding:3px 10px; border-radius:5px; border:1px solid var(--gray2); background:transparent; color:var(--gray5); cursor:pointer; }
+.ms-horizon button.active { background:rgba(107,131,245,0.15); border-color:rgba(107,131,245,0.4); color:#6B83F5; }
+</style>
+
+<div class="ms-grid">
+
+<!-- LEFT: LEVERS PANEL -->
+<div>
+  <div class="ms-panel">
+    <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px;">Management decisions</div>
+    <div style="font-size:11px;color:var(--gray4);margin-bottom:14px;">Pull any lever — the model updates instantly. Stack multiple events to see combined impact.</div>
+
+    <div class="ms-scenario-btns" id="ms-presets">
+      <button onclick="loadPreset('base')" class="active" id="mp-base">Base</button>
+      <button onclick="loadPreset('raise')" id="mp-raise">Series G raise</button>
+      <button onclick="loadPreset('down')" id="mp-down">Market downturn</button>
+      <button onclick="loadPreset('austerity')" id="mp-austerity">Austerity</button>
+      <button onclick="loadPreset('v0win')" id="mp-v0win">v0 breakout</button>
+      <button onclick="loadPreset('ipo')" id="mp-ipo">IPO prep</button>
+    </div>
+
+    <!-- CAPITAL EVENTS -->
+    <div class="ms-section">Capital & financing</div>
+
+    <div class="ms-toggle-row">
+      <button class="ms-toggle" id="tog-raise" onclick="toggleEvent('raise')"></button>
+      <div class="ms-toggle-label">Raise new capital round</div>
+    </div>
+    <div id="ev-raise" style="display:none;padding-left:40px;margin-bottom:8px;">
+      <div class="ms-row"><label class="ms-label">Raise amount ($M)</label><input type="range" id="sl-raise-amt" min="50" max="1000" step="25" value="300" oninput="runSim()"><span class="ms-val" id="vl-raise-amt">$300M</span></div>
+      <div class="ms-row"><label class="ms-label">New shares dilution %</label><input type="range" id="sl-dilution" min="5" max="25" step="1" value="12" oninput="runSim()"><span class="ms-val" id="vl-dilution">12%</span></div>
+      <div class="ms-row"><label class="ms-label">Month of raise (mo from now)</label><input type="range" id="sl-raise-mo" min="1" max="18" step="1" value="6" oninput="runSim()"><span class="ms-val" id="vl-raise-mo">Mo 6</span></div>
+    </div>
+
+    <div class="ms-toggle-row">
+      <button class="ms-toggle" id="tog-ipo" onclick="toggleEvent('ipo')"></button>
+      <div class="ms-toggle-label">IPO / liquidity event</div>
+    </div>
+    <div id="ev-ipo" style="display:none;padding-left:40px;margin-bottom:8px;">
+      <div class="ms-row"><label class="ms-label">IPO proceeds ($M)</label><input type="range" id="sl-ipo-amt" min="100" max="2000" step="50" value="500" oninput="runSim()"><span class="ms-val" id="vl-ipo-amt">$500M</span></div>
+      <div class="ms-row"><label class="ms-label">Months until IPO</label><input type="range" id="sl-ipo-mo" min="3" max="36" step="1" value="18" oninput="runSim()"><span class="ms-val" id="vl-ipo-mo">18 mo</span></div>
+    </div>
+
+    <!-- REVENUE LEVERS -->
+    <div class="ms-section">Revenue & growth</div>
+
+    <div class="ms-row"><label class="ms-label">Rev growth rate (MoM)</label><input type="range" id="sl-rev-gr" min="-5" max="15" step="0.5" value="4" oninput="runSim()"><span class="ms-val" id="vl-rev-gr">+4%</span></div>
+    <div class="ms-row"><label class="ms-label">v0 growth premium (add'l)</label><input type="range" id="sl-v0-gr" min="0" max="20" step="1" value="6" oninput="runSim()"><span class="ms-val" id="vl-v0-gr">+6%</span></div>
+    <div class="ms-row"><label class="ms-label">Churn / contraction rate</label><input type="range" id="sl-churn" min="0" max="5" step="0.25" value="1" oninput="runSim()"><span class="ms-val" id="vl-churn">1%</span></div>
+
+    <div class="ms-toggle-row">
+      <button class="ms-toggle" id="tog-mktdown" onclick="toggleEvent('mktdown')"></button>
+      <div class="ms-toggle-label">Market downturn / recession</div>
+    </div>
+    <div id="ev-mktdown" style="display:none;padding-left:40px;margin-bottom:8px;">
+      <div class="ms-row"><label class="ms-label">Rev growth haircut</label><input type="range" id="sl-mkthc" min="1" max="10" step="0.5" value="3" oninput="runSim()"><span class="ms-val" id="vl-mkthc">-3pp</span></div>
+      <div class="ms-row"><label class="ms-label">Churn spike (add'l)</label><input type="range" id="sl-mktchurn" min="0.5" max="5" step="0.25" value="1.5" oninput="runSim()"><span class="ms-val" id="vl-mktchurn">+1.5%</span></div>
+      <div class="ms-row"><label class="ms-label">Duration (months)</label><input type="range" id="sl-mktdur" min="3" max="24" step="1" value="9" oninput="runSim()"><span class="ms-val" id="vl-mktdur">9 mo</span></div>
+    </div>
+
+    <!-- MARGIN LEVERS -->
+    <div class="ms-section">Gross margin</div>
+
+    <div class="ms-row"><label class="ms-label">Core hosting GM %</label><input type="range" id="sl-core-gm" min="50" max="78" step="0.5" value="67" oninput="runSim()"><span class="ms-val" id="vl-core-gm">67%</span></div>
+    <div class="ms-row"><label class="ms-label">v0 GM % (Hive migration)</label><input type="range" id="sl-v0-gm" min="-30" max="75" step="1" value="35" oninput="runSim()"><span class="ms-val" id="vl-v0-gm">35%</span></div>
+    <div class="ms-row"><label class="ms-label">AI Gateway GM %</label><input type="range" id="sl-ai-gm" min="-20" max="70" step="1" value="45" oninput="runSim()"><span class="ms-val" id="vl-ai-gm">45%</span></div>
+    <div class="ms-row"><label class="ms-label">Hosting cost inflation (MoM)</label><input type="range" id="sl-cor-inf" min="-1" max="3" step="0.25" value="0.5" oninput="runSim()"><span class="ms-val" id="vl-cor-inf">+0.5%</span></div>
+
+    <!-- COST LEVERS -->
+    <div class="ms-section">Operating expenses</div>
+
+    <div class="ms-row"><label class="ms-label">S&M spend ($M/mo)</label><input type="range" id="sl-sm" min="4" max="22" step="0.5" value="12.5" oninput="runSim()"><span class="ms-val" id="vl-sm">$12.5M</span></div>
+    <div class="ms-row"><label class="ms-label">R&D spend ($M/mo)</label><input type="range" id="sl-rd" min="4" max="18" step="0.5" value="12.1" oninput="runSim()"><span class="ms-val" id="vl-rd">$12.1M</span></div>
+    <div class="ms-row"><label class="ms-label">G&A spend ($M/mo)</label><input type="range" id="sl-ga" min="2" max="12" step="0.5" value="6.7" oninput="runSim()"><span class="ms-val" id="vl-ga">$6.7M</span></div>
+    <div class="ms-row"><label class="ms-label">Opex growth rate (MoM)</label><input type="range" id="sl-opex-gr" min="-2" max="4" step="0.25" value="1" oninput="runSim()"><span class="ms-val" id="vl-opex-gr">+1%</span></div>
+
+    <div class="ms-toggle-row">
+      <button class="ms-toggle" id="tog-hire" onclick="toggleEvent('hire')"></button>
+      <div class="ms-toggle-label">Major hiring push</div>
+    </div>
+    <div id="ev-hire" style="display:none;padding-left:40px;margin-bottom:8px;">
+      <div class="ms-row"><label class="ms-label">Add'l headcount cost ($M/mo)</label><input type="range" id="sl-hire-cost" min="0.5" max="10" step="0.5" value="2" oninput="runSim()"><span class="ms-val" id="vl-hire-cost">$2M</span></div>
+      <div class="ms-row"><label class="ms-label">Revenue lift from hiring (MoM)</label><input type="range" id="sl-hire-lift" min="0" max="3" step="0.25" value="0.75" oninput="runSim()"><span class="ms-val" id="vl-hire-lift">+0.75%</span></div>
+      <div class="ms-row"><label class="ms-label">Ramp time (months delay)</label><input type="range" id="sl-hire-ramp" min="1" max="9" step="1" value="3" oninput="runSim()"><span class="ms-val" id="vl-hire-ramp">3 mo</span></div>
+    </div>
+
+    <div class="ms-toggle-row">
+      <button class="ms-toggle" id="tog-rif" onclick="toggleEvent('rif')"></button>
+      <div class="ms-toggle-label">Reduction in force (layoffs)</div>
+    </div>
+    <div id="ev-rif" style="display:none;padding-left:40px;margin-bottom:8px;">
+      <div class="ms-row"><label class="ms-label">Savings ($M/mo)</label><input type="range" id="sl-rif-save" min="0.5" max="8" step="0.5" value="3" oninput="runSim()"><span class="ms-val" id="vl-rif-save">$3M</span></div>
+      <div class="ms-row"><label class="ms-label">One-time severance ($M)</label><input type="range" id="sl-rif-sev" min="0" max="20" step="1" value="5" oninput="runSim()"><span class="ms-val" id="vl-rif-sev">$5M</span></div>
+      <div class="ms-row"><label class="ms-label">Revenue impact (growth haircut)</label><input type="range" id="sl-rif-rev" min="0" max="3" step="0.25" value="0.5" oninput="runSim()"><span class="ms-val" id="vl-rif-rev">-0.5%</span></div>
+    </div>
+
+    <!-- HORIZON -->
+    <div class="ms-section">Forecast horizon</div>
+    <div class="ms-horizon" id="ms-horizon">
+      <button onclick="setHorizon(6)"  class="active" id="mh-6">6 months</button>
+      <button onclick="setHorizon(12)" id="mh-12">12 months</button>
+      <button onclick="setHorizon(24)" id="mh-24">24 months</button>
+      <button onclick="setHorizon(36)" id="mh-36">36 months</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- RIGHT: OUTPUT PANEL -->
+<div>
+
+  <!-- KPI cards -->
+  <div class="ms-kpis" id="ms-kpis"></div>
+
+  <!-- Main chart -->
+  <div class="ms-panel" style="margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:11px;font-weight:600;color:var(--gray5);">Revenue · Gross profit · EBITDA · Cash</div>
+      <div style="display:flex;gap:10px;font-size:10px;color:var(--gray4);">
+        <span><span style="display:inline-block;width:8px;height:8px;background:#6B83F5;border-radius:2px;margin-right:3px;"></span>Revenue</span>
+        <span><span style="display:inline-block;width:8px;height:8px;background:#1D9E75;border-radius:2px;margin-right:3px;"></span>GP</span>
+        <span><span style="display:inline-block;width:8px;height:8px;background:#EF4444;border-radius:2px;margin-right:3px;"></span>EBITDA</span>
+        <span><span style="display:inline-block;width:8px;height:8px;background:rgba(136,135,128,0.5);border-radius:2px;margin-right:3px;"></span>Cash</span>
+      </div>
+    </div>
+    <div class="ms-chart-wrap"><canvas id="ms-chart"></canvas></div>
+  </div>
+
+  <!-- Waterfall EBITDA bridge -->
+  <div class="ms-panel" style="margin-bottom:14px;">
+    <div style="font-size:11px;font-weight:600;color:var(--gray5);margin-bottom:10px;">Monthly EBITDA bridge — current vs simulated (Month 12)</div>
+    <div class="ms-waterfall" id="ms-waterfall"></div>
+  </div>
+
+  <!-- Event log -->
+  <div class="ms-panel">
+    <div style="font-size:11px;font-weight:600;color:var(--gray5);margin-bottom:8px;">Active decisions & their impact</div>
+    <div class="ms-event-log" id="ms-event-log"><div class="ms-event" style="color:var(--gray4)">No events active. Toggle switches above or pull levers to see impact logged here.</div></div>
+  </div>
+
+  <!-- CFO Narrative panel -->
+  <div class="ms-panel" id="ms-narrative-panel" style="margin-top:14px;border-color:rgba(245,158,11,0.3);">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div style="width:6px;height:6px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+      <div style="font-size:11px;font-weight:600;color:#F59E0B;">CEO read — what this really means</div>
+      <div style="font-size:10px;color:var(--gray4);margin-left:auto;">live · updates every lever pull</div>
+    </div>
+    <div id="ms-narrative-body" style="font-size:12px;color:var(--gray5);line-height:1.75;"></div>
+  </div>
+
+</div>
+</div>
+`;
+
+  let simHorizon = 6;
+  let activeToggles = {};
+
+  window.setHorizon = function(h) {
+    simHorizon = h;
+    [6,12,24,36].forEach(n => {
+      const b = document.getElementById('mh-'+n);
+      if(b) b.classList.toggle('active', n===h);
+    });
+    runSim();
+  };
+
+  window.toggleEvent = function(key) {
+    activeToggles[key] = !activeToggles[key];
+    const btn = document.getElementById('tog-'+key);
+    const panel = document.getElementById('ev-'+key);
+    if(btn) btn.classList.toggle('on', activeToggles[key]);
+    if(panel) panel.style.display = activeToggles[key] ? 'block' : 'none';
+    runSim();
+  };
+
+  const PRESETS = {
+    base:      { 'sl-rev-gr':4, 'sl-v0-gr':6, 'sl-churn':1, 'sl-core-gm':67, 'sl-v0-gm':35, 'sl-ai-gm':45, 'sl-cor-inf':0.5, 'sl-sm':12.5, 'sl-rd':12.1, 'sl-ga':6.7, 'sl-opex-gr':1 },
+    raise:     { 'sl-rev-gr':5, 'sl-v0-gr':8, 'sl-churn':0.75, 'sl-core-gm':67, 'sl-v0-gm':40, 'sl-ai-gm':50, 'sl-cor-inf':0.5, 'sl-sm':15, 'sl-rd':14, 'sl-ga':7, 'sl-opex-gr':1.5, 'sl-raise-amt':400, 'sl-dilution':12, 'sl-raise-mo':3 },
+    down:      { 'sl-rev-gr':1, 'sl-v0-gr':2, 'sl-churn':2.5, 'sl-core-gm':65, 'sl-v0-gm':25, 'sl-ai-gm':35, 'sl-cor-inf':1, 'sl-sm':12.5, 'sl-rd':12.1, 'sl-ga':6.7, 'sl-opex-gr':0.5, 'sl-mkthc':4, 'sl-mktchurn':2, 'sl-mktdur':12 },
+    austerity: { 'sl-rev-gr':3, 'sl-v0-gr':5, 'sl-churn':1, 'sl-core-gm':67, 'sl-v0-gm':35, 'sl-ai-gm':45, 'sl-cor-inf':0.5, 'sl-sm':8, 'sl-rd':8.5, 'sl-ga':4.5, 'sl-opex-gr':-0.5, 'sl-rif-save':4, 'sl-rif-sev':8, 'sl-rif-rev':0.75 },
+    v0win:     { 'sl-rev-gr':6, 'sl-v0-gr':15, 'sl-churn':0.75, 'sl-core-gm':67, 'sl-v0-gm':58, 'sl-ai-gm':55, 'sl-cor-inf':0.25, 'sl-sm':14, 'sl-rd':13, 'sl-ga':6.5, 'sl-opex-gr':1 },
+    ipo:       { 'sl-rev-gr':5, 'sl-v0-gr':7, 'sl-churn':0.5, 'sl-core-gm':68, 'sl-v0-gm':60, 'sl-ai-gm':52, 'sl-cor-inf':0.25, 'sl-sm':11, 'sl-rd':10.5, 'sl-ga':6, 'sl-opex-gr':0.5, 'sl-ipo-amt':600, 'sl-ipo-mo':18 },
+  };
+
+  const PRESET_TOGGLES = {
+    raise:     { raise:true },
+    down:      { mktdown:true },
+    austerity: { rif:true },
+    v0win:     {},
+    ipo:       { ipo:true },
+    base:      {},
+  };
+
+  window.loadPreset = function(key) {
+    // Reset all toggles
+    ['raise','ipo','mktdown','hire','rif'].forEach(k => {
+      activeToggles[k] = false;
+      const b = document.getElementById('tog-'+k);
+      const p = document.getElementById('ev-'+k);
+      if(b) b.classList.remove('on');
+      if(p) p.style.display = 'none';
+    });
+    // Apply preset slider values
+    const p = PRESETS[key];
+    Object.entries(p).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if(el) el.value = val;
+    });
+    // Apply preset toggles
+    const pt = PRESET_TOGGLES[key] || {};
+    Object.keys(pt).forEach(k => toggleEvent(k));
+    // Highlight active preset button
+    document.querySelectorAll('.ms-scenario-btns button').forEach(b => b.classList.remove('active'));
+    const pb = document.getElementById('mp-'+key);
+    if(pb) pb.classList.add('active');
+    runSim();
+  };
+
+  window.runSim = function() {
+    // Read all sliders
+    const g = id => parseFloat(document.getElementById(id).value);
+    const revGr    = g('sl-rev-gr') / 100;
+    const v0Gr     = g('sl-v0-gr') / 100;
+    const churn    = g('sl-churn') / 100;
+    const coreGM   = g('sl-core-gm') / 100;
+    const v0GM     = g('sl-v0-gm') / 100;
+    const aiGM     = g('sl-ai-gm') / 100;
+    const corInf   = g('sl-cor-inf') / 100;
+    const smBase   = g('sl-sm');
+    const rdBase   = g('sl-rd');
+    const gaBase   = g('sl-ga');
+    const opexGr   = g('sl-opex-gr') / 100;
+
+    // Update display values
+    const sv = (id, fmt) => { const el=document.getElementById(id); if(el) el.textContent=fmt; };
+    sv('vl-rev-gr',   (revGr*100>=0?'+':'')+((revGr*100).toFixed(1))+'%');
+    sv('vl-v0-gr',    '+'+(v0Gr*100).toFixed(0)+'%');
+    sv('vl-churn',    (churn*100).toFixed(2)+'%');
+    sv('vl-core-gm',  (coreGM*100).toFixed(1)+'%');
+    sv('vl-v0-gm',    (v0GM*100).toFixed(0)+'%');
+    sv('vl-ai-gm',    (aiGM*100).toFixed(0)+'%');
+    sv('vl-cor-inf',  (corInf>=0?'+':'')+(corInf*100).toFixed(2)+'%');
+    sv('vl-sm',       '$'+smBase.toFixed(1)+'M');
+    sv('vl-rd',       '$'+rdBase.toFixed(1)+'M');
+    sv('vl-ga',       '$'+gaBase.toFixed(1)+'M');
+    sv('vl-opex-gr',  (opexGr*100>=0?'+':'')+((opexGr*100).toFixed(2))+'%');
+
+    if(activeToggles['raise']) {
+      sv('vl-raise-amt','$'+g('sl-raise-amt').toFixed(0)+'M');
+      sv('vl-dilution',  g('sl-dilution').toFixed(0)+'%');
+      sv('vl-raise-mo',  'Mo '+g('sl-raise-mo').toFixed(0));
+    }
+    if(activeToggles['ipo']) {
+      sv('vl-ipo-amt','$'+g('sl-ipo-amt').toFixed(0)+'M');
+      sv('vl-ipo-mo', g('sl-ipo-mo').toFixed(0)+' mo');
+    }
+    if(activeToggles['mktdown']) {
+      sv('vl-mkthc',    '-'+g('sl-mkthc').toFixed(1)+'pp');
+      sv('vl-mktchurn','+'+g('sl-mktchurn').toFixed(2)+'%');
+      sv('vl-mktdur',   g('sl-mktdur').toFixed(0)+' mo');
+    }
+    if(activeToggles['hire']) {
+      sv('vl-hire-cost','$'+g('sl-hire-cost').toFixed(1)+'M');
+      sv('vl-hire-lift','+'+g('sl-hire-lift').toFixed(2)+'%');
+      sv('vl-hire-ramp', g('sl-hire-ramp').toFixed(0)+' mo');
+    }
+    if(activeToggles['rif']) {
+      sv('vl-rif-save','$'+g('sl-rif-save').toFixed(1)+'M');
+      sv('vl-rif-sev', '$'+g('sl-rif-sev').toFixed(0)+'M');
+      sv('vl-rif-rev', '-'+g('sl-rif-rev').toFixed(2)+'%');
+    }
+
+    // ── BUILD PROJECTION ─────────────────────────────
+    const N = simHorizon;
+    const startCash = ACT.cash.filter(v=>v>0).slice(-1)[0] || 534;
+    const startRev  = ACT.rev[ACT.rev.length-1];
+    const startSub  = ACT.sub[ACT.sub.length-1];
+    const startUsg  = ACT.usg[ACT.usg.length-1];
+    const startV0   = ACT.v0[ACT.v0.length-1];
+    const startAI   = Math.max(ACT.ai[ACT.ai.length-1], 0.5);
+
+    const mktDur    = activeToggles['mktdown'] ? g('sl-mktdur') : 0;
+    const mktHC     = activeToggles['mktdown'] ? g('sl-mkthc')/100 : 0;
+    const mktChurn  = activeToggles['mktdown'] ? g('sl-mktchurn')/100 : 0;
+    const raiseMo   = activeToggles['raise'] ? g('sl-raise-mo') : 999;
+    const raiseAmt  = activeToggles['raise'] ? g('sl-raise-amt') : 0;
+    const ipoMo     = activeToggles['ipo'] ? g('sl-ipo-mo') : 999;
+    const ipoAmt    = activeToggles['ipo'] ? g('sl-ipo-amt') : 0;
+    const hireRamp  = activeToggles['hire'] ? g('sl-hire-ramp') : 999;
+    const hireCost  = activeToggles['hire'] ? g('sl-hire-cost') : 0;
+    const hireLift  = activeToggles['hire'] ? g('sl-hire-lift')/100 : 0;
+    const rifSave   = activeToggles['rif'] ? g('sl-rif-save') : 0;
+    const rifSev    = activeToggles['rif'] ? g('sl-rif-sev') : 0;
+    const rifRevHC  = activeToggles['rif'] ? g('sl-rif-rev')/100 : 0;
+
+    let cash = startCash;
+    let prevRev = startRev;
+    let prevV0  = startV0;
+    const labels=[], revArr=[], gpArr=[], ebitdaArr=[], cashArr=[], gmArr=[];
+
+    for(let mo = 1; mo <= N; mo++) {
+      const inMkt      = mo <= mktDur;
+      const effRevGr   = revGr - (inMkt ? mktHC : 0) - rifRevHC + (mo > hireRamp ? hireLift : 0);
+      const effChurn   = churn + (inMkt ? mktChurn : 0);
+      const effV0Gr    = v0Gr + (inMkt ? -0.05 : 0);
+
+      const sub = startSub * Math.pow(1 + effRevGr - effChurn, mo);
+      const usg = startUsg * Math.pow(1 + effRevGr * 0.8, mo);
+      const v0  = prevV0   * (1 + effV0Gr - effChurn * 0.5);
+      const ai  = startAI  * Math.pow(1 + effRevGr * 0.6, mo);
+      const rev = sub + usg + v0 + ai;
+
+      const v0Share = v0 / Math.max(rev, 0.1);
+      const blGM = (sub + usg) / rev * coreGM + v0Share * v0GM + ai / rev * aiGM;
+      const gp  = rev * blGM;
+      const cor = rev * (1 - blGM) * Math.pow(1 + corInf, mo);
+
+      const smMo = (smBase + (mo > hireRamp ? hireCost * 0.4 : 0)) * Math.pow(1 + opexGr, mo);
+      const rdMo = (rdBase + (mo > hireRamp ? hireCost * 0.4 : 0)) * Math.pow(1 + opexGr, mo);
+      const gaMo = (gaBase + (mo > hireRamp ? hireCost * 0.2 : 0)) * Math.pow(1 + opexGr * 0.5, mo);
+      const opex = smMo + rdMo + gaMo - (mo >= 1 ? rifSave : 0);
+      const ebitda = gp - opex;
+
+      // One-time cash events
+      let cashDelta = ebitda;
+      if(Math.round(mo) === Math.round(raiseMo)) cashDelta += raiseAmt;
+      if(Math.round(mo) === Math.round(ipoMo))   cashDelta += ipoAmt;
+      if(mo === 1 && activeToggles['rif'])        cashDelta -= rifSev;
+      cash += cashDelta;
+
+      const lastMo = ACT[`arr`] ? MONTHS_ACT[MONTHS_ACT.length-1] : 'Now';
+      labels.push('Mo '+mo);
+      revArr.push(+rev.toFixed(2));
+      gpArr.push(+gp.toFixed(2));
+      ebitdaArr.push(+ebitda.toFixed(2));
+      cashArr.push(+cash.toFixed(1));
+      gmArr.push(+(blGM*100).toFixed(1));
+
+      prevV0 = v0;
+      prevRev = rev;
+    }
+
+    // ── KPI CARDS ─────────────────────────────────────
+    const lastRev    = revArr[N-1];
+    const lastEBITDA = ebitdaArr[N-1];
+    const lastCash   = cashArr[N-1];
+    const lastGM     = gmArr[N-1];
+    const moBreakeven = ebitdaArr.findIndex(v=>v>=0);
+    const burnAtEnd  = Math.max(-lastEBITDA, 0);
+    const runwayEst  = burnAtEnd > 0 ? (lastCash / burnAtEnd).toFixed(0) : '∞';
+
+    const kpiData = [
+      { lbl:'Revenue at Mo '+N, val:'$'+lastRev.toFixed(1)+'M', sub: 'from $'+startRev.toFixed(1)+'M today', cls: lastRev > startRev ? 'green' : 'red' },
+      { lbl:'EBITDA at Mo '+N, val:(lastEBITDA>=0?'+':'')+lastEBITDA.toFixed(1)+'M', sub: lastEBITDA>=0?'Profitable':'Still burning', cls: lastEBITDA>=0?'green': lastEBITDA>-10?'amber':'red' },
+      { lbl:'Breakeven', val: moBreakeven>=0 ? 'Mo '+(moBreakeven+1) : 'Beyond horizon', sub: moBreakeven>=0 ? 'in this forecast window' : 'extend horizon to see', cls: moBreakeven>=0?'green':'amber' },
+      { lbl:'Cash at Mo '+N, val:'$'+lastCash.toFixed(0)+'M', sub: runwayEst+' mo runway at end burn', cls: lastCash > 200 ? 'green' : lastCash > 50 ? 'amber' : 'red' },
+    ];
+
+    document.getElementById('ms-kpis').innerHTML = kpiData.map(k=>
+      `<div class="ms-kpi"><div class="lbl">${k.lbl}</div><div class="num ${k.cls}">${k.val}</div><div class="sub" style="color:var(--gray4)">${k.sub}</div></div>`
+    ).join('');
+
+    // ── CHART ─────────────────────────────────────────
+    const isDark = true;
+    const grid = 'rgba(255,255,255,0.05)';
+    const tick = 'rgba(255,255,255,0.25)';
+    const TTopts = {backgroundColor:'rgba(9,13,26,0.95)',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'rgba(255,255,255,0.9)',bodyColor:'rgba(255,255,255,0.6)',padding:10};
+    const fa = v=>(v<0?'-':'')+'$'+Math.abs(v).toFixed(0)+'M';
+
+    if(simChart) simChart.destroy();
+    const ctx = document.getElementById('ms-chart');
+    if(!ctx) return;
+    simChart = new Chart(ctx, {
+      type:'bar',
+      data:{labels, datasets:[
+        {label:'Revenue',data:revArr,backgroundColor:'rgba(107,131,245,0.65)',borderRadius:2,borderSkipped:false,yAxisID:'y'},
+        {label:'Gross profit',data:gpArr,backgroundColor:'rgba(29,158,117,0.65)',borderRadius:2,borderSkipped:false,yAxisID:'y'},
+        {label:'EBITDA',type:'line',data:ebitdaArr,borderColor:'#EF4444',borderWidth:2,pointRadius:N<=12?3:1,tension:0.3,fill:false,yAxisID:'y',
+          pointBackgroundColor:ebitdaArr.map(v=>v>=0?'#10B981':'#EF4444')},
+        {label:'Cash',type:'line',data:cashArr,borderColor:'rgba(136,135,128,0.5)',borderWidth:1.5,borderDash:[4,3],pointRadius:0,tension:0.3,fill:false,yAxisID:'y2'},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:false},tooltip:{...TTopts,callbacks:{label:c=>' '+c.dataset.label+': '+fa(c.parsed.y)}}},
+        scales:{
+          x:{grid:{color:grid},ticks:{color:tick,font:{size:9},maxRotation:0},border:{display:false}},
+          y:{grid:{color:grid},ticks:{color:tick,font:{size:9},callback:fa},border:{display:false},position:'left'},
+          y2:{grid:{display:false},ticks:{color:tick,font:{size:9},callback:v=>'$'+Math.round(v)+'M'},border:{display:false},position:'right'}
+        }
+      }
+    });
+
+    // ── WATERFALL BRIDGE (Mo 12 or last available) ───
+    const bridgeMo = Math.min(11, N-1);
+    const baseEBITDA = ACT.ebitda[ACT.ebitda.length-1];
+    const simEBITDA  = ebitdaArr[bridgeMo];
+    const delta = simEBITDA - baseEBITDA;
+    const items = [
+      {lbl:'Current EBITDA',  val:baseEBITDA, color:'rgba(107,131,245,0.7)'},
+      {lbl:'Revenue growth',  val:(revArr[bridgeMo]-startRev)*0.63, color:'rgba(29,158,117,0.7)'},
+      {lbl:'v0 margin change',val:(v0GM-0.35)*startV0*Math.pow(1+v0Gr,bridgeMo+1)*0.4, color:'rgba(20,184,166,0.7)'},
+      {lbl:'Opex change',     val:-(ebitdaArr[bridgeMo]+(revArr[bridgeMo]*lastGM/100-gpArr[bridgeMo])), color:'rgba(239,68,68,0.6)'},
+      {lbl:'Simulated EBITDA',val:simEBITDA, color: simEBITDA>=0?'rgba(16,185,129,0.8)':'rgba(239,68,68,0.8)'},
+    ];
+    const maxAbs = Math.max(...items.map(i=>Math.abs(i.val)), 1);
+    document.getElementById('ms-waterfall').innerHTML = items.map(item => {
+      const pct = Math.min(Math.abs(item.val)/maxAbs*100, 100).toFixed(1);
+      const sign = item.val >= 0 ? '+' : '';
+      return `<div class="ms-wf-row">
+        <div class="ms-wf-label">${item.lbl}</div>
+        <div class="ms-wf-bar-wrap"><div class="ms-wf-bar" style="width:${pct}%;background:${item.color}"></div></div>
+        <div class="ms-wf-val">${sign}${item.val.toFixed(1)}M</div>
+      </div>`;
+    }).join('');
+
+    // ── EVENT LOG ─────────────────────────────────────
+    const events = [];
+    if(activeToggles['raise']) {
+      const amt=g('sl-raise-amt'), mo=g('sl-raise-mo'), dil=g('sl-dilution');
+      events.push({type:'raise', msg:`Raise $${amt.toFixed(0)}M at Mo ${mo.toFixed(0)} · ${dil.toFixed(0)}% dilution · cash jumps to $${(startCash+amt).toFixed(0)}M`});
+    }
+    if(activeToggles['ipo']) {
+      events.push({type:'raise', msg:`IPO in ${g('sl-ipo-mo').toFixed(0)} months · $${g('sl-ipo-amt').toFixed(0)}M proceeds · significant dilution and compliance costs`});
+    }
+    if(activeToggles['mktdown']) {
+      events.push({type:'market', msg:`Market downturn for ${g('sl-mktdur').toFixed(0)} months · rev growth haircut -${g('sl-mkthc').toFixed(1)}pp · churn spikes +${g('sl-mktchurn').toFixed(2)}%`});
+    }
+    if(activeToggles['hire']) {
+      events.push({type:'cost', msg:`Hiring push: +$${g('sl-hire-cost').toFixed(1)}M/mo costs · revenue lift starts after ${g('sl-hire-ramp').toFixed(0)}-month ramp · payback depends on hire quality`});
+    }
+    if(activeToggles['rif']) {
+      events.push({type:'ops', msg:`RIF: saves $${g('sl-rif-save').toFixed(1)}M/mo · one-time $${g('sl-rif-sev').toFixed(0)}M severance · -${g('sl-rif-rev').toFixed(2)}% rev growth haircut`});
+    }
+    const revDelta = (revGr*100 - 4).toFixed(1);
+    if(Math.abs(revGr*100-4) > 0.3) events.push({type:'ops', msg:`Revenue growth at ${(revGr*100).toFixed(1)}% MoM (${revDelta>=0?'+':''}${revDelta}pp vs base 4%)`});
+    if(Math.abs(v0GM*100-35) > 2)   events.push({type:'ops', msg:`v0 GM at ${(v0GM*100).toFixed(0)}% (${v0GM*100>35?'post-Hive improvement':'cost pressure remains'})`});
+    if(smBase < 10 || rdBase < 10)  events.push({type:'cost', msg:`Austerity mode: S&M $${smBase.toFixed(1)}M + R&D $${rdBase.toFixed(1)}M — watch for growth slowdown lag`});
+
+    const typeLabel = {raise:'RAISE', cost:'COST', market:'MARKET', ops:'OPS'};
+    document.getElementById('ms-event-log').innerHTML = events.length
+      ? events.map(e=>`<div class="ms-event"><span class="tag ${e.type}">${typeLabel[e.type]}</span>${e.msg}</div>`).join('')
+      : '<div class="ms-event" style="color:var(--gray4)">Base case — no special events active.</div>';
+
+    // ── CFO NARRATIVE ─────────────────────────────────
+    buildNarrative({
+      startCash, startRev, startV0,
+      lastRev, lastEBITDA, lastCash, lastGM,
+      moBreakeven, burnAtEnd, runwayEst,
+      revGr, v0GM, coreGM, churn, smBase, rdBase, gaBase,
+      activeToggles, N, simHorizon,
+      revArr, ebitdaArr, cashArr,
+      g
+    });
+  };
+
+
+  // ═══════════════════════════════════════════════════════
+  // CFO NARRATIVE ENGINE
+  // Reads the current simulation state and generates a
+  // plain-English real-world read, like a CFO briefing.
+  // ═══════════════════════════════════════════════════════
+  function buildNarrative(p) {
+    const el = document.getElementById('ms-narrative-body');
+    if (!el) return;
+
+    const fmt  = (v, d=1) => (v<0?'-':'') + '$' + Math.abs(v).toFixed(d) + 'M';
+    const fmtR = v => (v>=0?'+':'')+v.toFixed(1)+'%';
+    const mo   = p.N;
+    const baseRunway = p.startCash / 9.3;
+    const blendedGMnow = p.lastGM.toFixed(1);
+    const gmDelta = (p.lastGM - 63.2);
+    const burnAtEnd = p.burnAtEnd > 0 ? p.burnAtEnd : 0;
+    const runway = burnAtEnd > 0 ? (p.lastCash / burnAtEnd) : 999;
+    const revGrowthPct = (p.revGr * 100).toFixed(1);
+    const v0GMpct = (p.v0GM * 100).toFixed(0);
+    const coreGMpct = (p.coreGM * 100).toFixed(1);
+    const revDelta = ((p.lastRev / p.startRev - 1) * 100).toFixed(0);
+    const moBreakeven = p.moBreakeven;
+
+    // ── OPENING SCENE ──────────────────────────────────────────────────────
+    // Write as a living narrative, not a bulleted report
+    let story = '';
+
+    // ── ACT 1: THE STATE OF PLAY ───────────────────────────────────────────
+    {
+      const tone = p.lastEBITDA >= 0 ? 'arriving' :
+                   p.lastEBITDA > -8 ? 'getting closer' : 'still a ways out';
+      const cashColor = runway > 40 ? 'comfortable' : runway > 20 ? 'manageable' : 'tight';
+      const revVerb = revDelta > 20 ? 'rockets' : revDelta > 0 ? 'climbs' : 'contracts';
+
+      story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#F59E0B;text-transform:uppercase;margin-bottom:8px">The ${mo}-month story</div>
+        <p style="margin-bottom:8px">Revenue ${revVerb} from <strong style="color:rgba(255,255,255,.9)">$${p.startRev.toFixed(1)}M</strong> to <strong style="color:rgba(255,255,255,.9)">$${p.lastRev.toFixed(1)}M</strong> — a <strong style="color:${revDelta>0?'#10B981':'#EF4444'}">${revDelta>0?'+':''}${revDelta}%</strong> move over ${mo} months. Profitability is <em>${tone}</em>: EBITDA lands at <strong style="color:${p.lastEBITDA>=0?'#10B981':'#EF4444'}">${fmt(p.lastEBITDA)}/mo</strong> by month ${mo}, with <strong>${runway>=999?'unlimited':runway.toFixed(0)+' months'}</strong> of runway left in the tank — which feels ${cashColor} right now.</p>
+        <p>The gross margin picture tells the deeper story: <strong style="color:${gmDelta>1?'#10B981':gmDelta<-1?'#EF4444':'#F59E0B'}">${blendedGMnow}% blended GM</strong> at month ${mo}${Math.abs(gmDelta)>1?' ('+fmtR(gmDelta)+' vs today\'s 63.2%)':''}. ${gmDelta > 3 ? 'When margin expands, every new dollar of revenue is worth more — the whole company gets lighter.' : gmDelta < -3 ? 'Compressed margins mean the revenue engine is working harder to stand still — a dangerous dynamic that accelerates burn even when topline looks fine.' : 'Margins are roughly stable, which means the profitability path is mostly a revenue story, not a cost story.'}</p>
+      </div>`;
+    }
+
+    // ── ACT 2: MARKET CONTEXT ─────────────────────────────────────────────
+    {
+      const mktActive = p.activeToggles['mktdown'];
+      const revGrNum = p.revGr * 100;
+
+      if (mktActive) {
+        const dur = p.g('sl-mktdur');
+        const hc  = p.g('sl-mkthc');
+        const churnSpike = p.g('sl-mktchurn');
+        const trough = Math.min(...p.ebitdaArr);
+        const troughMo = p.ebitdaArr.indexOf(trough) + 1;
+        story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#EF4444;text-transform:uppercase;margin-bottom:8px">Market headwinds</div>
+          <p style="margin-bottom:8px">Picture this: the macro turns. Enterprise IT budgets freeze. CFOs at ABC's customers start cutting SaaS spend, and developer tools — however mission-critical they feel to engineers — are the first line to go in a board-level cost review. A <strong>${hc.toFixed(1)}pp</strong> growth haircut combined with churn spiking <strong>+${churnSpike.toFixed(1)}%</strong> is exactly how 2022 played out for every infrastructure company from Cloudflare to Hashicorp. The model shows EBITDA hitting its worst point at <strong style="color:#EF4444">month ${troughMo}: ${fmt(trough)}/mo</strong>.</p>
+          <p style="margin-bottom:8px">Here's the interconnection that makes downturns painful: slower revenue growth reduces the denominator that opex is measured against, so every cost looks worse on a percentage basis — even if headcount didn't change. S&M suddenly looks like it's 45% of revenue instead of 36%. The board asks hard questions. The CFO starts preparing a Plan B. Engineers feel the energy shift even before any announcement.</p>
+          <p>The companies that survive downturns best do three things in the first 60 days: they <em>cut once, deeply, and visibly</em> (half-measures destroy morale twice); they <em>double down on retention</em> (keeping an existing customer is 5–7× cheaper than finding a new one); and they <em>accelerate product velocity</em> on the one product that's still growing — for ABC right now, that's v0. A downturn that lasts ${dur.toFixed(0)} months in developer tools would historically coincide with a 20–30% compression in ARR multiples across the sector, meaning a re-raise would be at a significantly lower valuation.</p>
+        </div>`;
+      } else if (revGrNum < 2) {
+        story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#F59E0B;text-transform:uppercase;margin-bottom:8px">Growth caution signal</div>
+          <p>${revGrNum.toFixed(1)}% monthly growth is below the ${'"danger zone"'} threshold for a Series F company. At this pace, ARR grows only ~${(Math.pow(1+p.revGr,12)-1)*100|0}% annually — the market expects 40–80% for a company at this stage. Investors watching the monthly cohort data will see it before the board deck does. The narrative question becomes: is this a temporary air pocket (product cycle, seasonality, one-time event) or the start of a deceleration story? The answer determines whether the next financing is at a premium or a discount.</p>
+        </div>`;
+      } else if (revGrNum >= 7) {
+        story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#10B981;text-transform:uppercase;margin-bottom:8px">Growth flywheel active</div>
+          <p>${revGrNum.toFixed(1)}% monthly compounding is the kind of number that makes investors overlook almost everything else. At this rate, ARR roughly ${revGrNum>=10?'triples':'doubles'} within ${revGrNum>=10?'14':'18'} months. In the developer tools market — where GitHub Copilot, Cursor, and Bolt.new are all fighting for the same engineering workflow — this growth rate signals that ABC has found the right product at the right time. The danger: growth at this pace attracts competition faster than moats can be built. Every month of this growth window is a month to deepen integrations, lock in enterprise contracts, and expand the platform beyond deployment into the full dev lifecycle.</p>
+        </div>`;
+      }
+    }
+
+    // ── ACT 3: THE V0 / MARGIN THREAD ─────────────────────────────────────
+    {
+      const v0GMnum = p.v0GM * 100;
+      const v0Rev = p.startV0;
+      const v0AnnualImpact = (v0GMnum - 35) / 100 * v0Rev * 12;
+
+      if (Math.abs(v0GMnum - 35) > 5) {
+        const direction = v0GMnum > 35 ? 'improving' : 'deteriorating';
+        const analogy   = v0GMnum > 55 ? 'AWS in 2013 — a business within a business, now printing money' :
+                          v0GMnum > 35 ? 'a product growing into its unit economics' :
+                          'a rocket ship burning its own fuel';
+        story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:${v0GMnum>35?'#6B83F5':'#EF4444'};text-transform:uppercase;margin-bottom:8px">The v0 chapter</div>
+          <p style="margin-bottom:8px">v0 is growing at 175× in 14 months. That sentence would have been dismissed as science fiction at the start of FY25. But here we are — and the question is no longer <em>whether</em> v0 matters, it's whether the margin structure can support the growth. At <strong>${v0GMnum}% GM</strong>, v0 is ${analogy}. The difference between 35% and 55% GM on v0's current $5.3M/mo revenue base is <strong style="color:${v0AnnualImpact>0?'#10B981':'#EF4444'}">${v0AnnualImpact>=0?'+':''}${fmt(v0AnnualImpact,0)}/year in gross profit</strong> — and that gap widens every month as v0 scales.</p>
+          <p style="margin-bottom:8px">${v0GMnum < 20 ? 'When a product grows this fast with negative margins, investors will support it for 2–3 quarters before asking when the unit economics normalise. The Hive migration is ABC\'s answer to that question. Every week it slips is a week the board gets more nervous about the margin story.' : v0GMnum >= 55 ? 'Post-Hive, v0 becomes ABC\'s margin engine. The compounding math is striking: at $5.3M/mo growing 15% MoM, v0 alone could be a $200M+ ARR business within 18 months — at 55% GM, that\'s $110M+ in annual gross profit from a product that barely existed 18 months ago.' : 'The Hive migration is tracking. Margins are moving in the right direction. The CFO can now tell the story of "v0 growing into its economics" rather than "v0 dragging down blended margin."'}</p>
+          <p>The connection that often gets missed: v0 margin improvement doesn't just help EBITDA — it changes the <em>quality</em> of ABC's revenue. High-margin product revenue trades at 25–40× ARR. Low-margin usage revenue trades at 10–15×. Every point of v0 GM improvement is simultaneously an EBITDA improvement and a valuation multiple expansion. The Series G or IPO math changes materially.</p>
+        </div>`;
+      }
+    }
+
+    // ── ACT 4: CAPITAL EVENTS ────────────────────────────────────────────
+    if (p.activeToggles['raise']) {
+      const amt = p.g('sl-raise-amt');
+      const dil = p.g('sl-dilution');
+      const raiseMo = p.g('sl-raise-mo');
+      const postMoney = (9.3 * (1 + amt / (9.3 * 1000 / dil * 100))).toFixed(1);
+      story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#6B83F5;text-transform:uppercase;margin-bottom:8px">The raise: what it really means</div>
+        <p style="margin-bottom:8px">Raising $${amt.toFixed(0)}M sounds simple on a slide. In reality, a Series G is a 6–9 month full-contact sport. The CEO spends 40–50% of their time on the road for 3 months. The CFO builds 47 versions of the financial model. The general counsel negotiates term sheets at midnight. Meanwhile, the engineering team ships half as fast because their manager's manager is distracted — a ripple effect that shows up in the sprint velocity data before it shows up in revenue.</p>
+        <p style="margin-bottom:8px">The ${dil.toFixed(0)}% dilution means every employee's options are worth ${dil.toFixed(0)}% less per share. At $9.3B valuation, a 1% stake was worth $93M; post-raise it's worth $${(93*(1-dil/100)).toFixed(0)}M. Founders and early employees feel this acutely. The CFO has to answer the question: <em>"Why are we raising if we have 57 months of runway?"</em> The right answer isn't "we need the money" — it's "we're raising from strength to win the v0 market before Microsoft Azure and Google Cloud price us out of it."</p>
+        <p>The sequencing matters enormously. Raising in month ${raiseMo.toFixed(0)} means doing it <em>after</em> the v0 trajectory is established and visible in the numbers. That's smart timing — you want 2–3 quarters of v0 growth data before walking into Sequoia or a16z. Every month of v0 data makes the story more compelling and the valuation more defensible.</p>
+      </div>`;
+    }
+
+    if (p.activeToggles['ipo']) {
+      const ipoAmt = p.g('sl-ipo-amt');
+      const ipoMo = p.g('sl-ipo-mo');
+      story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#6B83F5;text-transform:uppercase;margin-bottom:8px">The IPO: a different game entirely</div>
+        <p style="margin-bottom:8px">Going public in ${ipoMo.toFixed(0)} months changes everything about how ABC operates — not just financially, but culturally and operationally. Public companies live in 90-day cycles. Every decision gets measured against quarterly guidance. Engineers who joined for the mission start checking the stock price on their phones at lunch. The CFO now has to manage Wall Street analysts who have never deployed a Next.js app but have opinions about ABC's gross margin trajectory.</p>
+        <p style="margin-bottom:8px">The $${ipoAmt.toFixed(0)}M in proceeds matters less than it sounds — ABC already has $534M. What the IPO actually buys is a <em>currency</em>: ABC stock can now be used to acquire NuxtLabs-scale companies without spending cash, to compensate talent that demands liquid equity, and to signal to Fortune 500 procurement departments that ABC is a permanent institution, not a startup that might disappear.</p>
+        <p>The timing question: analysts want to see 2 consecutive quarters of improving EBITDA margin before an S-1 gets a warm reception. In this scenario, that means the v0 Hive migration needs to be complete and showing in the numbers <em>before</em> filing. If the S-1 shows 50% GM going to 63%+ with a clear mechanistic explanation, the roadshow is a success story. If it shows 50% GM with a TBD migration timeline, institutional investors will price in the uncertainty and the IPO window closes.</p>
+      </div>`;
+    }
+
+    // ── ACT 5: PEOPLE & ORGANISATION ──────────────────────────────────────
+    if (p.activeToggles['rif'] || p.activeToggles['hire']) {
+      story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#F59E0B;text-transform:uppercase;margin-bottom:8px">The people layer — what the model can't fully capture</div>`;
+
+      if (p.activeToggles['rif']) {
+        const save = p.g('sl-rif-save');
+        const sev  = p.g('sl-rif-sev');
+        const revHC = p.g('sl-rif-rev');
+        const count = Math.round(save * 1e6 / 15000);
+        story += `<p style="margin-bottom:8px">A reduction in force cutting $${save.toFixed(1)}M/month means roughly <strong>${count} roles</strong> — real people, real families. The model captures the $${sev.toFixed(0)}M severance and the ${revHC.toFixed(2)}% revenue haircut. What it can't fully capture: the Slack channel that goes quiet the day of the announcement, the senior engineer in Berlin who decides that morning to accept the Google offer they'd been sitting on, the enterprise sales rep in New York who stops pushing for the Q2 close because they're not sure the company will be the same in 6 months.</p>
+        <p style="margin-bottom:8px">The research is consistent: <strong>employee engagement drops 20–35%</strong> in the 90 days after a layoff, even among survivors. Engineering velocity typically slips 15–20% for a quarter. Glassdoor reviews spike. Recruitment becomes 40% harder and 25% more expensive for 6–12 months. The break-even on a RIF — when the EBITDA savings exceed the productivity loss — arrives around <strong>month 8–14</strong>, not month 1.</p>
+        <p>The one principle that separates companies that recover well from those that spiral: <em>cut once, cut deep, communicate honestly</em>. The worst outcome — which happens when leadership is too cautious — is two or three rounds of layoffs over 18 months. Each round is progressively more damaging to morale and retention because employees can no longer believe the all-hands message that "this is the last one."</p>`;
+      }
+
+      if (p.activeToggles['hire']) {
+        const cost = p.g('sl-hire-cost');
+        const ramp = p.g('sl-hire-ramp');
+        const lift = p.g('sl-hire-lift');
+        const count = Math.round(cost * 1e6 / 15000);
+        story += `<p style="margin-bottom:8px">Adding ~${count} people feels like acceleration. On paper it is. In practice, the ${ramp.toFixed(0)}-month ramp is optimistic — enterprise sales cycles typically run 6–9 months, which means the new AEs hired today won't show up in ARR until Q4 at the earliest. R&D hires take even longer: a new engineer needs 60–90 days of onboarding before contributing meaningful code, and the codebase knowledge required to work on ABC's infrastructure means that ramp is probably 90–120 days for senior engineers.</p>
+        <p>The ${lift.toFixed(2)}% revenue lift per month from hiring — once it kicks in — compounds beautifully in the model. But the sequencing matters: hiring before the product-market fit is locked in means you're paying premium salaries for people to sell something that isn't quite ready. In ABC's case, the v0 motion is real and validated, so the hiring case is strong — but it needs to be directed at v0 GTM and v0 engineering, not spread evenly across all departments.</p>`;
+      }
+
+      story += `</div>`;
+    }
+
+    // ── ACT 6: THE INTERCONNECTION MAP ────────────────────────────────────
+    {
+      // Always shown — this is the systems thinking layer
+      const rifActive   = p.activeToggles['rif'];
+      const hireActive  = p.activeToggles['hire'];
+      const mktActive   = p.activeToggles['mktdown'];
+      const raiseActive = p.activeToggles['raise'];
+      const highBurn    = burnAtEnd > 12;
+      const lowGM       = p.lastGM < 58;
+      const highGrowth  = p.revGr * 100 >= 6;
+      const v0Healthy   = p.v0GM * 100 >= 50;
+
+      // Build a dynamic systems map based on what's active
+      let chains = [];
+
+      if (lowGM && highBurn)
+        chains.push('<strong>Margin compression → burn acceleration → board pressure → faster raise timeline → executive distraction → slower product → slower growth → more burn.</strong> This is the spiral. Breaking it requires fixing margin first, everything else second.');
+
+      if (highGrowth && v0Healthy)
+        chains.push('<strong>v0 margin recovery → blended GM expansion → EBITDA improvement → longer runway → ability to hire aggressively → faster v0 growth → higher ARR multiple → stronger IPO/raise position.</strong> This is the flywheel. Each turn makes the next turn easier.');
+
+      if (mktActive && rifActive)
+        chains.push('<strong>Market downturn → revenue misses → board pressure → RIF → morale drop → product slows → v0 momentum at risk → competitive window opens for Netlify and AWS Amplify → customer churn accelerates → more pressure.</strong> The doom loop. The only escape is cutting fast enough that the savings rebuild confidence before the product impact lands.');
+
+      if (raiseActive && highGrowth)
+        chains.push('<strong>Strong growth → raise from strength → capital deployed in v0 GTM → v0 ARR accelerates → higher quality revenue → valuation re-rating → IPO optionality unlocked → permanent capital → acquisition currency for developer tool consolidation.</strong> The compounding path.');
+
+      if (!rifActive && !mktActive && !lowGM && p.revGr * 100 >= 4)
+        chains.push('<strong>Stable growth + improving margins + strong cash position = the ideal flywheel.</strong> Revenue growth reduces opex as a percentage. Margin improvement makes each dollar of revenue worth more. Cash removes urgency and gives management optionality. All three together is what allows ABC to invest counter-cyclically — hiring when competitors are frozen, acquiring when multiples are compressed, shipping when others are distracted by survival.');
+
+      if (chains.length > 0) {
+        story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.35);text-transform:uppercase;margin-bottom:8px">How these factors connect</div>
+          ${chains.map(c=>`<p style="margin-bottom:8px">${c}</p>`).join('')}
+        </div>`;
+      }
+    }
+
+    // ── ACT 7: BREAKEVEN & THE ONE NUMBER ─────────────────────────────────
+    {
+      if (moBreakeven >= 0) {
+        const beMo  = moBreakeven + 1;
+        const beRev = p.revArr[moBreakeven];
+        const beARR = (beRev * 12).toFixed(0);
+        story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#10B981;text-transform:uppercase;margin-bottom:8px">The moment everything changes — month ${beMo}</div>
+          <p style="margin-bottom:8px">Month ${beMo} is not just a number in a model. It's the board meeting where the CFO puts down the slide that says <em>"EBITDA positive"</em> for the first time — and the room goes quiet in a different way than usual. Revenue reaches <strong>~$${beRev.toFixed(1)}M/mo ($${beARR}M ARR run-rate)</strong>. The narrative flips overnight from "high-burn growth company" to "profitable infrastructure platform." That re-rating is worth 5–10× in ARR multiple expansion with institutional investors.</p>
+          <p>In the developer tools market, breakeven is also a competitive signal. It tells enterprise procurement teams that ABC is a safe vendor — not just technically, but financially. SOC 2 and ISO 27001 get you through security reviews. Profitable operations get you through the "will this vendor exist in 5 years" conversation with the CTO. Both matter, and the second one is harder to manufacture than the first.</p>
+        </div>`;
+      } else {
+        const neededRev = (p.gaBase + p.rdBase + p.smBase) / 0.63;
+        story += `<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:.5px solid rgba(255,255,255,0.07)">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:#F59E0B;text-transform:uppercase;margin-bottom:8px">The breakeven question</div>
+          <p>Breakeven is beyond the ${mo}-month window in this scenario — the model needs approximately <strong>$${neededRev.toFixed(1)}M/mo in revenue</strong> to cross zero at current costs. Switch the horizon to 24 or 36 months to see when it arrives. The board will ask this question in the first 5 minutes of the next meeting. The CFO who walks in with a specific month, specific revenue milestone, and the two or three decisions that could move it earlier is the CFO who leaves the meeting having earned trust. The one who says "we're not guiding on that timeline" leaves having spent it.</p>
+        </div>`;
+      }
+    }
+
+    // ── CLOSING: THE CEO LENS ─────────────────────────────────────────────
+    {
+      const topFocus = p.v0GM * 100 < 40 ? 'Hive migration — it is worth more than any other initiative on the roadmap' :
+                       p.revGr * 100 < 3  ? 'diagnosing the growth slowdown before it shows up in the board deck' :
+                       burnAtEnd > 15      ? 'getting burn below $10M/month before the next raise conversation' :
+                       p.activeToggles['mktdown'] ? 'building the contingency plan before the downturn forces it' :
+                       'extending the v0 lead before Microsoft and Google price-match';
+
+      story += `<div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.25);text-transform:uppercase;margin-bottom:8px">If you are the CEO, the one thing to focus on right now is</div>
+        <p style="font-size:13px;color:rgba(255,255,255,.85);line-height:1.6"><strong>${topFocus}.</strong></p>
+        <p style="margin-top:8px">Everything else is noise until that changes.</p>
+      </div>`;
+    }
+
+    el.innerHTML = story;
+  }
+
+
+  // Initial run
+  runSim();
+}
+
+</script>
+</body>
+</html>

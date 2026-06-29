@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tatsiana Strigelskiy | Finance Portfolio</title>
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#11141b; --border:#232733; --text:#e7e9ee;
+    --muted:#9aa3b2; --gold:#d4af37; --accent:#6ea8fe;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;}
+  header{
+    position:sticky; top:0; z-index:50; background:var(--panel);
+    border-bottom:1px solid var(--border); padding:0 24px;
+  }
+  .brand{display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
+  .brand h1{font-size:18px;margin:0;letter-spacing:.3px;}
+  .brand span{color:var(--gold);}
+  .maintabs{display:flex;gap:4px;overflow-x:auto;}
+  .maintab{
+    padding:12px 18px; cursor:pointer; color:var(--muted); font-weight:600;
+    border-bottom:3px solid transparent; white-space:nowrap; font-size:14px;
+    transition:.15s;
+  }
+  .maintab:hover{color:var(--text);}
+  .maintab.active{color:var(--gold); border-bottom-color:var(--gold);}
+  .subtabbar{
+    display:flex; gap:4px; overflow-x:auto; background:#0e1016;
+    border-bottom:1px solid var(--border); padding:0 24px;
+  }
+  .subtab{
+    padding:10px 14px; cursor:pointer; color:var(--muted); font-size:13px;
+    border-bottom:2px solid transparent; white-space:nowrap; transition:.15s;
+  }
+  .subtab:hover{color:var(--text);}
+  .subtab.active{color:var(--accent); border-bottom-color:var(--accent);}
+  .frame-wrap{position:relative; width:100%; height:calc(100vh - 96px);}
+  iframe{
+    width:100%; height:100%; border:0; display:none; background:#fff;
+  }
+  iframe.active{display:block;}
+  .panel{display:none;}
+  .panel.active{display:flex; flex-direction:column;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>Tatsiana Strigelskiy <span>· Finance Portfolio</span></h1>
+  </div>
+  <div class="maintabs" id="maintabs">
+    <div class="maintab active" data-panel="panel-portfolio">Professional Portfolio</div>
+    <div class="maintab" data-panel="panel-sankey">Financial Flow (Sankey)</div>
+    <div class="maintab" data-panel="panel-twin">Financial Twin Model</div>
+  </div>
+</header>
+
+<!-- PORTFOLIO PANEL -->
+<div class="panel active" id="panel-portfolio">
+  <div class="subtabbar" id="subtabs-portfolio">
+    <div class="subtab" data-target="frame-portfolio" data-anchor="frameworks">Frameworks</div>
+    <div class="subtab" data-target="frame-portfolio" data-anchor="philosophy">Philosophy</div>
+    <div class="subtab" data-target="frame-portfolio" data-anchor="skills">Skills</div>
+    <div class="subtab" data-target="frame-portfolio" data-anchor="impact">Impact</div>
+    <div class="subtab" data-target="frame-portfolio" data-anchor="library">Library</div>
+    <div class="subtab" data-target="frame-portfolio" data-anchor="contact">Contact</div>
+  </div>
+  <div class="frame-wrap"><iframe id="frame-portfolio" class="active" src="portfolio.html"></iframe></div>
+</div>
+
+<!-- SANKEY PANEL -->
+<div class="panel" id="panel-sankey">
+  <div class="subtabbar" id="subtabs-sankey">
+    <div class="subtab" data-target="frame-sankey" data-anchor="">Flow Diagram</div>
+  </div>
+  <div class="frame-wrap"><iframe id="frame-sankey" src="sankey.html"></iframe></div>
+</div>
+
+<!-- TWIN PANEL -->
+<div class="panel" id="panel-twin">
+  <div class="subtabbar" id="subtabs-twin">
+    <div class="subtab" data-target="frame-twin" data-call="overview">Overview</div>
+    <div class="subtab" data-target="frame-twin" data-call="pl">P&amp;L Detail</div>
+    <div class="subtab" data-target="frame-twin" data-call="drivers">Driver Tree</div>
+    <div class="subtab" data-target="frame-twin" data-call="scenarios">Scenarios</div>
+    <div class="subtab" data-target="frame-twin" data-call="valuation">Valuation</div>
+    <div class="subtab" data-target="frame-twin" data-call="issues">Open Items</div>
+    <div class="subtab" data-target="frame-twin" data-call="anomalies">⚡ Mar→Apr Anomalies</div>
+    <div class="subtab" data-target="frame-twin" data-call="revquality">💎 Revenue Quality</div>
+    <div class="subtab" data-target="frame-twin" data-call="costeff">🔬 Cost Efficiency</div>
+    <div class="subtab" data-target="frame-twin" data-call="mgmtsim">⚙ Management Simulator</div>
+  </div>
+  <div class="frame-wrap"><iframe id="frame-twin" src="twin.html"></iframe></div>
+</div>
+
+<script>
+// ---- Main tab switching ----
+const mainTabs = document.querySelectorAll('.maintab');
+mainTabs.forEach(t=>{
+  t.addEventListener('click', ()=>{
+    mainTabs.forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.panel).classList.add('active');
+  });
+});
+
+// ---- Sub tab switching ----
+function setActiveSub(group, el){
+  document.querySelectorAll('#'+group+' .subtab').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Portfolio subtabs: jump to anchor inside the iframe
+document.querySelectorAll('#subtabs-portfolio .subtab').forEach(s=>{
+  s.addEventListener('click', ()=>{
+    setActiveSub('subtabs-portfolio', s);
+    const frame = document.getElementById(s.dataset.target);
+    const anchor = s.dataset.anchor;
+    try{
+      const doc = frame.contentWindow.document;
+      const el = doc.getElementById(anchor);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    }catch(e){
+      // cross-origin fallback (e.g. opened locally via file://)
+      frame.src = 'portfolio.html#' + anchor;
+    }
+  });
+});
+
+// Sankey subtabs (single view, no-op)
+document.querySelectorAll('#subtabs-sankey .subtab').forEach(s=>{
+  s.addEventListener('click', ()=> setActiveSub('subtabs-sankey', s));
+});
+
+// Twin subtabs: call switchTab() inside iframe
+document.querySelectorAll('#subtabs-twin .subtab').forEach(s=>{
+  s.addEventListener('click', ()=>{
+    setActiveSub('subtabs-twin', s);
+    const frame = document.getElementById(s.dataset.target);
+    const tabId = s.dataset.call;
+    try{
+      frame.contentWindow.switchTab(tabId);
+    }catch(e){
+      console.warn('Could not switch tab inside iframe (cross-origin?)', e);
+    }
+  });
+});
+
+// Mark default active subtabs
+document.querySelector('#subtabs-sankey .subtab').classList.add('active');
+document.querySelector('#subtabs-twin .subtab').classList.add('active');
+</script>
+
+</body>
+</html>
