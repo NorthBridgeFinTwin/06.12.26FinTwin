@@ -36,13 +36,18 @@
   }
   .subtab:hover{color:var(--text);}
   .subtab.active{color:var(--accent); border-bottom-color:var(--accent);}
-  .frame-wrap{position:relative; width:100%; height:calc(100vh - 96px);}
+
+  /* Panel = subtabbar + iframe stacked */
+  .panel{display:none; flex-direction:column; height:calc(100vh - 96px);}
+  .panel.active{display:flex;}
+
+  /* iframe fills the remaining height inside the panel */
+  .frame-wrap{flex:1; position:relative;}
   iframe{
-    width:100%; height:100%; border:0; display:none; background:#fff;
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    border:0;
   }
-  iframe.active{display:block;}
-  .panel{display:none;}
-  .panel.active{display:flex; flex-direction:column;}
 </style>
 </head>
 <body>
@@ -61,98 +66,89 @@
 <!-- PORTFOLIO PANEL -->
 <div class="panel active" id="panel-portfolio">
   <div class="subtabbar" id="subtabs-portfolio">
-    <div class="subtab" data-target="frame-portfolio" data-anchor="frameworks">Frameworks</div>
-    <div class="subtab" data-target="frame-portfolio" data-anchor="philosophy">Philosophy</div>
-    <div class="subtab" data-target="frame-portfolio" data-anchor="skills">Skills</div>
-    <div class="subtab" data-target="frame-portfolio" data-anchor="impact">Impact</div>
-    <div class="subtab" data-target="frame-portfolio" data-anchor="library">Library</div>
-    <div class="subtab" data-target="frame-portfolio" data-anchor="contact">Contact</div>
+    <div class="subtab active" data-anchor="frameworks">Frameworks</div>
+    <div class="subtab" data-anchor="philosophy">Philosophy</div>
+    <div class="subtab" data-anchor="skills">Skills</div>
+    <div class="subtab" data-anchor="impact">Impact</div>
+    <div class="subtab" data-anchor="library">Library</div>
+    <div class="subtab" data-anchor="contact">Contact</div>
   </div>
-  <div class="frame-wrap"><iframe id="frame-portfolio" class="active" src="portfolio.html"></iframe></div>
+  <div class="frame-wrap">
+    <iframe id="frame-portfolio" src="portfolio.html"></iframe>
+  </div>
 </div>
 
 <!-- SANKEY PANEL -->
 <div class="panel" id="panel-sankey">
   <div class="subtabbar" id="subtabs-sankey">
-    <div class="subtab" data-target="frame-sankey" data-anchor="">Flow Diagram</div>
+    <div class="subtab active">Flow Diagram</div>
   </div>
-  <div class="frame-wrap"><iframe id="frame-sankey" src="sankey.html"></iframe></div>
+  <div class="frame-wrap">
+    <iframe id="frame-sankey" src="sankey.html"></iframe>
+  </div>
 </div>
 
 <!-- TWIN PANEL -->
 <div class="panel" id="panel-twin">
   <div class="subtabbar" id="subtabs-twin">
-    <div class="subtab" data-target="frame-twin" data-call="overview">Overview</div>
-    <div class="subtab" data-target="frame-twin" data-call="pl">P&amp;L Detail</div>
-    <div class="subtab" data-target="frame-twin" data-call="drivers">Driver Tree</div>
-    <div class="subtab" data-target="frame-twin" data-call="scenarios">Scenarios</div>
-    <div class="subtab" data-target="frame-twin" data-call="valuation">Valuation</div>
-    <div class="subtab" data-target="frame-twin" data-call="issues">Open Items</div>
-    <div class="subtab" data-target="frame-twin" data-call="anomalies">⚡ Mar→Apr Anomalies</div>
-    <div class="subtab" data-target="frame-twin" data-call="revquality">💎 Revenue Quality</div>
-    <div class="subtab" data-target="frame-twin" data-call="costeff">🔬 Cost Efficiency</div>
-    <div class="subtab" data-target="frame-twin" data-call="mgmtsim">⚙ Management Simulator</div>
+    <div class="subtab active" data-call="overview">Overview</div>
+    <div class="subtab" data-call="pl">P&amp;L Detail</div>
+    <div class="subtab" data-call="drivers">Driver Tree</div>
+    <div class="subtab" data-call="scenarios">Scenarios</div>
+    <div class="subtab" data-call="valuation">Valuation</div>
+    <div class="subtab" data-call="issues">Open Items</div>
+    <div class="subtab" data-call="anomalies">⚡ Mar→Apr Anomalies</div>
+    <div class="subtab" data-call="revquality">💎 Revenue Quality</div>
+    <div class="subtab" data-call="costeff">🔬 Cost Efficiency</div>
+    <div class="subtab" data-call="mgmtsim">⚙ Management Simulator</div>
   </div>
-  <div class="frame-wrap"><iframe id="frame-twin" src="twin.html"></iframe></div>
+  <div class="frame-wrap">
+    <iframe id="frame-twin" src="twin.html"></iframe>
+  </div>
 </div>
 
 <script>
 // ---- Main tab switching ----
-const mainTabs = document.querySelectorAll('.maintab');
-mainTabs.forEach(t=>{
+document.querySelectorAll('.maintab').forEach(t=>{
   t.addEventListener('click', ()=>{
-    mainTabs.forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.maintab').forEach(x=>x.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     t.classList.add('active');
     document.getElementById(t.dataset.panel).classList.add('active');
   });
 });
 
-// ---- Sub tab switching ----
-function setActiveSub(group, el){
-  document.querySelectorAll('#'+group+' .subtab').forEach(s=>s.classList.remove('active'));
-  el.classList.add('active');
-}
-
-// Portfolio subtabs: jump to anchor inside the iframe
+// ---- Portfolio subtabs: scroll iframe to anchor ----
 document.querySelectorAll('#subtabs-portfolio .subtab').forEach(s=>{
   s.addEventListener('click', ()=>{
-    setActiveSub('subtabs-portfolio', s);
-    const frame = document.getElementById(s.dataset.target);
+    document.querySelectorAll('#subtabs-portfolio .subtab').forEach(x=>x.classList.remove('active'));
+    s.classList.add('active');
+    const frame = document.getElementById('frame-portfolio');
     const anchor = s.dataset.anchor;
     try{
-      const doc = frame.contentWindow.document;
-      const el = doc.getElementById(anchor);
+      const el = frame.contentWindow.document.getElementById(anchor);
       if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
     }catch(e){
-      // cross-origin fallback (e.g. opened locally via file://)
       frame.src = 'portfolio.html#' + anchor;
     }
   });
 });
 
-// Sankey subtabs (single view, no-op)
-document.querySelectorAll('#subtabs-sankey .subtab').forEach(s=>{
-  s.addEventListener('click', ()=> setActiveSub('subtabs-sankey', s));
-});
-
-// Twin subtabs: call switchTab() inside iframe
+// ---- Twin subtabs: call switchTab() inside iframe ----
 document.querySelectorAll('#subtabs-twin .subtab').forEach(s=>{
   s.addEventListener('click', ()=>{
-    setActiveSub('subtabs-twin', s);
-    const frame = document.getElementById(s.dataset.target);
+    document.querySelectorAll('#subtabs-twin .subtab').forEach(x=>x.classList.remove('active'));
+    s.classList.add('active');
+    const frame = document.getElementById('frame-twin');
     const tabId = s.dataset.call;
+    // If iframe already loaded, call directly; otherwise wait
     try{
       frame.contentWindow.switchTab(tabId);
     }catch(e){
-      console.warn('Could not switch tab inside iframe (cross-origin?)', e);
+      frame.addEventListener('load', ()=>{ try{ frame.contentWindow.switchTab(tabId); }catch(_){} }, {once:true});
     }
   });
 });
-
-// Mark default active subtabs
-document.querySelector('#subtabs-sankey .subtab').classList.add('active');
-document.querySelector('#subtabs-twin .subtab').classList.add('active');
 </script>
 
 </body>
